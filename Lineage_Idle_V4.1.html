@@ -1,0 +1,972 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Lineage Idle V4.1</title>
+<style>
+:root{--bg:#05070a;--panel:#0d1117;--panel2:#111827;--line:#334155;--text:#dbeafe;--muted:#94a3b8;--gold:#facc15;--green:#22c55e;--red:#ef4444;--blue:#60a5fa;--purple:#c084fc;--orange:#fb923c}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:"Microsoft JhengHei",Consolas,monospace;font-size:15px;user-select:none}.hidden{display:none!important}.app{height:100vh;display:flex;flex-direction:column;padding:12px;gap:10px}.panel{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px}.top{display:flex;justify-content:space-between;align-items:center}.title{color:var(--gold);font-weight:700}.grid{display:grid;gap:10px}.main{flex:1;display:grid;grid-template-columns:300px 1fr 330px;gap:10px;min-height:0}.col{display:flex;flex-direction:column;gap:10px;min-height:0}.scroll{overflow:auto}.btn,select,input{background:#1f2937;color:var(--text);border:1px solid #475569;border-radius:8px;padding:8px 10px;font:inherit}.btn{cursor:pointer}.btn:hover{background:#334155}.btn:disabled{opacity:.45;cursor:not-allowed}.btn.green{color:#86efac}.btn.blue{color:#93c5fd}.btn.red{color:#fca5a5}.row{display:flex;align-items:center;justify-content:space-between;gap:8px}.tabs{display:flex;gap:6px;flex-wrap:wrap}.tab{padding:8px 12px}.tab.active{border-color:var(--gold);color:var(--gold)}.bar{height:18px;background:#020617;border:1px solid #475569;border-radius:99px;overflow:hidden;position:relative}.bar i{display:block;height:100%;width:0}.hp{background:#991b1b}.mp{background:#1d4ed8}.exp{background:#a16207}.bar span{position:absolute;inset:0;text-align:center;font-size:12px;line-height:16px;text-shadow:1px 1px #000}.stat{display:grid;grid-template-columns:1fr 1fr;gap:6px}.item{border-bottom:1px dashed #293548;padding:7px 0}.log{font-size:14px;line-height:1.55}.c-gold{color:var(--gold)}.c-green{color:var(--green)}.c-red{color:var(--red)}.c-blue{color:var(--blue)}.c-purple{color:var(--purple)}.c-orange{color:var(--orange)}.modal{position:fixed;inset:0;background:rgba(0,0,0,.86);display:flex;align-items:center;justify-content:center;z-index:50}.modal-card{width:min(760px,94vw);max-height:92vh;overflow:auto}.classes{grid-template-columns:repeat(auto-fit,minmax(150px,1fr))}.class-card{text-align:left;min-height:96px}.class-card.selected{border-color:var(--gold);background:#1e293b}.small{font-size:13px;color:var(--muted)}.pill{display:inline-block;border:1px solid #475569;border-radius:99px;padding:2px 7px;margin:2px;color:#cbd5e1}.rarity-白{color:#e5e7eb}.rarity-綠{color:#4ade80}.rarity-藍{color:#60a5fa}.rarity-紫{color:#c084fc}.rarity-橘{color:#fb923c}.rarity-紅{color:#f87171}.kbd{background:#020617;border:1px solid #334155;border-radius:5px;padding:1px 5px;color:#cbd5e1}.setting-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:10px}.setting-card{background:#0b1220;border:1px solid #26364f;border-radius:10px;padding:12px}@media(max-width:1100px){.main{grid-template-columns:1fr}.app{height:auto}.col{min-height:500px}}
+</style>
+</head>
+<body>
+<div id="start" class="modal">
+  <div class="panel modal-card">
+    <h1 class="title" style="font-size:42px;text-align:center;margin:20px 0 8px">Lineage Idle V4.1</h1>
+    <p class="small" style="text-align:center;margin-bottom:24px">單機版</p>
+    <div class="grid">
+      <button id="newGame" class="btn green" style="font-size:22px;padding:14px">新冒險</button>
+      <button id="loadGame" class="btn blue" style="font-size:22px;padding:14px">讀取存檔</button>
+      <button id="importBtn" class="btn" style="font-size:18px;padding:12px">匯入存檔 JSON</button>
+      <input id="importFile" type="file" accept="application/json,.json" class="hidden">
+    </div>
+  </div>
+</div>
+
+<div id="classModal" class="modal hidden">
+  <div class="panel modal-card">
+    <h2 class="title">選擇職業</h2>
+    <div id="classList" class="grid classes"></div>
+    <div class="row" style="margin-top:14px"><button id="backStart" class="btn">返回</button><button id="confirmClass" class="btn green" disabled>開始遊戲</button></div>
+  </div>
+</div>
+
+<div class="app hidden" id="app">
+  <div class="panel top">
+    <div><span class="title">Lineage Idle V4.1</span> <span id="subTitle" class="small"></span></div>
+    <div class="row"><button class="btn blue" id="saveBtn">儲存</button><button class="btn" id="exportBtn">匯出</button><button class="btn red" id="resetBtn">刪除</button></div>
+  </div>
+  <div class="main">
+    <div class="col">
+      <div class="panel">
+        <div class="row"><div class="title">角色</div><div id="className" class="c-gold"></div></div>
+        <div class="row"><span>等級 <b id="lv">1</b></span><span>金幣 <b id="adena" class="c-gold">0</b></span></div>
+        <div>HP<div class="bar"><i id="hpBar" class="hp"></i><span id="hpTxt"></span></div></div>
+        <div>MP<div class="bar"><i id="mpBar" class="mp"></i><span id="mpTxt"></span></div></div>
+        <div>EXP<div class="bar"><i id="expBar" class="exp"></i><span id="expTxt"></span></div></div>
+        <div class="stat" id="statBox" style="margin-top:10px"></div>
+      </div>
+      <div class="panel hidden" id="legacyAutoPanel">
+        <input id="hpLimit" type="number" min="1" max="99">
+        <input id="autoSell" type="checkbox">
+        <input id="autoBoss" type="checkbox">
+        <select id="autoSkill"></select>
+      </div>
+      <div class="panel scroll" style="flex:1"><div class="title">系統紀錄</div><div id="sysLog" class="log"></div></div>
+    </div>
+
+    <div class="col">
+      <div class="panel">
+        <div class="tabs" id="tabs"></div>
+      </div>
+      <div class="panel scroll" style="flex:1">
+        <div id="tabContent"></div>
+      </div>
+    </div>
+
+    <div class="col">
+      <div class="panel">
+        <div class="row"><span class="title">狩獵地圖</span><select id="mapSelect"></select></div>
+        <div class="small" id="mapInfo"></div>
+      </div>
+      <div class="panel">
+        <div class="title">目前目標</div>
+        <div id="monsterName" class="c-red" style="font-size:22px;margin:8px 0">尋找中</div>
+        <div class="bar"><i id="monBar" class="hp"></i><span id="monTxt"></span></div>
+      </div>
+      <div class="panel scroll" style="flex:1"><div class="title">戰鬥紀錄</div><div id="battleLog" class="log"></div></div>
+    </div>
+  </div>
+</div>
+
+<script>
+'use strict';
+const DB=(()=>{
+ const rarities=['白','綠','藍','紫','橘','紅'];
+ const classes={
+  prince:{name:'王族',stats:{str:13,dex:10,con:12,int:10,wis:11},desc:'血盟與輔助型，命中與全隊增益。',weapons:['sword','dagger'],magic:2,skills:['true_target','brave_avatar','glowing_aura','shining_aura']},
+  knight:{name:'騎士',stats:{str:16,dex:12,con:14,int:8,wis:9},desc:'近戰坦克，衝擊與高防禦。',weapons:['sword','twohand','spear'],magic:1,skills:['shock_stun','solid_carriage','counter_barrier','reduction_armor']},
+  elf:{name:'妖精',stats:{str:11,dex:15,con:12,int:12,wis:12},desc:'弓箭與屬性精靈魔法。',weapons:['bow','dagger','sword'],magic:6,skills:['triple_arrow','elemental_fire','wind_walk','earth_skin','water_life']},
+  wizard:{name:'法師',stats:{str:8,dex:10,con:10,int:18,wis:16},desc:'完整一般魔法與高魔法傷害。',weapons:['staff','dagger'],magic:10,skills:['holy_walk','mana_shield','meteor_strike','disintegrate']},
+  darkelf:{name:'黑暗妖精',stats:{str:14,dex:15,con:12,int:11,wis:10},desc:'雙刀爆擊與暗黑魔法。',weapons:['dualblade','claw','dagger'],magic:2,skills:['burning_spirit','double_break','uncanny_dodge','shadow_fang']},
+  dragon:{name:'龍騎士',stats:{str:15,dex:12,con:14,int:10,wis:10},desc:'鎖鏈劍與龍之技能。',weapons:['chain_sword'],magic:1,skills:['dragon_skin','foe_slayer','mortal_body','thunder_grab']},
+  illusion:{name:'幻術士',stats:{str:10,dex:11,con:12,int:15,wis:15},desc:'幻術方塊與精神系輔助。',weapons:['kiringku'],magic:5,skills:['mirror_image','cube_ignite','cube_balance','insight']},
+  warrior:{name:'戰士',stats:{str:17,dex:11,con:16,int:8,wis:9},desc:'雙斧與高血量減傷。',weapons:['axe','twohand'],magic:0,skills:['titan_rock','howl','power_grip','desperado']},
+  fencer:{name:'劍士',stats:{str:15,dex:14,con:13,int:10,wis:10},desc:'快速連擊與劍氣。',weapons:['sword','dagger'],magic:1,skills:['phantom_reaper','infinity_blitz','judgment','blade']},
+  lancer:{name:'黃金槍騎',stats:{str:16,dex:13,con:14,int:9,wis:10},desc:'槍術突進與範圍壓制。',weapons:['spear'],magic:1,skills:['crusader','pressure','vanguard','maelstrom']}
+ };
+ const skills={
+  heal:{name:'初級治癒術',lv:4,type:'heal',mp:5,power:35,job:'general'},shield:{name:'保護罩',lv:8,type:'buff',mp:8,ac:-2,sec:120,job:'general'},bless_weapon:{name:'擬似魔法武器',lv:12,type:'buff',mp:10,dmg:2,sec:180,job:'general'},haste:{name:'加速術',lv:20,type:'buff',mp:20,spd:20,sec:300,job:'general'},greater_heal:{name:'高級治癒術',lv:24,type:'heal',mp:20,power:120,job:'general'},fireball:{name:'火球術',lv:28,type:'attack',mp:20,power:95,job:'general'},ice_lance:{name:'冰矛圍籬',lv:36,type:'attack',mp:30,power:160,job:'general'},meteor_strike:{name:'流星雨',lv:55,type:'attack',mp:60,power:420,job:'wizard'},disintegrate:{name:'究極光裂術',lv:70,type:'attack',mp:90,power:850,job:'wizard'},holy_walk:{name:'神聖疾走',lv:20,type:'buff',mp:15,spd:20,sec:300,job:'wizard'},mana_shield:{name:'魔法屏障',lv:45,type:'buff',mp:40,dr:8,sec:120,job:'wizard'},true_target:{name:'精準目標',lv:15,type:'buff',mp:10,hit:3,sec:180,job:'prince'},brave_avatar:{name:'勇猛意志',lv:45,type:'buff',mp:30,dmg:5,sec:180,job:'prince'},glowing_aura:{name:'激勵士氣',lv:30,type:'buff',mp:25,ac:-3,sec:300,job:'prince'},shining_aura:{name:'鋼鐵士氣',lv:60,type:'buff',mp:40,dr:5,sec:240,job:'prince'},shock_stun:{name:'衝擊之暈',lv:30,type:'attack',mp:18,power:150,stun:1,job:'knight'},solid_carriage:{name:'堅固防護',lv:35,type:'buff',mp:25,ac:-5,sec:180,job:'knight'},counter_barrier:{name:'反擊屏障',lv:50,type:'buff',mp:40,dr:10,sec:180,job:'knight'},reduction_armor:{name:'增幅防禦',lv:40,type:'buff',mp:30,dr:6,sec:240,job:'knight'},triple_arrow:{name:'三重矢',lv:15,type:'attack',mp:10,power:110,job:'elf'},elemental_fire:{name:'烈炎武器',lv:30,type:'buff',mp:25,dmg:5,sec:240,job:'elf'},wind_walk:{name:'風之疾走',lv:25,type:'buff',mp:20,spd:25,sec:300,job:'elf'},earth_skin:{name:'大地防護',lv:20,type:'buff',mp:18,ac:-4,sec:300,job:'elf'},water_life:{name:'生命之泉',lv:35,type:'heal',mp:25,power:160,job:'elf'},burning_spirit:{name:'燃燒鬥志',lv:25,type:'buff',mp:20,dmg:5,sec:240,job:'darkelf'},double_break:{name:'雙重破壞',lv:45,type:'buff',mp:35,dmg:10,sec:180,job:'darkelf'},uncanny_dodge:{name:'暗影閃避',lv:35,type:'buff',mp:25,ac:-6,sec:180,job:'darkelf'},shadow_fang:{name:'暗影之牙',lv:30,type:'buff',mp:25,dmg:4,sec:240,job:'darkelf'},dragon_skin:{name:'龍之護鎧',lv:20,type:'buff',mp:20,dr:5,sec:300,job:'dragon'},foe_slayer:{name:'屠宰者',lv:30,type:'attack',mp:18,power:170,job:'dragon'},mortal_body:{name:'致命身軀',lv:40,type:'buff',mp:30,dmg:8,sec:180,job:'dragon'},thunder_grab:{name:'奪命之雷',lv:55,type:'attack',mp:45,power:360,job:'dragon'},mirror_image:{name:'鏡像',lv:20,type:'buff',mp:20,ac:-4,sec:240,job:'illusion'},cube_ignite:{name:'立方：燃燒',lv:35,type:'attack',mp:30,power:220,job:'illusion'},cube_balance:{name:'立方：平衡',lv:45,type:'heal',mp:35,power:220,job:'illusion'},insight:{name:'洞察',lv:30,type:'buff',mp:25,hit:3,dmg:3,sec:300,job:'illusion'},titan_rock:{name:'泰坦岩石',lv:45,type:'buff',mp:25,dr:12,sec:180,job:'warrior'},howl:{name:'咆哮',lv:25,type:'attack',mp:15,power:130,job:'warrior'},power_grip:{name:'力量抓取',lv:35,type:'attack',mp:20,power:190,job:'warrior'},desperado:{name:'亡命之徒',lv:60,type:'attack',mp:45,power:480,job:'warrior'},phantom_reaper:{name:'幻影收割者',lv:40,type:'attack',mp:28,power:250,job:'fencer'},infinity_blitz:{name:'無限閃擊',lv:55,type:'buff',mp:40,dmg:12,sec:160,job:'fencer'},judgment:{name:'審判',lv:35,type:'attack',mp:24,power:210,job:'fencer'},blade:{name:'劍刃',lv:25,type:'buff',mp:18,dmg:4,sec:240,job:'fencer'},crusader:{name:'聖十字軍',lv:35,type:'buff',mp:25,dr:6,dmg:4,sec:240,job:'lancer'},pressure:{name:'壓迫',lv:30,type:'attack',mp:20,power:190,job:'lancer'},vanguard:{name:'先鋒突擊',lv:45,type:'attack',mp:30,power:300,job:'lancer'},maelstrom:{name:'漩渦槍擊',lv:60,type:'attack',mp:48,power:520,job:'lancer'}
+ };
+ const items={}; const add=(id,o)=>items[id]=Object.assign({id,rarity:'白',price:100,type:'material'},o);
+ [['orc_dagger','歐西斯匕首','dagger',3],['katana','武士刀','sword',14],['damascus','大馬士革刀','sword',15],['tsurugi','瑟魯基之劍','sword',18],['red_sword','赤焰之劍','sword',22],['death_blade','死亡騎士烈炎劍','sword',30],['dragon_slayer','屠龍劍','twohand',40],['crossbow','十字弓','bow',14],['ancient_bow','古代妖精弓','bow',24],['staff_mana','瑪那魔杖','staff',10],['ice_staff','冰之女王魔杖','staff',20],['dual_blade','幽暗雙刀','dualblade',18],['dark_claw','黑暗鋼爪','claw',20],['chain_sword','消滅者鎖鏈劍','chain_sword',22],['kiringku','藍寶奇古獸','kiringku',18],['titan_axe','泰坦戰斧','axe',28],['gold_spear','黃金槍','spear',24]].forEach((w,i)=>add(w[0],{name:w[1],type:'weapon',weapon:w[2],dmg:w[3],safe:6,rarity:rarities[Math.min(5,Math.floor(i/3))],price:1000*(i+1)}));
+ [['tshirt','T恤',0],['iron_helm','鋼盔',-2],['iron_armor','鋼鐵金屬盔甲',-7],['iron_gloves','鋼鐵手套',-1],['iron_boots','鋼鐵長靴',-3],['iron_leggings','鋼鐵脛甲',-4],['prot_cloak','保護者斗篷',-3],['magic_cloak','抗魔法斗篷',-2],['power_gloves','力量手套',-1],['dex_gloves','敏捷手套',-1],['ancient_armor','古代盔甲',-12],['dragon_armor','龍之盔甲',-18]].forEach((a,i)=>add(a[0],{name:a[1],type:i==0?'tshirt':a[0].includes('helm')?'helmet':a[0].includes('gloves')?'gloves':a[0].includes('boots')?'boots':a[0].includes('leggings')?'leggings':a[0].includes('cloak')?'cloak':'armor',ac:a[2],safe:4,rarity:rarities[Math.min(5,Math.floor(i/2))],price:800*(i+1),stat:a[0]=='power_gloves'?{str:2}:a[0]=='dex_gloves'?{dex:2}:a[0]=='magic_cloak'?{mr:10}:{}}));
+ [['skull_necklace','骷髏項鍊',{hit:1}],['brave_necklace','勇氣項鍊',{dmg:2}],['wisdom_ring','智慧戒指',{int:1,wis:1}],['def_ring','防禦戒指',{ac:-1}],['transform_ring','變身戒指',{spd:5}],['dark_earring','黑妖耳環',{dmg:3}],['mana_earring','魔力耳環',{mp:80}],['ogre_belt','歐吉皮帶',{hp:100}],['dragon_ring','龍之戒指',{dmg:6,hit:4,ac:-4}],['myth_earring','神話耳環',{str:2,dex:2,int:2,wis:2}]].forEach((x,i)=>add(x[0],{name:x[1],type:x[0].includes('ring')?'ring':x[0].includes('earring')?'earring':x[0].includes('belt')?'belt':'amulet',stat:x[2],safe:0,rarity:rarities[Math.min(5,Math.floor(i/2))],price:1500*(i+1)}));
+ [['potion_red','治癒藥水',37,80],['potion_orange','強力治癒藥水',200,220],['potion_clear','終極治癒藥水',600,600]].forEach(p=>add(p[0],{name:p[1],type:'potion',price:p[2],heal:p[3]}));
+ [['scroll_weapon','對武器施法的卷軸','weapon'],['scroll_armor','對盔甲施法的卷軸','armor'],['scroll_bless_weapon','受祝福的對武器施法的卷軸','weapon'],['scroll_bless_armor','受祝福的對盔甲施法的卷軸','armor'],['scroll_accessory','對飾品的卷軸','accessory']].forEach((s,i)=>add(s[0],{name:s[1],type:'scroll',target:s[2],rarity:i>1?'綠':'白',price:[75000,30000,300000,120000,80000][i]}));
+ Object.entries(skills).forEach(([id,s])=>add('book_'+id,{name:'技術書 / 魔法書：'+s.name,type:'book',skill:id,rarity:s.job=='general'?'白':'綠',price:5000+s.lv*300}));
+ const drop=(ids)=>ids.map((id,i)=>({id,rate:Math.max(.3,18-i*1.7)}));
+ const maps=[
+  ['talking','說話之島',1,12,['goblin','orc','wolf','werewolf'],drop(['orc_dagger','tshirt','potion_red','book_heal','book_shield'])],['elf_forest','妖精森林',8,22,['orc_archer','ent','dryad','spirit'],drop(['crossbow','dex_gloves','ancient_bow','book_triple_arrow','book_wind_walk','scroll_armor'])],['gludin','古魯丁地監',15,32,['skeleton','zombie','ghoul','spartoi'],drop(['iron_helm','iron_armor','iron_boots','katana','book_haste','scroll_weapon'])],['giran_prison','奇岩監獄',28,45,['prisoner','dark_guard','baphomet_follower'],drop(['damascus','power_gloves','magic_cloak','book_shock_stun','book_burning_spirit','scroll_bless_armor'])],['dragon_valley','龍之谷',40,60,['harpy','wyvern','bone_dragon','drake'],drop(['tsurugi','red_sword','brave_necklace','book_foe_slayer','book_greater_heal','scroll_bless_weapon'])],['ivory','象牙塔',45,65,['living_armor','lesser_demon','succubus','elder'],drop(['staff_mana','ice_staff','wisdom_ring','book_fireball','book_ice_lance','book_holy_walk'])],['toi_1','傲慢之塔 1F 失真',55,70,['toi_zombie','toi_skeleton','zombie_lord'],drop(['ancient_armor','def_ring','mana_earring','book_counter_barrier','book_double_break'])],['toi_4','傲慢之塔 4F 死亡',65,80,['death_knight_guard','phantom_knight','grim_reaper'],drop(['death_blade','dark_earring','book_meteor_strike','book_titan_rock','scroll_bless_weapon'])],['toi_10','傲慢之塔 10F 傲慢',75,90,['mummy_lord','vampire','baphomet'],drop(['dragon_ring','transform_ring','book_disintegrate','book_infinity_blitz','book_maelstrom'])],['lastabad','拉斯塔巴德',82,96,['darkelf_general','darkelf_mage','lastabad_royal'],drop(['dual_blade','dark_claw','kiringku','chain_sword','book_desperado','book_crusader'])],['antharas','安塔瑞斯巢穴',90,99,['earth_dragon_guard','antharas'],drop(['dragon_slayer','dragon_armor','dragon_ring','myth_earring','book_thunder_grab'])],['fafu','法利昂神殿',90,99,['water_dragon_guard','fafu'],drop(['dragon_slayer','dragon_armor','dragon_ring','myth_earring','book_cube_balance'])],['valakas','巴拉卡斯熔岩區',92,99,['fire_dragon_guard','valakas'],drop(['dragon_slayer','dragon_armor','dragon_ring','myth_earring','book_meteor_strike'])],['lind','林德拜爾天空城',92,99,['wind_dragon_guard','lindvior'],drop(['dragon_slayer','dragon_armor','dragon_ring','myth_earring','book_vanguard'])]
+ ].map(a=>({id:a[0],name:a[1],min:a[2],max:a[3],monsters:a[4],drops:a[5]}));
+ const mons={}; const mk=(id,name,lv,boss=false)=>mons[id]={id,name,lv,boss,hp:Math.floor((boss?900:80)+lv*(boss?220:38)),atk:Math.floor(4+lv*(boss?2.8:1.15)),def:Math.floor(lv/8),exp:Math.floor(15+lv*lv*(boss?7:1.4)),adena:[lv*8,lv*(boss?120:25)]};
+ ['goblin 哥布林 2','orc 妖魔 5','wolf 狼 6','werewolf 狼人 10','orc_archer 妖魔弓箭手 12','ent 安特 16','dryad 妖精森林守護者 18','spirit 精靈 20','skeleton 骷髏 18','zombie 殭屍 20','ghoul 食屍鬼 24','spartoi 史巴托 30','prisoner 監獄囚犯 30','dark_guard 黑暗守衛 36','baphomet_follower 巴風特信徒 42','harpy 哈維 42','wyvern 飛龍 48','bone_dragon 骨龍 55','drake 飛龍王 60','living_armor 活鎧甲 48','lesser_demon 小惡魔 55','succubus 魅魔 60','elder 長者 65','toi_zombie 傲慢殭屍 58','toi_skeleton 傲慢骷髏 62','zombie_lord 殭屍王 70 boss','death_knight_guard 死亡騎士親衛 70','phantom_knight 幻影騎士 75','grim_reaper 死神 80 boss','mummy_lord 木乃伊王 84 boss','vampire 吸血鬼 86 boss','baphomet 巴風特 90 boss','darkelf_general 黑妖將軍 86','darkelf_mage 黑妖法師 88','lastabad_royal 拉斯塔巴德親衛 94','earth_dragon_guard 地龍守衛 92','antharas 安塔瑞斯 99 boss','water_dragon_guard 水龍守衛 92','fafu 法利昂 99 boss','fire_dragon_guard 火龍守衛 94','valakas 巴拉卡斯 99 boss','wind_dragon_guard 風龍守衛 94','lindvior 林德拜爾 99 boss'].forEach(s=>{let p=s.split(' ');mk(p[0],p[1],+p[2],p[3]=='boss')});
+
+ const transforms={
+  none:{id:'none',name:'無變身',lv:1,duration:0,stat:{},desc:'維持原本外型，沒有額外加成。'},
+  orc:{id:'orc',name:'妖魔',lv:1,duration:1800,stat:{spd:5,hp:20},desc:'低階狩獵變身，略微提升速度與生命。'},
+  skeleton:{id:'skeleton',name:'骷髏',lv:10,duration:1800,stat:{spd:8,dex:1},desc:'不死系變身，適合初期練功。'},
+  werewolf:{id:'werewolf',name:'狼人',lv:20,duration:1800,stat:{spd:10,str:1,dmg:1},desc:'近戰速度提升，適合物理職業。'},
+  succubus:{id:'succubus',name:'魅魔',lv:35,duration:1800,stat:{int:1,wis:1,mp:60},desc:'魔法型變身，提升魔力與施法能力。'},
+  dark_elf:{id:'dark_elf',name:'黑暗妖精',lv:45,duration:1800,stat:{spd:14,dex:2,dmg:2},desc:'高速度物理變身，適合弓與雙刀。'},
+  death_knight:{id:'death_knight',name:'死亡騎士',lv:55,duration:1800,stat:{spd:18,str:2,dmg:4,hit:3},desc:'經典高速近戰變身，大幅提升攻擊節奏。'},
+  baphomet:{id:'baphomet',name:'巴風特',lv:65,duration:1800,stat:{spd:16,int:2,dmg:3,mr:10},desc:'兼具魔法與物理能力的惡魔變身。'},
+  kenrauhel:{id:'kenrauhel',name:'反王肯恩',lv:75,duration:1800,stat:{spd:20,str:3,dex:2,dmg:6,dr:3},desc:'高階戰鬥變身，適合挑戰傲慢之塔與拉斯塔巴德。'},
+  dragon_knight:{id:'dragon_knight',name:'龍騎士覺醒',lv:85,duration:1800,stat:{spd:22,str:3,int:2,dmg:8,dr:5,mr:15},desc:'龍族力量加護，終局地圖推薦。'},
+  mythic_knight:{id:'mythic_knight',name:'神話騎士',lv:95,duration:1800,stat:{spd:25,str:4,dex:4,int:3,wis:3,dmg:12,hit:8,dr:8,mr:25},desc:'神話級變身，提供全面能力加成。'}
+ };
+ return {classes,skills,items,maps,mons,transforms};
+})();
+const Store={key:'lineage_idle_v30',save(s){localStorage.setItem(this.key,JSON.stringify(s));},load(){try{return JSON.parse(localStorage.getItem(this.key)||'null')}catch{return null}},clear(){localStorage.removeItem(this.key)}};
+const Game={
+ state:null,timer:null,tab:'inventory',selectedClass:null,
+ baseState(cls){let c=DB.classes[cls];return {version:'3.0',classId:cls,lv:1,exp:0,adena:300,stats:{...c.stats},hp:0,mp:0,inventory:{potion_red:{id:'potion_red',qty:50,enchant:0}},equip:{weapon:null,helmet:null,tshirt:null,armor:null,cloak:null,gloves:null,boots:null,leggings:null,amulet:null,belt:null,earring1:null,earring2:null,ring1:null,ring2:null},skills:{},buffs:{},map:'talking',monster:null,settings:{hpLimit:45,autoSell:false,autoBoss:true,autoSkill:'none',autoSkills:[],autoBuyPotion:false,autoBuyPotionId:'potion_red',autoBuyPotionQty:50,autoTransform:'none'},collection:{},transform:null,lastSave:Date.now()};},
+ init(){this.bind();this.renderClassList();document.getElementById('loadGame').disabled=!Store.load();},
+ bind(){const $=id=>document.getElementById(id);$('newGame').onclick=()=>this.showClass();$('loadGame').onclick=()=>this.load();$('backStart').onclick=()=>this.showStart();$('confirmClass').onclick=()=>this.startNew();$('saveBtn').onclick=()=>this.save(true);$('exportBtn').onclick=()=>this.exportSave();$('resetBtn').onclick=()=>{if(confirm('確定刪除存檔？')){Store.clear();location.reload();}};$('importBtn').onclick=()=>$('importFile').click();$('importFile').onchange=e=>this.importSave(e);$('mapSelect').onchange=e=>{this.state.map=e.target.value;this.state.monster=null;this.log('切換地圖：'+this.map().name);this.render();};$('hpLimit').onchange=e=>{this.state.settings.hpLimit=+e.target.value;this.save(false)};$('autoSell').onchange=e=>{this.state.settings.autoSell=e.target.checked;this.save(false)};$('autoBoss').onchange=e=>{this.state.settings.autoBoss=e.target.checked;this.save(false)};$('autoSkill').onchange=e=>{this.state.settings.autoSkill=e.target.value;this.save(false)};},
+ renderClassList(){let box=document.getElementById('classList');box.innerHTML=Object.entries(DB.classes).map(([id,c])=>`<button class="btn class-card" data-class="${id}"><b class="c-gold">${c.name}</b><br><span class="small">${c.desc}</span><br><span class="small">STR ${c.stats.str} / DEX ${c.stats.dex} / INT ${c.stats.int}</span></button>`).join('');box.querySelectorAll('button').forEach(b=>b.onclick=()=>{this.selectedClass=b.dataset.class;box.querySelectorAll('button').forEach(x=>x.classList.remove('selected'));b.classList.add('selected');document.getElementById('confirmClass').disabled=false;});},
+ showStart(){document.getElementById('start').classList.remove('hidden');document.getElementById('classModal').classList.add('hidden');},showClass(){document.getElementById('start').classList.add('hidden');document.getElementById('classModal').classList.remove('hidden');},
+ startNew(){this.state=this.baseState(this.selectedClass);this.recalc();this.state.hp=this.maxHp();this.state.mp=this.maxMp();this.learnByLevel();this.enter();this.log('新冒險開始。職業：'+this.cls().name);this.log('劇情：殷海薩的光芒逐漸黯淡，亞丁各地出現魔物暴動。你從說話之島出發，追查四龍甦醒的徵兆。','green');this.save(false);},
+ load(){let s=Store.load();if(!s){alert('沒有存檔');return}this.state=s;this.applyOffline();this.recalc();this.enter();this.log('讀取存檔完成。');},
+ enter(){this.migrateState();document.getElementById('start').classList.add('hidden');document.getElementById('classModal').classList.add('hidden');document.getElementById('app').classList.remove('hidden');this.initMenus();this.render();clearInterval(this.timer);this.timer=setInterval(()=>this.tick(),1000);},
+ cls(){return DB.classes[this.state.classId]},map(){return DB.maps.find(m=>m.id===this.state.map)||DB.maps[0]},mon(){return this.state.monster},
+ migrateState(){if(!this.state)return;this.state.settings=this.state.settings||{};if(this.state.settings.hpLimit===undefined)this.state.settings.hpLimit=45;if(this.state.settings.autoSell===undefined)this.state.settings.autoSell=false;if(this.state.settings.autoBoss===undefined)this.state.settings.autoBoss=true;if(this.state.settings.autoSkill===undefined)this.state.settings.autoSkill='none';if(this.state.settings.autoTransform===undefined)this.state.settings.autoTransform='none';if(!Array.isArray(this.state.settings.autoSkills)){this.state.settings.autoSkills=this.state.settings.autoSkill&&this.state.settings.autoSkill!=='none'?[this.state.settings.autoSkill]:[]}if(this.state.settings.autoBuyPotion===undefined)this.state.settings.autoBuyPotion=false;if(this.state.settings.autoBuyPotionId===undefined)this.state.settings.autoBuyPotionId='potion_red';if(this.state.settings.autoBuyPotionQty===undefined)this.state.settings.autoBuyPotionQty=50;if(!this.state.collection)this.state.collection={};if(this.state.transform===undefined)this.state.transform=null;},
+ initMenus(){document.getElementById('tabs').innerHTML=[['equipment','裝備'],['inventory','背包'],['settings','自動設定'],['transform','變身'],['skills','職業技能'],['story','劇情/奇遇'],['maps','地圖掉落'],['collection','收藏'],['shop','商店']].map(t=>`<button class="btn tab" data-tab="${t[0]}">${t[1]}</button>`).join('');document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>{this.tab=b.dataset.tab;this.renderTab();});document.getElementById('mapSelect').innerHTML=DB.maps.map(m=>`<option value="${m.id}">${m.name} Lv${m.min}-${m.max}</option>`).join('');},
+ maxHp(){let st=this.totalStats();return 80+this.state.lv*18+st.con*10+(st.hp||0)},maxMp(){let st=this.totalStats();return 40+this.state.lv*8+st.wis*8+st.int*4+(st.mp||0)},needExp(){return Math.floor(120*Math.pow(this.state.lv,2.15))},
+ totalStats(){let s={...this.state.stats,ac:10,dmg:0,hit:0,mr:0,dr:0,spd:0,hp:0,mp:0};Object.values(this.state.equip).forEach(k=>{let it=this.invItem(k);if(!it)return;let d=DB.items[it.id];if(d.ac!==undefined)s.ac+=d.ac-(it.enchant||0);if(d.dmg)s.dmg+=d.dmg+(it.enchant||0);Object.assign(s,this.addStats(s,d.stat||{}));});let tr=this.activeTransform();if(tr)Object.assign(s,this.addStats(s,tr.stat||{}));Object.values(this.state.buffs).forEach(b=>{if(Date.now()<b.until)Object.assign(s,this.addStats(s,b));});return s},addStats(a,b){let r={...a};for(let k in b)if(typeof b[k]=='number')r[k]=(r[k]||0)+b[k];return r},
+ activeTransform(){let t=this.state&&this.state.transform;if(!t||!t.id||t.id==='none')return null;if(t.until&&Date.now()>t.until){this.state.transform=null;return null}return DB.transforms[t.id]||null},
+ recalc(){this.state.hp=Math.min(this.state.hp||this.maxHp(),this.maxHp());this.state.mp=Math.min(this.state.mp||this.maxMp(),this.maxMp());},
+ invItem(key){return key&&this.state.inventory[key]},itemName(key,showQty=true){let it=this.invItem(key);if(!it)return '';let d=DB.items[it.id];return `${it.enchant?`+${it.enchant} `:''}${d.name}${showQty&&it.qty>1?' ×'+it.qty:''}`},
+ addItem(id,qty=1,enchant=0){let d=DB.items[id];let stackable=['potion','scroll','book','material'].includes(d?.type);let key=stackable?id+'|'+enchant:id+'|'+enchant+'|'+Date.now().toString(36)+Math.random().toString(36).slice(2,6);let old=this.state.inventory[key];if(old)old.qty+=qty;else this.state.inventory[key]={id,qty,enchant};this.state.collection[id]=true;},
+ removeItem(key,qty=1){let it=this.state.inventory[key];if(!it)return false;it.qty-=qty;if(it.qty<=0){Object.keys(this.state.equip).forEach(s=>{if(this.state.equip[s]===key)this.state.equip[s]=null});delete this.state.inventory[key];}return true;},
+ splitOne(key){let it=this.invItem(key);if(!it)return null;if(it.qty<=1)return key;it.qty-=1;let newKey=it.id+'|'+(it.enchant||0)+'|'+Date.now().toString(36)+Math.random().toString(36).slice(2,6);this.state.inventory[newKey]={id:it.id,qty:1,enchant:it.enchant||0};return newKey;},
+ learnByLevel(){let c=this.cls();for(let [id,s] of Object.entries(DB.skills)){let ok=s.job==='general'?c.magic>0&&s.lv<=this.state.lv&&s.lv<=c.magic*8:(s.job===this.state.classId&&s.lv<=this.state.lv);if(ok&&!this.state.skills[id]){this.state.skills[id]=true;this.log(`學會技能：${s.name}`,'green');}}},
+ tick(){if(!this.state)return;if(this.state.settings.autoTransform&&this.state.settings.autoTransform!=='none'&&!this.activeTransform())this.transform(this.state.settings.autoTransform);this._skillCast=false;this.state.hp=Math.min(this.maxHp(),this.state.hp+Math.max(2,Math.floor(this.maxHp()*0.025)));this.autoPotion();this.fight();if(!this._skillCast){this.state.mp=Math.min(this.maxMp(),this.state.mp+Math.max(1,Math.floor(this.maxMp()*0.01)));}this.renderStatus();},
+ spawn(){let m=this.map();let pool=m.monsters.map(id=>DB.mons[id]).filter(x=>this.state.settings.autoBoss||!x.boss);let base=pool[Math.floor(Math.random()*pool.length)]||DB.mons.goblin;this.state.monster={id:base.id,hp:base.hp,maxHp:base.hp};this.blog('遭遇 '+base.name+(base.boss?' <span class="c-orange">BOSS</span>':''));},
+ fight(){if(!this.mon()||this.mon().hp<=0)this.spawn();let mdef=DB.mons[this.mon().id], st=this.totalStats();this.useAutoSkill();let dmg=Math.max(1,Math.floor((st.dmg+this.state.lv*1.8+st.str*1.4+st.dex*.5)*(1+st.spd/100)-mdef.def));this.mon().hp-=dmg;this.blog(`你攻擊 ${mdef.name}，造成 <span class="c-orange">${dmg}</span> 傷害。`);if(this.mon().hp<=0){this.kill(mdef);return}let taken=Math.max(1,mdef.atk+Math.floor(mdef.lv*.8)-Math.floor((10-st.ac)*1.2)-(st.dr||0));this.state.hp-=taken;this.blog(`${mdef.name} 反擊，造成 <span class="c-red">${taken}</span> 傷害。HP：${Math.max(0,Math.floor(this.state.hp))}/${this.maxHp()}`);if(this.state.hp<=0){this.state.hp=Math.floor(this.maxHp()*.6);this.state.exp=Math.max(0,this.state.exp-Math.floor(this.needExp()*.03));this.blog('<span class="c-red">角色瀕死撤退，損失少量經驗。</span>');this.state.monster=null;}},
+ kill(mdef){let m=this.map();let ad=this.rand(mdef.adena[0],mdef.adena[1]);this.state.adena+=ad;this.state.exp+=mdef.exp;this.blog(`擊敗 ${mdef.name}，EXP +${mdef.exp}，金幣 +${ad}`);m.drops.forEach(d=>{if(Math.random()*100<d.rate){this.addItem(d.id,1,0);this.log('獲得道具：'+DB.items[d.id].name,'green');}});this.levelUp();this.storyEncounter(mdef);this.state.monster=null;if(this.state.settings.autoSell)this.sellWhite();},
+ storyEncounter(mdef){if(Math.random()>0.12)return;let list=[['吟遊詩人的傳聞',`吟遊詩人在營火旁唱起古老歌謠，提到 ${this.map().name} 曾是亞丁遠征軍的補給線。你獲得少量經驗。`,'exp'],['流浪商人的包裹','一名流浪商人被怪物追趕，你救下他後收到謝禮。','adena'],['古代石碑','你在戰場邊緣發現刻著殷海薩文字的石碑，短時間內精神振奮。','buff'],['迷路的妖精','迷路的妖精請你帶路回森林，臨別前留下治癒藥水。','item'],['亞丁騎士的殘影',`一位亞丁騎士的殘影指向 ${mdef.name} 倒下的位置，提醒你傲慢之塔的封印正在鬆動。`,'exp']];let e=list[this.rand(0,list.length-1)];if(e[2]==='exp')this.state.exp+=Math.floor(this.needExp()*0.03);if(e[2]==='adena')this.state.adena+=this.state.lv*80;if(e[2]==='buff')this.state.buffs.story_bless={name:'奇遇祝福',dmg:3,hit:2,until:Date.now()+180000};if(e[2]==='item')this.addItem('potion_orange',3,0);this.log(`<span class="c-purple">奇遇：${e[0]}</span> ${e[1]}`,'green');},
+ levelUp(){while(this.state.exp>=this.needExp()&&this.state.lv<99){this.state.exp-=this.needExp();this.state.lv++;this.recalc();this.state.hp=this.maxHp();this.state.mp=this.maxMp();this.log(`<span class="c-gold">升級！目前 Lv.${this.state.lv}</span>`);this.learnByLevel();}},
+ useAutoSkill(){let ids=Array.isArray(this.state.settings.autoSkills)?this.state.settings.autoSkills:[];if(!ids.length&&this.state.settings.autoSkill&&this.state.settings.autoSkill!=='none')ids=[this.state.settings.autoSkill];for(let id of ids){if(!id||id==='none'||!this.state.skills[id])continue;let s=DB.skills[id];if(this.state.mp<s.mp)continue;if(s.type==='heal'&&this.state.hp>=this.maxHp()*0.92)continue;if(s.type==='buff'&&this.state.buffs[id]&&Date.now()<this.state.buffs[id].until)continue;let beforeMp=this.state.mp;this.state.mp=Math.max(0,this.state.mp-s.mp);this._skillCast=true;if(s.type==='heal'){let beforeHp=this.state.hp,heal=s.power+this.totalStats().int*3;this.state.hp=Math.min(this.maxHp(),this.state.hp+heal);this.blog(`施放 ${s.name}，消耗 MP ${beforeMp-Math.floor(this.state.mp)}，恢復 HP ${Math.floor(this.state.hp-beforeHp)}。HP：${Math.floor(this.state.hp)}/${this.maxHp()}｜MP：${Math.floor(this.state.mp)}/${this.maxMp()}`)}else if(s.type==='attack'&&this.mon()){let mdmg=s.power+this.state.lv*2+this.totalStats().int*5;this.mon().hp-=mdmg;this.blog(`施放 <span class="c-purple">${s.name}</span>，消耗 MP ${beforeMp-Math.floor(this.state.mp)}，造成 ${mdmg} 傷害。MP：${Math.floor(this.state.mp)}/${this.maxMp()}`)}else if(s.type==='buff'){this.state.buffs[id]={...s,until:Date.now()+(s.sec||120)*1000};this.blog(`施放 ${s.name}，消耗 MP ${beforeMp-Math.floor(this.state.mp)}。MP：${Math.floor(this.state.mp)}/${this.maxMp()}`)}this.syncVitals();}},
+ autoPotion(){let pct=this.state.hp/this.maxHp()*100;if(pct>this.state.settings.hpLimit)return;let key=Object.keys(this.state.inventory).find(k=>this.state.inventory[k].id==='potion_red'||this.state.inventory[k].id==='potion_orange'||this.state.inventory[k].id==='potion_clear');if(!key&&this.state.settings.autoBuyPotion){this.autoBuyConsumable(this.state.settings.autoBuyPotionId||'potion_red',this.state.settings.autoBuyPotionQty||50);key=Object.keys(this.state.inventory).find(k=>this.state.inventory[k].id==='potion_red'||this.state.inventory[k].id==='potion_orange'||this.state.inventory[k].id==='potion_clear');}if(!key)return;let it=this.state.inventory[key],d=DB.items[it.id];this.state.hp=Math.min(this.maxHp(),this.state.hp+d.heal);this.removeItem(key,1);this.blog(`自動使用 ${d.name}。HP：${Math.floor(this.state.hp)}/${this.maxHp()}`);},
+ autoBuyConsumable(id,targetQty){let d=DB.items[id];if(!d||d.type!=='potion')return;let owned=Object.values(this.state.inventory).filter(x=>x.id===id).reduce((a,x)=>a+x.qty,0);let need=Math.max(0,targetQty-owned);if(need<=0)return;let can=Math.min(need,Math.floor(this.state.adena/d.price));if(can<=0)return;this.state.adena-=can*d.price;this.addItem(id,can,0);this.log(`自動購買 ${d.name} ×${can}`,'green');},
+ useItem(key){let it=this.invItem(key);if(!it)return;let d=DB.items[it.id];if(d.type==='potion'){this.state.hp=Math.min(this.maxHp(),this.state.hp+(d.heal||0));this.removeItem(key,1);this.blog(`使用 ${d.name}，恢復 HP。HP：${Math.floor(this.state.hp)}/${this.maxHp()}`)}else if(d.type==='book'){let sk=DB.skills[d.skill];if(!sk){alert('這本書目前沒有對應技能');return}let c=this.cls();let ok=sk.job==='general'?c.magic>0&&sk.lv<=c.magic*8:sk.job===this.state.classId;if(!ok){alert(this.cls().name+'無法學習 '+sk.name);return}if(this.state.skills[d.skill]){alert('已經學會 '+sk.name+'，不能重複學習');return}if(this.state.lv<sk.lv){alert('等級不足，需要 Lv.'+sk.lv);return}this.state.skills[d.skill]=true;this.removeItem(key,1);this.log('學會技能：'+sk.name,'green')}this.render();},
+ sellItem(key){let it=this.invItem(key);if(!it||Object.values(this.state.equip).includes(key))return;let d=DB.items[it.id];let price=Math.max(1,Math.floor((d.price||100)*(0.35+(it.enchant||0)*0.2)))*it.qty;this.state.adena+=price;this.removeItem(key,it.qty);this.log(`賣出 ${d.name}，獲得 ${price.toLocaleString()} 金幣。`,'green');this.render();},
+ unequip(slot){if(this.state.equip[slot]){this.state.equip[slot]=null;this.log('已卸下 '+(this.slotNames()[slot]||slot));this.render();}},
+ equip(key){let original=this.invItem(key);if(!original)return;let d=DB.items[original.id];if(d.type==='weapon'&&!this.cls().weapons.includes(d.weapon)){alert(this.cls().name+'不能裝備此武器');return}key=this.splitOne(key);let it=this.invItem(key);if(!it)return;let slot=d.type;if(d.type==='ring')slot=!this.state.equip.ring1?'ring1':(!this.state.equip.ring2?'ring2':'ring1');if(d.type==='earring')slot=!this.state.equip.earring1?'earring1':(!this.state.equip.earring2?'earring2':'earring1');this.state.equip[slot]=key;if(this.state.inventory[key])this.state.inventory[key].qty=1;this.log('已裝備 '+d.name,'green');this.render();},
+ enchant(key){key=this.splitOne(key);let it=this.invItem(key),d=DB.items[it.id];if(!it||!['weapon','helmet','tshirt','armor','cloak','gloves','boots','leggings','ring','earring','amulet','belt'].includes(d.type))return;let scroll=Object.keys(this.state.inventory).find(k=>{let x=DB.items[this.state.inventory[k].id];return x.type==='scroll'&&(x.target===d.type||x.target==='accessory'&&['ring','earring','amulet','belt'].includes(d.type)||x.target==='armor'&&!['weapon','ring','earring','amulet','belt'].includes(d.type))});if(!scroll){alert('沒有可用卷軸');return}this.removeItem(scroll,1);let safe=d.safe??0,rate=it.enchant<safe?1:Math.max(.15,.72-(it.enchant-safe)*.14);if(Math.random()<rate){let next=(it.enchant||0)+1;let slots=Object.keys(this.state.equip).filter(s=>this.state.equip[s]===key);this.removeItem(key,1);this.addItem(it.id,1,next);let newKey=Object.keys(this.state.inventory).find(k=>this.state.inventory[k].id===it.id&&this.state.inventory[k].enchant===next&&!Object.values(this.state.equip).includes(k));slots.forEach(s=>this.state.equip[s]=newKey);this.log(`${d.name} 強化成功 +${next}`,'green')}else{this.removeItem(key,1);this.log(`${d.name} 強化失敗，裝備消失。`,'red')}this.render();},
+ transform(id){let t=DB.transforms[id];if(!t)return;if(id==='none'){this.state.transform=null;this.log('已解除變身。');this.render();return}if(this.state.lv<t.lv){alert('等級不足，需要 Lv.'+t.lv);return}this.state.transform={id,until:Date.now()+t.duration*1000};this.log('變身為 '+t.name+'，持續 '+Math.floor(t.duration/60)+' 分鐘。','green');this.render();},
+ sellWhite(){for(let k of Object.keys(this.state.inventory)){let it=this.state.inventory[k],d=DB.items[it.id];if(d.rarity==='白'&&['weapon','helmet','tshirt','armor','cloak','gloves','boots','leggings'].includes(d.type)&&!Object.values(this.state.equip).includes(k)){this.state.adena+=(d.price||100)*it.qty;delete this.state.inventory[k];}}},
+ buy(id){let d=DB.items[id];if(this.state.adena<d.price){alert('金幣不足');return}this.state.adena-=d.price;this.addItem(id,1,0);this.render();},rand(a,b){return Math.floor(a+Math.random()*(b-a+1))},
+ render(){this.renderStatus();this.renderTab();},
+ syncVitals(){if(!this.state)return;let s=this.state;s.hp=Math.max(0,Math.min(s.hp,this.maxHp()));s.mp=Math.max(0,Math.min(s.mp,this.maxMp()));this.bar('hp',s.hp,this.maxHp());this.bar('mp',s.mp,this.maxMp());this.bar('exp',s.exp,this.needExp(),true);let mon=this.mon();document.getElementById('monsterName').innerHTML=mon?DB.mons[mon.id].name:'尋找中';this.bar('mon',mon?mon.hp:0,mon?mon.maxHp:1);document.getElementById('lv').textContent=s.lv;document.getElementById('adena').textContent=s.adena.toLocaleString();},
+ renderStatus(){if(!this.state)return;let s=this.state,st=this.totalStats();s.hp=Math.max(0,Math.min(s.hp,this.maxHp()));s.mp=Math.max(0,Math.min(s.mp,this.maxMp()));document.getElementById('subTitle').textContent=`Lv.${s.lv} ${this.cls().name}${this.activeTransform()?'｜變身 '+this.activeTransform().name:''}｜${this.map().name}`;document.getElementById('className').textContent=this.cls().name;document.getElementById('lv').textContent=s.lv;document.getElementById('adena').textContent=s.adena.toLocaleString();this.bar('hp',s.hp,this.maxHp());this.bar('mp',s.mp,this.maxMp());this.bar('exp',s.exp,this.needExp(),true);document.getElementById('statBox').innerHTML=[`STR ${st.str}`,`DEX ${st.dex}`,`CON ${st.con}`,`INT ${st.int}`,`WIS ${st.wis}`,`AC ${st.ac}`,`DMG +${Math.floor(st.dmg+s.lv*1.8)}`,`MR ${st.mr||0}%`].map(x=>`<div>${x}</div>`).join('');document.getElementById('mapSelect').value=s.map;document.getElementById('mapInfo').textContent=`${this.map().name}｜建議 Lv.${this.map().min}-${this.map().max}`;let hpLimitEl=document.getElementById('hpLimit'),autoSellEl=document.getElementById('autoSell'),autoBossEl=document.getElementById('autoBoss'),auto=document.getElementById('autoSkill');if(hpLimitEl)hpLimitEl.value=s.settings.hpLimit;if(autoSellEl)autoSellEl.checked=s.settings.autoSell;if(autoBossEl)autoBossEl.checked=s.settings.autoBoss;let sk=[['none','無']].concat(Object.keys(s.skills).map(id=>[id,DB.skills[id].name]));if(auto){auto.innerHTML=sk.map(x=>`<option value="${x[0]}">${x[1]}</option>`).join('');auto.value=s.settings.autoSkill||'none';}let mon=this.mon();document.getElementById('monsterName').innerHTML=mon?DB.mons[mon.id].name:'尋找中';this.bar('mon',mon?mon.hp:0,mon?mon.maxHp:1);},
+ bar(id,v,m,pct=false){let p=Math.max(0,Math.min(100,v/m*100));document.getElementById(id+'Bar').style.width=p+'%';document.getElementById(id+'Txt').textContent=pct?`${p.toFixed(2)}%`:`${Math.floor(v)}/${Math.floor(m)}`},
+ renderTab(){document.querySelectorAll('.tab').forEach(b=>b.classList.toggle('active',b.dataset.tab===this.tab));let el=document.getElementById('tabContent');if(!this.state)return;if(this.tab==='equipment')el.innerHTML=this.viewEquipment();if(this.tab==='inventory')el.innerHTML=this.viewInventory();if(this.tab==='settings')el.innerHTML=this.viewSettings();if(this.tab==='transform')el.innerHTML=this.viewTransform();if(this.tab==='skills')el.innerHTML=this.viewSkills();if(this.tab==='story')el.innerHTML=this.viewStory();if(this.tab==='maps')el.innerHTML=this.viewMaps();if(this.tab==='collection')el.innerHTML=this.viewCollection();if(this.tab==='shop')el.innerHTML=this.viewShop();el.querySelectorAll('[data-equip]').forEach(b=>b.onclick=()=>this.equip(b.dataset.equip));el.querySelectorAll('[data-enchant]').forEach(b=>b.onclick=()=>this.enchant(b.dataset.enchant));el.querySelectorAll('[data-use]').forEach(b=>b.onclick=()=>this.useItem(b.dataset.use));el.querySelectorAll('[data-sell]').forEach(b=>b.onclick=()=>this.sellItem(b.dataset.sell));el.querySelectorAll('[data-unequip]').forEach(b=>b.onclick=()=>this.unequip(b.dataset.unequip));el.querySelectorAll('[data-buy]').forEach(b=>b.onclick=()=>this.buy(b.dataset.buy));el.querySelectorAll('[data-transform]').forEach(b=>b.onclick=()=>this.transform(b.dataset.transform));el.querySelectorAll('[data-setting]').forEach(x=>x.onchange=()=>{let k=x.dataset.setting;let v=x.type==='checkbox'?x.checked:(x.type==='number'?+x.value:x.value);this.state.settings[k]=v;if(k==='autoTransform'&&v&&v!=='none')this.transform(v);this.save(false);this.render();});el.querySelectorAll('[data-skill-toggle]').forEach(x=>x.onchange=()=>{let id=x.dataset.skillToggle;let arr=this.state.settings.autoSkills||[];if(x.checked&&!arr.includes(id))arr.push(id);if(!x.checked)arr=arr.filter(v=>v!==id);this.state.settings.autoSkills=arr;this.state.settings.autoSkill=arr[0]||'none';this.save(false);this.render();});},
+ slotNames(){return {weapon:'武器',helmet:'頭盔',tshirt:'內衣',armor:'盔甲',cloak:'斗篷',gloves:'手套',boots:'鞋子',leggings:'脛甲',amulet:'項鍊',belt:'腰帶',earring1:'耳環(左)',earring2:'耳環(右)',ring1:'戒指(左)',ring2:'戒指(右)'}},equipOrder(){return ['weapon','helmet','tshirt','armor','cloak','gloves','leggings','boots','amulet','earring1','earring2','ring1','ring2','belt']},typeName(t){return {weapon:'武器',helmet:'頭盔',tshirt:'內衣',armor:'盔甲',cloak:'斗篷',gloves:'手套',boots:'鞋子',leggings:'脛甲',ring:'戒指',earring:'耳環',amulet:'項鍊',belt:'腰帶',potion:'藥水',scroll:'卷軸',book:'技能書',material:'材料'}[t]||t},
+ viewEquipment(){let names=this.slotNames();let eq=this.equipOrder().map(slot=>{let k=this.state.equip[slot];return `<div class="item row"><span>${names[slot]||slot}</span><span>${k?`<span class="c-gold">${this.itemName(k,false)}</span> <button class="btn" data-unequip="${slot}">卸下</button> <button class="btn" data-enchant="${k}">強化</button>`:'<span class="c-gold">未裝備</span>'}</span></div>`}).join('');return `<h3 class="title">目前裝備</h3><div class="small">裝備後會立即套用能力。戒指與耳環會自動裝到左/右欄位。</div>${eq}`},
+ viewInventory(){let rows=Object.entries(this.state.inventory).sort((a,b)=>(DB.items[a[1].id].type).localeCompare(DB.items[b[1].id].type)||DB.items[a[1].id].name.localeCompare(DB.items[b[1].id].name)).map(([k,it])=>{let d=DB.items[it.id];let canEquip=['weapon','helmet','tshirt','armor','cloak','gloves','boots','leggings','ring','earring','amulet','belt'].includes(d.type);let buttons=[];if(canEquip)buttons.push(`<button class="btn" data-equip="${k}">裝備</button>`,`<button class="btn" data-enchant="${k}">強化</button>`);if(d.type==='potion'||d.type==='book')buttons.push(`<button class="btn green" data-use="${k}">使用</button>`);if(!Object.values(this.state.equip).includes(k))buttons.push(`<button class="btn red" data-sell="${k}">賣出</button>`);return `<div class="item row"><span class="rarity-${d.rarity}">${this.itemName(k)} <span class="small">${this.typeName(d.type)}</span></span><span>${buttons.join(' ')}</span></div>`}).join('');return `<h3 class="title">背包</h3><div class="small">可直接使用藥水、技能書；裝備可裝備、強化或賣出。</div>${rows||'<div class="small">空</div>'}`},
+ viewSettings(){let s=this.state.settings;if(!Array.isArray(s.autoSkills))s.autoSkills=s.autoSkill&&s.autoSkill!=='none'?[s.autoSkill]:[];let skills=Object.keys(this.state.skills).map(id=>[id,DB.skills[id].name,DB.skills[id].type,DB.skills[id].mp]);let transforms=Object.values(DB.transforms).filter(t=>t.id==='none'||this.state.lv>=t.lv);let potionIds=['potion_red','potion_orange','potion_clear'];return `<h3 class="title">自動設定</h3><div class="small">集中管理放置行為。設定會自動儲存。自動技能可多選，系統會依清單逐一嘗試施放；BUFF 尚未結束時不會重複施放。</div><div class="setting-grid"><div class="setting-card"><b class="c-gold">戰鬥</b><label class="row item"><span>自動喝水 HP%</span><input data-setting="hpLimit" type="number" min="1" max="99" value="${s.hpLimit}" style="width:90px"></label><label class="row item"><span>自動挑戰 BOSS</span><input data-setting="autoBoss" type="checkbox" ${s.autoBoss?'checked':''}></label><div class="item"><b>自動施放技能（可多選）</b><br>${skills.length?skills.map(x=>`<label class="pill"><input type="checkbox" data-skill-toggle="${x[0]}" ${s.autoSkills.includes(x[0])?'checked':''}> ${x[1]} <span class="small">MP${x[3]} / ${x[2]}</span></label>`).join(' '):'<span class="small">尚未學會可用技能</span>'}</div></div><div class="setting-card"><b class="c-gold">背包 / 自動補給</b><label class="row item"><span>自動賣白裝</span><input data-setting="autoSell" type="checkbox" ${s.autoSell?'checked':''}></label><label class="row item"><span>藥水不足自動購買</span><input data-setting="autoBuyPotion" type="checkbox" ${s.autoBuyPotion?'checked':''}></label><label class="row item"><span>購買藥水</span><select data-setting="autoBuyPotionId">${potionIds.map(id=>`<option value="${id}" ${s.autoBuyPotionId===id?'selected':''}>${DB.items[id].name}</option>`).join('')}</select></label><label class="row item"><span>補到數量</span><input data-setting="autoBuyPotionQty" type="number" min="1" max="999" value="${s.autoBuyPotionQty||50}" style="width:90px"></label><div class="small">金幣足夠時，喝水前會自動補到指定數量。</div></div><div class="setting-card"><b class="c-gold">變身</b><label class="row item"><span>預設變身</span><select data-setting="autoTransform">${transforms.map(t=>`<option value="${t.id}" ${s.autoTransform===t.id?'selected':''}>${t.name}</option>`).join('')}</select></label><div class="small">選擇後會立即變身；之後變身結束會自動補上。</div></div></div>`},
+viewTransform(){let active=this.activeTransform();let rows=Object.values(DB.transforms).map(t=>{let locked=this.state.lv<t.lv;let stat=Object.entries(t.stat||{}).map(([k,v])=>`${k.toUpperCase()} ${v>0?'+':''}${v}`).join('、')||'無';return `<div class="item row"><span><b class="${locked?'small':'c-gold'}">${t.name}</b> <span class="pill">Lv.${t.lv}</span><br><span class="small">${t.desc}｜${stat}</span></span><span>${active&&active.id===t.id?'<span class="c-green">使用中</span>':`<button class="btn" data-transform="${t.id}" ${locked?'disabled':''}>${t.id==='none'?'解除':'變身'}</button>`}</span></div>`}).join('');return `<h3 class="title">變身系統</h3><div class="small">目前變身：${active?active.name:'無'}。變身會提供速度、傷害、防禦或能力值加成。</div>${rows}`},
+ viewSkills(){let rows=Object.entries(DB.skills).filter(([id,s])=>s.job==='general'||s.job===this.state.classId).map(([id,s])=>`<div class="item"><span class="${this.state.skills[id]?'c-green':'small'}">${s.name}</span> <span class="pill">Lv.${s.lv}</span> <span class="pill">${s.type}</span> <span class="small">${this.state.skills[id]?'已學會':'未學會'}</span></div>`).join('');return `<h3 class="title">${this.cls().name} 可學技能</h3>${rows}`},
+ viewStory(){let chapters=[['亞丁曙光','說話之島的守衛傳來消息：古魯丁北方的地監再次傳出亡者腳步聲，亞丁王國召集冒險者調查異變。'],['妖精森林的低語','妖精森林的古樹開始枯萎，精靈們認為龍之谷深處的魔力潮汐已經外洩。'],['傲慢之塔的影子','傲慢之塔各層出現失真的空間裂縫，死亡騎士、吸血鬼與巴風特的幻影正在重新凝聚。'],['四龍甦醒','安塔瑞斯、法利昂、巴拉卡斯與林德拜爾的眷族正在各地收集古代遺物，真正的戰爭即將開始。']];let recent=Array.from(document.getElementById('sysLog').children).slice(0,10).map(x=>`<div class="item">${x.innerHTML}</div>`).join('');return `<h3 class="title">亞丁主線</h3>${chapters.map(c=>`<div class="item"><b class="c-gold">${c[0]}</b><br><span class="small">${c[1]}</span></div>`).join('')}<h3 class="title">最近奇遇</h3>${recent||'<div class="small">尚未發生奇遇。狩獵時有機率觸發。</div>'}`},
+ viewMaps(){return DB.maps.map(m=>`<div class="item"><b class="c-gold">${m.name}</b> <span class="pill">Lv.${m.min}-${m.max}</span><br><span class="small">怪物：${m.monsters.map(id=>DB.mons[id].name).join('、')}</span><br><span class="small">掉落：${m.drops.map(d=>DB.items[d.id].name).join('、')}</span></div>`).join('')},
+ viewCollection(){let got=Object.keys(this.state.collection).length,total=Object.keys(DB.items).length;return `<h3 class="title">收藏 ${got}/${total}</h3>`+Object.values(DB.items).map(d=>`<span class="pill rarity-${d.rarity}">${this.state.collection[d.id]?'✓':'□'} ${d.name}</span>`).join('')},
+ viewShop(){
+ let labels={potion:'藥水',scroll:'卷軸',book:'技能書 / 魔法書',weapon:'武器',helmet:'頭盔',tshirt:'內衣',armor:'盔甲',cloak:'斗篷',gloves:'手套',boots:'鞋子',leggings:'脛甲',amulet:'項鍊',belt:'腰帶',earring:'耳環',ring:'戒指',material:'材料'};
+ let order=['potion','scroll','book','weapon','helmet','tshirt','armor','cloak','gloves','boots','leggings','amulet','belt','earring','ring','material'];
+ let all=Object.values(DB.items).filter(d=>d.price!==undefined&&d.price>0).sort((a,b)=>{
+  let ta=order.indexOf(a.type),tb=order.indexOf(b.type);if(ta!==tb)return ta-tb;
+  let ra=['白','綠','藍','紫','橘','紅'].indexOf(a.rarity),rb=['白','綠','藍','紫','橘','紅'].indexOf(b.rarity);if(ra!==rb)return ra-rb;
+  return (a.price||0)-(b.price||0);
+ });
+ let html='<h3 class="title">商店</h3><div class="small">已補齊目前資料庫中的藥水、卷軸、技能書、武器、防具與飾品。價格依資料庫設定。</div>';
+ let current='';
+ for(let d of all){
+  if(d.type!==current){current=d.type;html+=`<h3 class="title" style="margin-top:18px">${labels[current]||current}</h3>`;}
+  let detail=[];
+  if(d.rarity)detail.push(d.rarity);
+  if(d.weapon)detail.push(d.weapon);
+  if(d.dmg)detail.push('傷害 '+d.dmg);
+  if(d.ac!==undefined)detail.push('AC '+d.ac);
+  if(d.heal)detail.push('HP +'+d.heal);
+  if(d.skill&&DB.skills[d.skill])detail.push(DB.skills[d.skill].job==='general'?'一般技能':(DB.classes[DB.skills[d.skill].job]?.name||DB.skills[d.skill].job));
+  html+=`<div class="item row"><span class="rarity-${d.rarity}">${d.name} <span class="small">${detail.join('｜')}</span></span><span><b class="c-gold">${(d.price||0).toLocaleString()}</b> <button class="btn" data-buy="${d.id}">購買</button></span></div>`;
+ }
+ return html;
+},
+ log(msg,type=''){let el=document.getElementById('sysLog');el.insertAdjacentHTML('afterbegin',`<div class="${type==='green'?'c-green':type==='red'?'c-red':''}">> ${msg}</div>`);while(el.children.length>80)el.lastChild.remove();this.syncVitals();},blog(msg){let el=document.getElementById('battleLog');el.insertAdjacentHTML('afterbegin',`<div>> ${msg}</div>`);while(el.children.length>80)el.lastChild.remove();this.syncVitals();},
+ save(show){this.state.lastSave=Date.now();Store.save(this.state);if(show)this.log('已儲存。','green');},
+ applyOffline(){let sec=Math.min(86400,Math.floor((Date.now()-(this.state.lastSave||Date.now()))/1000));if(sec>60){let gain=Math.floor(sec/10)*(this.state.lv*12);this.state.adena+=gain;this.state.exp+=Math.floor(sec/10)*(this.state.lv*6);this.levelUp();this.log(`離線收益：${Math.floor(sec/60)} 分鐘，金幣 +${gain}`,'green');}},
+ exportSave(){this.save(false);let blob=new Blob([JSON.stringify(this.state,null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='lineage_idle_v30_save.json';a.click();URL.revokeObjectURL(a.href)},
+ importSave(e){let f=e.target.files[0];if(!f)return;let r=new FileReader();r.onload=()=>{try{this.state=JSON.parse(r.result);this.save(false);this.enter();}catch{alert('存檔格式錯誤')}};r.readAsText(f)}
+};
+
+
+/* =========================
+   V3.0 Expansion Patch
+   新增：每日任務、成就、製作、倉庫、統計
+   ========================= */
+(()=>{
+ const V3={};
+ V3.today=()=>new Date().toISOString().slice(0,10);
+ V3.questDefs=()=>[
+  {id:'kill_30',name:'每日討伐',desc:'擊敗 30 隻怪物',need:30,type:'kill',reward:{adena:3000,item:'potion_orange',qty:5}},
+  {id:'boss_3',name:'菁英狩獵',desc:'擊敗 3 隻 BOSS',need:3,type:'boss',reward:{adena:8000,item:'scroll_weapon',qty:1}},
+  {id:'loot_10',name:'戰利品回收',desc:'獲得 10 件掉落道具',need:10,type:'loot',reward:{adena:5000,item:'scroll_armor',qty:1}},
+  {id:'skill_20',name:'戰鬥熟練',desc:'自動或手動施放技能 20 次',need:20,type:'skill',reward:{adena:4000,item:'potion_clear',qty:3}}
+ ];
+ V3.achDefs=()=>[
+  {id:'lv10',name:'初出茅廬',desc:'角色達到 Lv.10',check:g=>g.state.lv>=10,reward:{adena:5000}},
+  {id:'lv30',name:'亞丁冒險者',desc:'角色達到 Lv.30',check:g=>g.state.lv>=30,reward:{adena:30000,item:'scroll_bless_armor',qty:1}},
+  {id:'lv60',name:'傲慢挑戰者',desc:'角色達到 Lv.60',check:g=>g.state.lv>=60,reward:{adena:120000,item:'scroll_bless_weapon',qty:1}},
+  {id:'kill500',name:'魔物清掃者',desc:'累計擊敗 500 隻怪物',check:g=>(g.state.v3Stats?.kills||0)>=500,reward:{adena:80000}},
+  {id:'boss50',name:'首領獵人',desc:'累計擊敗 50 隻 BOSS',check:g=>(g.state.v3Stats?.bossKills||0)>=50,reward:{adena:150000,item:'scroll_bless_weapon',qty:1}},
+  {id:'collect50',name:'收藏家',desc:'收藏圖鑑達 50 件',check:g=>Object.keys(g.state.collection||{}).length>=50,reward:{adena:100000,item:'transform_ring',qty:1}},
+  {id:'ench7',name:'強化入門',desc:'擁有任一 +7 以上裝備',check:g=>Object.values(g.state.inventory||{}).some(x=>(x.enchant||0)>=7),reward:{adena:100000,item:'scroll_bless_armor',qty:1}}
+ ];
+ V3.recipes=()=>[
+  {id:'orange_pack',name:'強力治癒補給包',desc:'治癒藥水 10 + 金幣 800 → 強力治癒藥水 5',cost:{adena:800,items:{potion_red:10}},out:{id:'potion_orange',qty:5}},
+  {id:'clear_pack',name:'終極治癒補給包',desc:'強力治癒藥水 10 + 金幣 2500 → 終極治癒藥水 4',cost:{adena:2500,items:{potion_orange:10}},out:{id:'potion_clear',qty:4}},
+  {id:'bless_w',name:'祝武卷合成',desc:'武卷 4 + 金幣 100000 → 祝武卷 1',cost:{adena:100000,items:{scroll_weapon:4}},out:{id:'scroll_bless_weapon',qty:1}},
+  {id:'bless_a',name:'祝防卷合成',desc:'防卷 4 + 金幣 50000 → 祝防卷 1',cost:{adena:50000,items:{scroll_armor:4}},out:{id:'scroll_bless_armor',qty:1}}
+ ];
+ const oldMigrate=Game.migrateState.bind(Game), oldInitMenus=Game.initMenus.bind(Game), oldRenderTab=Game.renderTab.bind(Game), oldKill=Game.kill.bind(Game), oldAddItem=Game.addItem.bind(Game), oldUseAutoSkill=Game.useAutoSkill.bind(Game), oldTransform=Game.transform.bind(Game);
+ Object.assign(Game,{
+  migrateState(){oldMigrate();let s=this.state;if(!s)return;s.version='3.0';s.v3Stats=s.v3Stats||{kills:0,bossKills:0,loot:0,skills:0,crafts:0,adenaEarned:0,startAt:Date.now()};s.warehouse=s.warehouse||{};s.achievements=s.achievements||{};this.resetDailyIfNeeded();},
+  initMenus(){oldInitMenus();document.getElementById('tabs').innerHTML=[['equipment','裝備'],['inventory','背包'],['settings','自動設定'],['quest','任務'],['achievement','成就'],['craft','製作'],['warehouse','倉庫'],['stats','統計'],['transform','變身'],['skills','職業技能'],['story','劇情/奇遇'],['maps','地圖掉落'],['collection','收藏'],['shop','商店']].map(t=>`<button class="btn tab" data-tab="${t[0]}">${t[1]}</button>`).join('');document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>{this.tab=b.dataset.tab;this.renderTab();});},
+  resetDailyIfNeeded(){let d=V3.today();if(!this.state.daily||this.state.daily.date!==d){let q={};V3.questDefs().forEach(x=>q[x.id]={progress:0,claimed:false});this.state.daily={date:d,quests:q};}},
+  findItemKeys(id){return Object.keys(this.state.inventory||{}).filter(k=>this.state.inventory[k].id===id)},
+  countItem(id){return this.findItemKeys(id).reduce((a,k)=>a+(this.state.inventory[k].qty||1),0)},
+  consumeItem(id,qty){let left=qty;for(let k of this.findItemKeys(id)){let n=this.state.inventory[k].qty||1;let take=Math.min(n,left);this.removeItem(k,take);left-=take;if(left<=0)break;}return left<=0},
+  updateQuest(type,amount=1){this.resetDailyIfNeeded();for(let q of V3.questDefs().filter(x=>x.type===type)){let st=this.state.daily.quests[q.id];if(st&&!st.claimed)st.progress=Math.min(q.need,(st.progress||0)+amount);}},
+  giveReward(r){if(!r)return;if(r.adena){this.state.adena+=r.adena;this.state.v3Stats.adenaEarned=(this.state.v3Stats.adenaEarned||0)+r.adena;}if(r.exp)this.state.exp+=r.exp;if(r.item)this.addItem(r.item,r.qty||1,0);this.levelUp();},
+  claimQuest(id){let def=V3.questDefs().find(x=>x.id===id),st=this.state.daily.quests[id];if(!def||!st||st.claimed||st.progress<def.need)return;st.claimed=true;this.giveReward(def.reward);this.log('領取每日任務獎勵：'+def.name,'green');this.render();},
+  claimAchievement(id){let def=V3.achDefs().find(x=>x.id===id);if(!def||this.state.achievements[id]||!def.check(this))return;this.state.achievements[id]=true;this.giveReward(def.reward);this.log('完成成就：'+def.name,'green');this.render();},
+  craft(id){let r=V3.recipes().find(x=>x.id===id);if(!r)return;if(this.state.adena<(r.cost.adena||0)){alert('金幣不足');return}for(let [item,qty] of Object.entries(r.cost.items||{})){if(this.countItem(item)<qty){alert('材料不足：'+DB.items[item].name);return}}this.state.adena-=r.cost.adena||0;for(let [item,qty] of Object.entries(r.cost.items||{}))this.consumeItem(item,qty);this.addItem(r.out.id,r.out.qty||1,0);this.state.v3Stats.crafts=(this.state.v3Stats.crafts||0)+1;this.log('製作完成：'+r.name,'green');this.render();},
+  deposit(key){let it=this.invItem(key);if(!it||Object.values(this.state.equip).includes(key))return;this.state.warehouse[key]=it;delete this.state.inventory[key];this.log('存入倉庫：'+DB.items[it.id].name,'green');this.render();},
+  withdraw(key){let it=this.state.warehouse[key];if(!it)return;let nk=key;if(this.state.inventory[nk])nk=it.id+'|'+(it.enchant||0)+'|wh'+Date.now().toString(36);this.state.inventory[nk]=it;delete this.state.warehouse[key];this.log('取出倉庫：'+DB.items[it.id].name,'green');this.render();},
+  addItem(id,qty=1,enchant=0){oldAddItem(id,qty,enchant);if(this.state?.v3Stats){this.state.v3Stats.loot=(this.state.v3Stats.loot||0)+qty;this.updateQuest('loot',qty);}},
+  useAutoSkill(){let before=this.state?.mp||0;oldUseAutoSkill();if(this._skillCast&&this.state?.v3Stats){this.state.v3Stats.skills=(this.state.v3Stats.skills||0)+1;this.updateQuest('skill',1);}},
+  transform(id){oldTransform(id);},
+  kill(mdef){oldKill(mdef);this.state.v3Stats.kills=(this.state.v3Stats.kills||0)+1;this.updateQuest('kill',1);if(mdef.boss){this.state.v3Stats.bossKills=(this.state.v3Stats.bossKills||0)+1;this.updateQuest('boss',1);}this.checkAchievements();},
+  checkAchievements(){V3.achDefs().forEach(a=>{if(!this.state.achievements[a.id]&&a.check(this))this.log('成就可領取：'+a.name,'green');});},
+  renderTab(){oldRenderTab();let el=document.getElementById('tabContent');if(!this.state)return;if(this.tab==='quest')el.innerHTML=this.viewQuest();if(this.tab==='achievement')el.innerHTML=this.viewAchievement();if(this.tab==='craft')el.innerHTML=this.viewCraft();if(this.tab==='warehouse')el.innerHTML=this.viewWarehouse();if(this.tab==='stats')el.innerHTML=this.viewStats();el.querySelectorAll('[data-claim-quest]').forEach(b=>b.onclick=()=>this.claimQuest(b.dataset.claimQuest));el.querySelectorAll('[data-claim-ach]').forEach(b=>b.onclick=()=>this.claimAchievement(b.dataset.claimAch));el.querySelectorAll('[data-craft]').forEach(b=>b.onclick=()=>this.craft(b.dataset.craft));el.querySelectorAll('[data-deposit]').forEach(b=>b.onclick=()=>this.deposit(b.dataset.deposit));el.querySelectorAll('[data-withdraw]').forEach(b=>b.onclick=()=>this.withdraw(b.dataset.withdraw));},
+  viewQuest(){this.resetDailyIfNeeded();let rows=V3.questDefs().map(q=>{let st=this.state.daily.quests[q.id]||{progress:0,claimed:false};let done=st.progress>=q.need;let rw=[q.reward.adena?`金幣 ${q.reward.adena.toLocaleString()}`:'',q.reward.item?`${DB.items[q.reward.item].name} ×${q.reward.qty||1}`:''].filter(Boolean).join('、');return `<div class="item row"><span><b class="c-gold">${q.name}</b><br><span class="small">${q.desc}｜進度 ${st.progress}/${q.need}｜獎勵：${rw}</span></span><span>${st.claimed?'<span class="c-green">已領取</span>':`<button class="btn green" data-claim-quest="${q.id}" ${done?'':'disabled'}>領取</button>`}</span></div>`}).join('');return `<h3 class="title">每日任務</h3><div class="small">每日會重置。任務可提供穩定金幣、藥水與卷軸來源。</div>${rows}`},
+  viewAchievement(){let rows=V3.achDefs().map(a=>{let done=a.check(this),claimed=!!this.state.achievements[a.id];let rw=[a.reward.adena?`金幣 ${a.reward.adena.toLocaleString()}`:'',a.reward.item?`${DB.items[a.reward.item].name} ×${a.reward.qty||1}`:''].filter(Boolean).join('、');return `<div class="item row"><span><b class="${done?'c-gold':''}">${a.name}</b><br><span class="small">${a.desc}｜獎勵：${rw||'無'}</span></span><span>${claimed?'<span class="c-green">已完成</span>':`<button class="btn green" data-claim-ach="${a.id}" ${done?'':'disabled'}>領取</button>`}</span></div>`}).join('');return `<h3 class="title">成就系統</h3><div class="small">成就提供長期目標，適合後續接稱號、能力加成、排行榜。</div>${rows}`},
+  viewCraft(){let rows=V3.recipes().map(r=>{let ok=this.state.adena>=(r.cost.adena||0)&&Object.entries(r.cost.items||{}).every(([id,q])=>this.countItem(id)>=q);let mats=Object.entries(r.cost.items||{}).map(([id,q])=>`${DB.items[id].name} ${this.countItem(id)}/${q}`).join('、');return `<div class="item row"><span><b class="c-gold">${r.name}</b><br><span class="small">${r.desc}<br>材料：金幣 ${this.state.adena.toLocaleString()}/${(r.cost.adena||0).toLocaleString()}${mats?'、'+mats:''}</span></span><span><button class="btn green" data-craft="${r.id}" ${ok?'':'disabled'}>製作</button></span></div>`}).join('');return `<h3 class="title">製作 / 合成</h3><div class="small">V3 先加入補給與祝福卷軸合成，後續可擴充材料、套裝、神話裝備。</div>${rows}`},
+  viewWarehouse(){let inv=Object.entries(this.state.inventory||{}).filter(([k])=>!Object.values(this.state.equip).includes(k)).map(([k,it])=>`<div class="item row"><span>${this.itemName(k)} <span class="small">背包</span></span><button class="btn" data-deposit="${k}">存入</button></div>`).join('')||'<div class="small">背包沒有可存入物品</div>';let wh=Object.entries(this.state.warehouse||{}).map(([k,it])=>{let d=DB.items[it.id];return `<div class="item row"><span>${it.enchant?`+${it.enchant} `:''}${d.name}${it.qty>1?' ×'+it.qty:''} <span class="small">倉庫</span></span><button class="btn green" data-withdraw="${k}">取出</button></div>`}).join('')||'<div class="small">倉庫目前是空的</div>';return `<h3 class="title">倉庫</h3><div class="setting-grid"><div class="setting-card"><b class="c-gold">背包可存入</b>${inv}</div><div class="setting-card"><b class="c-gold">倉庫內容</b>${wh}</div></div>`},
+  viewStats(){let st=this.state.v3Stats||{};let run=Math.floor((Date.now()-(st.startAt||Date.now()))/60000);let coll=Object.keys(this.state.collection||{}).length;let wh=Object.keys(this.state.warehouse||{}).length;let cards=[['累計擊殺',st.kills||0],['BOSS 擊殺',st.bossKills||0],['取得掉落',st.loot||0],['技能施放',st.skills||0],['製作次數',st.crafts||0],['收藏數量',coll],['倉庫格數',wh],['本輪時間',run+' 分鐘']];return `<h3 class="title">角色統計</h3><div class="stat">${cards.map(x=>`<div class="setting-card"><div class="small">${x[0]}</div><div class="c-gold" style="font-size:22px">${x[1]}</div></div>`).join('')}</div>`}
+ });
+})();
+
+/* =========================
+   V3.1 Expansion Patch
+   新增：寵物/召喚獸、血盟/公會、副本/限時活動、套裝效果、裝備洗鍊/附魔、拍賣場、排行榜、轉生/覺醒
+   ========================= */
+(()=>{
+ const V31={};
+ V31.today=()=>new Date().toISOString().slice(0,10);
+ V31.petDefs=()=>[
+  {id:'wolf',name:'狼',lv:1,cost:2000,stat:{dmg:2,hit:1},desc:'初期物理輔助，穩定補刀。'},
+  {id:'bear',name:'熊',lv:15,cost:15000,stat:{hp:80,dr:2,dmg:4},desc:'提高生存與減傷。'},
+  {id:'hawk',name:'獵鷹',lv:30,cost:50000,stat:{dex:2,hit:4,spd:5},desc:'提升命中與速度。'},
+  {id:'succubus_pet',name:'魅魔召喚獸',lv:50,cost:150000,stat:{int:2,wis:2,mp:120,dmg:6},desc:'魔法職業推薦。'},
+  {id:'baby_dragon',name:'幼龍',lv:70,cost:500000,stat:{str:2,dex:2,int:2,dmg:12,dr:5,mr:15},desc:'高階泛用召喚獸。'}
+ ];
+ V31.guildLevels=[0,5000,18000,52000,120000,250000,520000,1000000,1800000,3000000];
+ V31.guildBonus=lv=>({dmg:Math.floor(lv*1.5),dr:Math.floor(lv/2),hp:lv*40,mp:lv*20,hit:Math.floor(lv/2)});
+ V31.dungeons=()=>[
+  {id:'daily_gold',name:'金幣洞窟',type:'daily',lv:10,attempts:3,reward:{adena:25000,expMul:8,item:'potion_orange',qty:5},desc:'每日穩定取得金幣與補給。'},
+  {id:'scroll_ruin',name:'卷軸遺跡',type:'daily',lv:35,attempts:2,reward:{adena:50000,expMul:14,item:'scroll_armor',qty:2},desc:'取得防卷與中量經驗。'},
+  {id:'dragon_trial',name:'四龍試煉',type:'weekly',lv:70,attempts:1,reward:{adena:220000,expMul:35,item:'scroll_bless_weapon',qty:1,boss:1},desc:'高階副本，計入 BOSS 擊殺。'},
+  {id:'event_moon',name:'限時活動：月光祭典',type:'event',lv:20,attempts:5,reward:{adena:18000,expMul:10,item:'moon_fragment',qty:3},desc:'活動材料可在拍賣場或後續活動商店使用。'}
+ ];
+ V31.sets={
+  iron:{name:'鋼鐵防具套裝',items:['iron_helm','iron_armor','iron_gloves','iron_boots','iron_leggings'],bonus:{ac:-4,dr:3,hp:120},desc:'集滿鋼鐵頭盔、盔甲、手套、長靴、脛甲。'},
+  dragon:{name:'龍之終局套裝',items:['dragon_armor','dragon_ring','myth_earring'],bonus:{dmg:12,hit:8,dr:8,mr:30,hp:300,mp:150},desc:'龍之盔甲、龍之戒指、神話耳環。'},
+  mage:{name:'魔力賢者套裝',items:['staff_mana','ice_staff','wisdom_ring','mana_earring'],bonus:{int:4,wis:3,mp:300,dmg:5,mr:20},desc:'瑪那魔杖、冰之女王魔杖、智慧戒指、魔力耳環。'},
+  assassin:{name:'暗影刺客套裝',items:['dual_blade','dark_claw','dark_earring'],bonus:{dex:4,dmg:10,hit:6,spd:8},desc:'幽暗雙刀、黑暗鋼爪、黑妖耳環。'}
+ };
+ V31.refinePool=[
+  {name:'力量',stat:{str:1},weight:18},{name:'敏捷',stat:{dex:1},weight:18},{name:'智力',stat:{int:1},weight:15},{name:'精神',stat:{wis:1},weight:15},
+  {name:'傷害',stat:{dmg:3},weight:15},{name:'命中',stat:{hit:3},weight:12},{name:'減傷',stat:{dr:2},weight:10},{name:'魔防',stat:{mr:8},weight:10},{name:'速度',stat:{spd:3},weight:6}
+ ];
+ V31.auctionItems=()=>[
+  {id:'scroll_weapon',qty:1,price:90000,seller:'亞丁商團'},{id:'scroll_armor',qty:1,price:42000,seller:'奇岩商人'},
+  {id:'scroll_bless_weapon',qty:1,price:380000,seller:'傲慢遠征隊'},{id:'potion_clear',qty:10,price:7000,seller:'藥水批發商'},
+  {id:'dragon_ring',qty:1,price:1200000,seller:'龍谷獵人'},{id:'moon_fragment',qty:10,price:50000,seller:'活動玩家'}
+ ];
+ V31.ensureEventItem=()=>{if(!DB.items.moon_fragment)DB.items.moon_fragment={id:'moon_fragment',name:'月光碎片',type:'material',rarity:'綠',price:6000};};
+ const oldMigrate=Game.migrateState.bind(Game), oldInitMenus=Game.initMenus.bind(Game), oldRenderTab=Game.renderTab.bind(Game), oldTotalStats=Game.totalStats.bind(Game), oldFight=Game.fight.bind(Game), oldViewInventory=Game.viewInventory.bind(Game), oldEnchant=Game.enchant.bind(Game), oldSave=Game.save.bind(Game);
+ Object.assign(Game,{
+  migrateState(){oldMigrate();V31.ensureEventItem();let s=this.state;if(!s)return;s.version='3.1';s.pets=s.pets||{};s.activePet=s.activePet||null;s.guild=s.guild||{name:null,level:0,exp:0,contribution:0};s.dungeon=s.dungeon||{date:V31.today(),runs:{}};s.auction=s.auction||{listings:V31.auctionItems(),sold:0};s.rebirth=s.rebirth||{count:0,awake:null};s.v31Stats=s.v31Stats||{dungeonRuns:0,auctionBuys:0,refines:0,enchants:0,petUpgrades:0};this.resetDungeonIfNeeded();},
+  initMenus(){oldInitMenus();let tabs=[['equipment','裝備'],['inventory','背包'],['settings','自動設定'],['pet','寵物/召喚'],['guild','血盟/公會'],['dungeon','副本/活動'],['setbonus','套裝'],['refine','洗鍊/附魔'],['auction','拍賣場'],['ranking','排行榜'],['rebirth','轉生/覺醒'],['quest','任務'],['achievement','成就'],['craft','製作'],['warehouse','倉庫'],['stats','統計'],['transform','變身'],['skills','職業技能'],['story','劇情/奇遇'],['maps','地圖掉落'],['collection','收藏'],['shop','商店']];document.getElementById('tabs').innerHTML=tabs.map(t=>`<button class="btn tab" data-tab="${t[0]}">${t[1]}</button>`).join('');document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>{this.tab=b.dataset.tab;this.renderTab();});},
+  addStatsMerge(a,b){let r={...a};for(let k in b)if(typeof b[k]==='number')r[k]=(r[k]||0)+b[k];return r;},
+  activeSetBonuses(){let equipped=Object.values(this.state.equip||{}).map(k=>this.invItem(k)).filter(Boolean).map(x=>x.id);let active=[];for(let [id,set] of Object.entries(V31.sets)){let count=set.items.filter(x=>equipped.includes(x)).length;if(count>=set.items.length)active.push({id,count,...set});}return active;},
+  totalStats(){let s=oldTotalStats();let pet=this.activePetDef();if(pet){let pl=this.state.pets[this.state.activePet]?.lv||1;let bonus={};for(let [k,v] of Object.entries(pet.stat||{}))bonus[k]=v+Math.floor(pl/5);s=this.addStatsMerge(s,bonus);}if(this.state.guild?.name)s=this.addStatsMerge(s,V31.guildBonus(this.state.guild.level||0));for(let set of this.activeSetBonuses())s=this.addStatsMerge(s,set.bonus||{});for(let k of Object.values(this.state.equip||{})){let it=this.invItem(k);if(!it)continue;if(it.refine)s=this.addStatsMerge(s,it.refine.stat||{});if(it.enchantAttr)s=this.addStatsMerge(s,it.enchantAttr.stat||{});}let rb=this.state.rebirth?.count||0;if(rb>0)s=this.addStatsMerge(s,{str:rb,dex:rb,int:rb,wis:rb,con:rb,hp:rb*120,mp:rb*60,dmg:rb*4,dr:rb*2});let aw=this.state.rebirth?.awake;if(aw==='war')s=this.addStatsMerge(s,{str:4,dmg:15,dr:5});if(aw==='wind')s=this.addStatsMerge(s,{dex:4,hit:10,spd:15});if(aw==='sage')s=this.addStatsMerge(s,{int:5,wis:4,mp:300,mr:30});return s;},
+  activePetDef(){return this.state?.activePet?V31.petDefs().find(x=>x.id===this.state.activePet):null;},
+  summonPet(id){let p=V31.petDefs().find(x=>x.id===id);if(!p)return;if(this.state.lv<p.lv){alert('等級不足，需要 Lv.'+p.lv);return}if(!this.state.pets[id]){if(this.state.adena<p.cost){alert('金幣不足');return}this.state.adena-=p.cost;this.state.pets[id]={lv:1,exp:0};this.log('取得寵物：'+p.name,'green');}this.state.activePet=id;this.log('召喚寵物：'+p.name,'green');this.render();},
+  upgradePet(id){let p=this.state.pets[id],def=V31.petDefs().find(x=>x.id===id);if(!p||!def)return;let cost=def.cost+Math.pow(p.lv,2)*1200;if(this.state.adena<cost){alert('金幣不足');return}this.state.adena-=cost;p.lv++;this.state.v31Stats.petUpgrades++;this.log(`${def.name} 升級為 Lv.${p.lv}`,'green');this.render();},
+  createGuild(){let name=prompt('請輸入血盟 / 公會名稱','亞丁遠征軍');if(!name)return;if(this.state.adena<100000){alert('創建需要 100,000 金幣');return}this.state.adena-=100000;this.state.guild={name,level:1,exp:0,contribution:0};this.log('創建血盟：'+name,'green');this.render();},
+  donateGuild(){if(!this.state.guild?.name)return;let amt=Number(prompt('捐獻金幣數量','10000')||0);if(!amt||amt<=0)return;if(this.state.adena<amt){alert('金幣不足');return}this.state.adena-=amt;this.state.guild.exp+=amt;this.state.guild.contribution+=amt;while(this.state.guild.level<9&&this.state.guild.exp>=V31.guildLevels[this.state.guild.level])this.state.guild.level++;this.log(`血盟捐獻 ${amt.toLocaleString()}，目前 Lv.${this.state.guild.level}`,'green');this.render();},
+  resetDungeonIfNeeded(){let d=V31.today();if(!this.state.dungeon||this.state.dungeon.date!==d)this.state.dungeon={date:d,runs:{}};for(let x of V31.dungeons())if(this.state.dungeon.runs[x.id]===undefined)this.state.dungeon.runs[x.id]=0;},
+  runDungeon(id){this.resetDungeonIfNeeded();let d=V31.dungeons().find(x=>x.id===id);if(!d)return;if(this.state.lv<d.lv){alert('等級不足，需要 Lv.'+d.lv);return}if((this.state.dungeon.runs[id]||0)>=d.attempts){alert('今日次數已用完');return}this.state.dungeon.runs[id]++;let reward=d.reward||{};let exp=Math.floor(this.state.lv*this.state.lv*(reward.expMul||8));this.state.exp+=exp;this.state.adena+=(reward.adena||0);if(reward.item)this.addItem(reward.item,reward.qty||1,0);if(reward.boss&&this.state.v3Stats){this.state.v3Stats.bossKills=(this.state.v3Stats.bossKills||0)+reward.boss;this.updateQuest&&this.updateQuest('boss',reward.boss);}this.state.v31Stats.dungeonRuns++;this.levelUp();this.log(`完成副本：${d.name}，EXP +${exp}，金幣 +${(reward.adena||0).toLocaleString()}`,'green');this.render();},
+  refineItem(key){let it=this.invItem(key),d=DB.items[it?.id];if(!it||!d)return;if(!['weapon','helmet','tshirt','armor','cloak','gloves','boots','leggings','ring','earring','amulet','belt'].includes(d.type))return;let cost=50000+(it.refine?100000:0)+(it.enchant||0)*25000;if(this.state.adena<cost){alert('金幣不足');return}this.state.adena-=cost;let pool=[];for(let r of V31.refinePool)for(let i=0;i<r.weight;i++)pool.push(r);let pick=pool[Math.floor(Math.random()*pool.length)];let stat={};for(let [k,v] of Object.entries(pick.stat))stat[k]=v+Math.floor(Math.random()*3);it.refine={name:pick.name,stat};this.state.v31Stats.refines++;this.log(`${d.name} 洗鍊完成：${pick.name}`,'green');this.render();},
+  attrEnchant(key){let it=this.invItem(key),d=DB.items[it?.id];if(!it||!d)return;let cost=120000+(it.enchantAttr?.lv||0)*80000;if(this.state.adena<cost){alert('金幣不足');return}this.state.adena-=cost;let attrs=[['火靈',{dmg:5}],['水靈',{hp:100,dr:2}],['風靈',{hit:4,spd:4}],['地靈',{ac:-2,dr:3}],['光靈',{mr:15,mp:80}]];let cur=it.enchantAttr||{lv:0};let pick=attrs[Math.floor(Math.random()*attrs.length)];it.enchantAttr={name:pick[0],lv:Math.min(5,(cur.lv||0)+1),stat:{}};for(let [k,v] of Object.entries(pick[1]))it.enchantAttr.stat[k]=v*it.enchantAttr.lv;this.state.v31Stats.enchants++;this.log(`${d.name} 附魔：${pick[0]} Lv.${it.enchantAttr.lv}`,'green');this.render();},
+  buyAuction(i){let item=this.state.auction.listings[+i];if(!item)return;if(this.state.adena<item.price){alert('金幣不足');return}this.state.adena-=item.price;this.addItem(item.id,item.qty||1,0);this.state.v31Stats.auctionBuys++;this.state.auction.listings.splice(+i,1);this.log('拍賣場購入：'+DB.items[item.id].name,'green');this.render();},
+  sellAuction(key){let it=this.invItem(key);if(!it||Object.values(this.state.equip).includes(key))return;let d=DB.items[it.id];let price=Math.floor((d.price||1000)*(it.qty||1)*0.75);this.state.adena+=price;this.removeItem(key,it.qty||1);this.state.auction.sold=(this.state.auction.sold||0)+1;this.log(`拍賣場快速出售 ${d.name}，收入 ${price.toLocaleString()}`,'green');this.render();},
+  doRebirth(){if(this.state.lv<99){alert('轉生需要 Lv.99');return}let c=this.state.rebirth.count||0;this.state.rebirth.count=c+1;this.state.lv=1;this.state.exp=0;this.state.hp=this.maxHp();this.state.mp=this.maxMp();this.state.adena+=500000*c;this.log(`完成第 ${c+1} 次轉生，取得永久能力加成。`,'green');this.render();},
+  setAwake(id){if((this.state.rebirth.count||0)<1||this.state.lv<70){alert('覺醒需要轉生 1 次且 Lv.70');return}this.state.rebirth.awake=id;this.log('覺醒路線已選擇：'+({war:'戰神',wind:'疾風',sage:'賢者'}[id]||id),'green');this.render();},
+  fight(){oldFight();let pet=this.activePetDef();if(pet&&this.mon()&&this.mon().hp>0){let pl=this.state.pets[this.state.activePet]?.lv||1;let pdmg=Math.max(1,Math.floor((pet.stat.dmg||2)*2+pl*1.5));this.mon().hp-=pdmg;this.blog(`${pet.name} 協助攻擊，造成 <span class="c-purple">${pdmg}</span> 傷害。`);if(this.mon().hp<=0){let mdef=DB.mons[this.mon().id];this.kill(mdef);}}},
+  enchant(key){oldEnchant(key);this.render();},
+  viewInventory(){let html=oldViewInventory();html=html.replace('</h3>','</h3><div class="small">V3.1：裝備若有洗鍊或附魔，可在「洗鍊/附魔」頁籤查看與操作。</div>');return html;},
+  save(show){oldSave(show);},
+  renderTab(){oldRenderTab();let el=document.getElementById('tabContent');if(!this.state)return;if(this.tab==='pet')el.innerHTML=this.viewPet();if(this.tab==='guild')el.innerHTML=this.viewGuild();if(this.tab==='dungeon')el.innerHTML=this.viewDungeon();if(this.tab==='setbonus')el.innerHTML=this.viewSetBonus();if(this.tab==='refine')el.innerHTML=this.viewRefine();if(this.tab==='auction')el.innerHTML=this.viewAuction();if(this.tab==='ranking')el.innerHTML=this.viewRanking();if(this.tab==='rebirth')el.innerHTML=this.viewRebirth();el.querySelectorAll('[data-summon-pet]').forEach(b=>b.onclick=()=>this.summonPet(b.dataset.summonPet));el.querySelectorAll('[data-upgrade-pet]').forEach(b=>b.onclick=()=>this.upgradePet(b.dataset.upgradePet));el.querySelectorAll('[data-create-guild]').forEach(b=>b.onclick=()=>this.createGuild());el.querySelectorAll('[data-donate-guild]').forEach(b=>b.onclick=()=>this.donateGuild());el.querySelectorAll('[data-dungeon]').forEach(b=>b.onclick=()=>this.runDungeon(b.dataset.dungeon));el.querySelectorAll('[data-refine]').forEach(b=>b.onclick=()=>this.refineItem(b.dataset.refine));el.querySelectorAll('[data-attr]').forEach(b=>b.onclick=()=>this.attrEnchant(b.dataset.attr));el.querySelectorAll('[data-buy-auction]').forEach(b=>b.onclick=()=>this.buyAuction(b.dataset.buyAuction));el.querySelectorAll('[data-sell-auction]').forEach(b=>b.onclick=()=>this.sellAuction(b.dataset.sellAuction));el.querySelectorAll('[data-rebirth]').forEach(b=>b.onclick=()=>this.doRebirth());el.querySelectorAll('[data-awake]').forEach(b=>b.onclick=()=>this.setAwake(b.dataset.awake));},
+  statText(o){return Object.entries(o||{}).map(([k,v])=>`${k.toUpperCase()} ${v>0?'+':''}${v}`).join('、')||'無';},
+  viewPet(){let rows=V31.petDefs().map(p=>{let own=this.state.pets[p.id];let lock=this.state.lv<p.lv;let cost=own?Math.floor(p.cost+Math.pow(own.lv,2)*1200):p.cost;return `<div class="item row"><span><b class="${own?'c-gold':''}">${p.name}</b> ${own?`<span class="pill">Lv.${own.lv}</span>`:`<span class="pill">取得 ${cost.toLocaleString()}</span>`}<br><span class="small">${p.desc}｜需求 Lv.${p.lv}｜${this.statText(p.stat)}</span></span><span><button class="btn green" data-summon-pet="${p.id}" ${lock?'disabled':''}>${own?(this.state.activePet===p.id?'召喚中':'召喚'):'取得/召喚'}</button> ${own?`<button class="btn" data-upgrade-pet="${p.id}">升級</button>`:''}</span></div>`}).join('');return `<h3 class="title">寵物 / 召喚獸</h3><div class="small">寵物提供能力加成，戰鬥中會協助攻擊。升級後加成會提高。</div>${rows}`},
+  viewGuild(){let g=this.state.guild;if(!g?.name)return `<h3 class="title">血盟 / 公會</h3><div class="small">創建後可捐獻金幣提升血盟等級，取得永久戰鬥加成。</div><button class="btn green" data-create-guild="1">創建血盟 / 公會（100,000 金幣）</button>`;let bonus=V31.guildBonus(g.level||0);let need=V31.guildLevels[g.level]||V31.guildLevels.at(-1);return `<h3 class="title">血盟 / 公會</h3><div class="setting-card"><div class="row"><b class="c-gold">${g.name}</b><span>Lv.${g.level}</span></div><div class="small">貢獻 ${g.contribution.toLocaleString()}｜經驗 ${g.exp.toLocaleString()} / ${need.toLocaleString()}｜加成：${this.statText(bonus)}</div><button class="btn green" data-donate-guild="1">捐獻金幣</button></div>`},
+  viewDungeon(){this.resetDungeonIfNeeded();let rows=V31.dungeons().map(d=>{let used=this.state.dungeon.runs[d.id]||0;let rw=d.reward;let txt=[rw.adena?`金幣 ${rw.adena.toLocaleString()}`:'',rw.expMul?`經驗倍率 ${rw.expMul}`:'',rw.item?`${DB.items[rw.item].name} ×${rw.qty||1}`:''].filter(Boolean).join('、');return `<div class="item row"><span><b class="c-gold">${d.name}</b> <span class="pill">${d.type}</span><br><span class="small">${d.desc}｜需求 Lv.${d.lv}｜今日 ${used}/${d.attempts}｜獎勵：${txt}</span></span><button class="btn green" data-dungeon="${d.id}" ${(this.state.lv<d.lv||used>=d.attempts)?'disabled':''}>挑戰</button></div>`}).join('');return `<h3 class="title">副本 / 限時活動</h3><div class="small">副本採每日次數制；限時活動目前以月光祭典常駐示範，後續可改為日期區間開放。</div>${rows}`},
+  viewSetBonus(){let active=this.activeSetBonuses().map(x=>x.id);let rows=Object.entries(V31.sets).map(([id,s])=>{let owned=s.items.filter(item=>Object.values(this.state.equip||{}).map(k=>this.invItem(k)).filter(Boolean).map(x=>x.id).includes(item)).length;let ok=active.includes(id);return `<div class="item"><b class="${ok?'c-gold':''}">${s.name}</b> <span class="pill">${owned}/${s.items.length}</span><br><span class="small">${s.desc}<br>效果：${this.statText(s.bonus)}${ok?'｜已啟用':''}</span></div>`}).join('');return `<h3 class="title">套裝效果</h3><div class="small">裝備指定套裝部件後，能力會自動套用到角色總能力。</div>${rows}`},
+  viewRefine(){let rows=Object.entries(this.state.inventory||{}).filter(([k,it])=>Object.values(this.state.equip||{}).includes(k)).map(([k,it])=>{let d=DB.items[it.id];let refine=it.refine?`${it.refine.name}：${this.statText(it.refine.stat)}`:'未洗鍊';let attr=it.enchantAttr?`${it.enchantAttr.name} Lv.${it.enchantAttr.lv}：${this.statText(it.enchantAttr.stat)}`:'未附魔';return `<div class="item row"><span><b class="c-gold">${this.itemName(k,false)}</b><br><span class="small">洗鍊：${refine}<br>附魔：${attr}</span></span><span><button class="btn" data-refine="${k}">洗鍊</button> <button class="btn green" data-attr="${k}">附魔</button></span></div>`}).join('')||'<div class="small">請先裝備物品後再進行洗鍊或附魔。</div>';return `<h3 class="title">裝備洗鍊 / 附魔</h3><div class="small">洗鍊會隨機給予單項能力；附魔最高 Lv.5，會累積屬性效果。</div>${rows}`},
+  viewAuction(){if(!this.state.auction?.listings?.length)this.state.auction.listings=V31.auctionItems();let buy=this.state.auction.listings.map((x,i)=>`<div class="item row"><span><b class="c-gold">${DB.items[x.id].name} ×${x.qty||1}</b><br><span class="small">賣家：${x.seller}｜價格 ${x.price.toLocaleString()}</span></span><button class="btn green" data-buy-auction="${i}">購買</button></div>`).join('');let sell=Object.entries(this.state.inventory||{}).filter(([k])=>!Object.values(this.state.equip||{}).includes(k)).slice(0,20).map(([k,it])=>`<div class="item row"><span>${this.itemName(k)}</span><button class="btn" data-sell-auction="${k}">快速出售</button></div>`).join('')||'<div class="small">沒有可出售物品</div>';return `<h3 class="title">拍賣場</h3><div class="setting-grid"><div class="setting-card"><b class="c-gold">市場商品</b>${buy}</div><div class="setting-card"><b class="c-gold">我的可出售物品</b>${sell}</div></div>`},
+  calcScore(){let st=this.totalStats();return Math.floor(this.state.lv*1000+(this.state.rebirth.count||0)*25000+(this.state.v3Stats?.kills||0)*8+(this.state.v3Stats?.bossKills||0)*250+(st.dmg||0)*100+(10-(st.ac||10))*50);},
+  viewRanking(){let me={name:'你',score:this.calcScore(),lv:this.state.lv,rebirth:this.state.rebirth.count||0};let list=[me,{name:'肯恩遠征隊',score:165000,lv:92,rebirth:1},{name:'傲慢塔獵人',score:128000,lv:86,rebirth:0},{name:'龍谷守望者',score:98000,lv:78,rebirth:0},{name:'說話之島新星',score:42000,lv:45,rebirth:0}].sort((a,b)=>b.score-a.score);return `<h3 class="title">排行榜</h3><div class="small">單機版以本機角色分數 + 模擬 NPC 排名呈現。分數會依等級、轉生、擊殺、BOSS、戰力計算。</div>${list.map((x,i)=>`<div class="item row"><span><b class="${x.name==='你'?'c-gold':''}">#${i+1} ${x.name}</b><br><span class="small">Lv.${x.lv}｜轉生 ${x.rebirth}</span></span><span>${x.score.toLocaleString()}</span></div>`).join('')}`},
+  viewRebirth(){let rb=this.state.rebirth||{count:0};let aw=rb.awake||'未覺醒';let awName={war:'戰神',wind:'疾風',sage:'賢者'}[aw]||aw;let can=this.state.lv>=99;let awakens=[['war','戰神','STR +4、DMG +15、DR +5'],['wind','疾風','DEX +4、HIT +10、SPD +15'],['sage','賢者','INT +5、WIS +4、MP +300、MR +30']].map(x=>`<div class="item row"><span><b class="c-gold">${x[1]}</b><br><span class="small">${x[2]}</span></span><button class="btn green" data-awake="${x[0]}" ${((rb.count||0)>=1&&this.state.lv>=70)?'':'disabled'}>${rb.awake===x[0]?'已選擇':'覺醒'}</button></div>`).join('');return `<h3 class="title">轉生 / 覺醒系統</h3><div class="setting-card"><div>目前轉生：<b class="c-gold">${rb.count||0}</b>｜覺醒：<b class="c-gold">${awName}</b></div><div class="small">轉生條件 Lv.99。轉生後等級回到 1，但保留裝備、道具、寵物、公會，並取得永久能力加成。</div><button class="btn green" data-rebirth="1" ${can?'':'disabled'}>進行轉生</button></div><h4 class="title">覺醒路線</h4><div class="small">需要至少轉生 1 次且 Lv.70。</div>${awakens}`}
+ });
+})();
+
+
+/* =========================
+   V3.2 UX Patch
+   優化：背包與裝備操作
+   ========================= */
+(()=>{
+ const oldMigrate=Game.migrateState.bind(Game), oldRenderTab=Game.renderTab.bind(Game);
+ const EQUIP_TYPES=['weapon','helmet','tshirt','armor','cloak','gloves','boots','leggings','ring','earring','amulet','belt'];
+ const TYPE_GROUPS={all:'全部',equip:'裝備',weapon:'武器',armor:'防具',accessory:'飾品',potion:'藥水',scroll:'卷軸',book:'技能書',other:'其他'};
+ const SORTS={type:'類型',rarity:'稀有度',power:'戰力',name:'名稱',qty:'數量',enchant:'強化'};
+ const rarityRank={'白':1,'綠':2,'藍':3,'紫':4,'橘':5,'紅':6};
+ const esc=v=>String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+ Object.assign(Game,{
+  migrateState(){oldMigrate();let s=this.state;if(!s)return;s.version='3.2';s.ui=s.ui||{};s.ui.invFilter=s.ui.invFilter||'all';s.ui.invSort=s.ui.invSort||'type';s.ui.invSearch=s.ui.invSearch||'';},
+  groupOfType(t){if(EQUIP_TYPES.includes(t))return t==='weapon'?'weapon':(['ring','earring','amulet','belt'].includes(t)?'accessory':'armor');return ['potion','scroll','book'].includes(t)?t:'other';},
+  itemPowerByKey(k){let it=this.invItem(k);if(!it)return 0;let d=DB.items[it.id]||{};let n=0;n+=(d.dmg||0)*12;n+=Math.max(0,10-(d.ac??10))*9;n+=(it.enchant||0)*(d.type==='weapon'?18:10);for(let src of [d.stat||{},it.refine?.stat||{},it.enchantAttr?.stat||{}])for(let [a,v] of Object.entries(src)){n+=({str:15,dex:14,con:13,int:15,wis:13,dmg:22,hit:12,dr:20,mr:1,spd:8,hp:.08,mp:.06,ac:-12}[a]||5)*v;}n+=rarityRank[d.rarity]||0;return Math.round(n);},
+  slotForKey(k){let it=this.invItem(k);if(!it)return '';let d=DB.items[it.id]||{};if(d.type==='ring')return this.state.equip.ring1===k?'ring1':(this.state.equip.ring2===k?'ring2':'ring1');if(d.type==='earring')return this.state.equip.earring1===k?'earring1':(this.state.equip.earring2===k?'earring2':'earring1');return d.type;},
+  statLineForKey(k){let it=this.invItem(k);if(!it)return '無';let d=DB.items[it.id]||{};let parts=[];if(d.dmg)parts.push('傷害 +'+(d.dmg+(it.enchant||0)));if(d.ac!==undefined)parts.push('AC '+(d.ac-(it.enchant||0)));let collect=o=>{for(let [a,v] of Object.entries(o||{}))parts.push(`${a.toUpperCase()} ${v>0?'+':''}${v}`)};collect(d.stat);if(it.refine)collect(it.refine.stat);if(it.enchantAttr)collect(it.enchantAttr.stat);return parts.join('、')||'無';},
+  invList(){let q=(this.state.ui?.invSearch||'').trim().toLowerCase(),filter=this.state.ui?.invFilter||'all',sort=this.state.ui?.invSort||'type';let rows=Object.entries(this.state.inventory||{}).filter(([k,it])=>{let d=DB.items[it.id]||{};let name=(d.name||it.id).toLowerCase();let group=this.groupOfType(d.type);let okFilter=filter==='all'||filter===d.type||filter===group||(filter==='equip'&&EQUIP_TYPES.includes(d.type));let okSearch=!q||name.includes(q)||it.id.toLowerCase().includes(q)||(d.rarity||'').includes(q);return okFilter&&okSearch;});rows.sort((a,b)=>{let da=DB.items[a[1].id]||{},db=DB.items[b[1].id]||{};if(sort==='rarity')return (rarityRank[db.rarity]||0)-(rarityRank[da.rarity]||0)||this.itemPowerByKey(b[0])-this.itemPowerByKey(a[0]);if(sort==='power')return this.itemPowerByKey(b[0])-this.itemPowerByKey(a[0]);if(sort==='qty')return (b[1].qty||1)-(a[1].qty||1);if(sort==='enchant')return (b[1].enchant||0)-(a[1].enchant||0);if(sort==='name')return (da.name||'').localeCompare(db.name||'');return (da.type||'').localeCompare(db.type||'')||(da.name||'').localeCompare(db.name||'');});return rows;},
+  canEquipKey(k){let it=this.invItem(k),d=it&&DB.items[it.id];return !!d&&EQUIP_TYPES.includes(d.type)&&(d.type!=='weapon'||this.cls().weapons.includes(d.weapon));},
+  equipCandidates(slot){let base=slot.replace(/[12]$/,'');return Object.entries(this.state.inventory||{}).filter(([k,it])=>{let d=DB.items[it.id]||{};if(Object.values(this.state.equip||{}).includes(k))return false;if(base==='ring')return d.type==='ring';if(base==='earring')return d.type==='earring';if(d.type!==base)return false;return this.canEquipKey(k);}).sort((a,b)=>this.itemPowerByKey(b[0])-this.itemPowerByKey(a[0])).slice(0,5);},
+  batchSell(mode){let sold=0,gain=0;for(let k of Object.keys(this.state.inventory||{})){if(Object.values(this.state.equip||{}).includes(k))continue;let it=this.state.inventory[k],d=DB.items[it.id]||{};let ok=mode==='white'?d.rarity==='白'&&EQUIP_TYPES.includes(d.type):mode==='trash'?['material'].includes(d.type):false;if(!ok)continue;let price=Math.max(1,Math.floor((d.price||100)*(0.35+(it.enchant||0)*0.2)))*(it.qty||1);gain+=price;sold+=it.qty||1;delete this.state.inventory[k];}this.state.adena+=gain;this.log(`批次整理完成：賣出 ${sold} 件，獲得 ${gain.toLocaleString()} 金幣。`,'green');this.render();},
+  setInvUI(k,v){this.state.ui=this.state.ui||{};this.state.ui[k]=v;this.renderTab();this.save(false);},
+  viewEquipmentV32(){let st=this.totalStats(),names=this.slotNames();let cards=this.equipOrder().map(slot=>{let k=this.state.equip[slot];let cands=this.equipCandidates(slot);let current=k?`<b class="c-gold">${this.itemName(k,false)}</b><br><span class="small">戰力 ${this.itemPowerByKey(k)}｜${this.statLineForKey(k)}</span>`:'<b class="small">未裝備</b>';let candHtml=cands.map(([ck])=>`<div class="item row"><span><span class="rarity-${DB.items[this.invItem(ck).id].rarity}">${this.itemName(ck)}</span><br><span class="small">戰力 ${this.itemPowerByKey(ck)}｜差異 ${this.itemPowerByKey(ck)-(k?this.itemPowerByKey(k):0)>=0?'+':''}${this.itemPowerByKey(ck)-(k?this.itemPowerByKey(k):0)}</span></span><button class="btn green" data-equip="${ck}">裝備</button></div>`).join('')||'<div class="small">沒有可替換裝備</div>';return `<div class="setting-card"><div class="row"><b>${names[slot]||slot}</b><span>${k?`<button class="btn" data-unequip="${slot}">卸下</button> <button class="btn" data-enchant="${k}">強化</button>`:''}</span></div><div class="item">${current}</div><details><summary class="small">可替換裝備 Top 5</summary>${candHtml}</details></div>`}).join('');return `<h3 class="title">裝備</h3><div class="setting-grid"><div class="setting-card"><b class="c-gold">角色總覽</b><div class="stat" style="margin-top:8px">${[`STR ${st.str}`,`DEX ${st.dex}`,`CON ${st.con}`,`INT ${st.int}`,`WIS ${st.wis}`,`AC ${st.ac}`,`DMG +${Math.floor(st.dmg+this.state.lv*1.8)}`,`MR ${st.mr||0}%`].map(x=>`<div>${x}</div>`).join('')}</div><div class="small" style="margin-top:8px">裝備欄現在會顯示戰力、屬性摘要與可替換裝備比較。</div></div>${cards}</div>`},
+  viewInventoryV32(){let ui=this.state.ui||{},rows=this.invList();let total=Object.values(this.state.inventory||{}).reduce((a,x)=>a+(x.qty||1),0),shown=rows.reduce((a,[,x])=>a+(x.qty||1),0);let controls=`<div class="setting-card"><div class="row" style="flex-wrap:wrap;justify-content:flex-start"><input data-inv-search value="${esc(ui.invSearch||'')}" placeholder="搜尋道具名稱 / 稀有度" style="min-width:220px"><select data-inv-filter>${Object.entries(TYPE_GROUPS).map(([k,v])=>`<option value="${k}" ${ui.invFilter===k?'selected':''}>${v}</option>`).join('')}</select><select data-inv-sort>${Object.entries(SORTS).map(([k,v])=>`<option value="${k}" ${ui.invSort===k?'selected':''}>排序：${v}</option>`).join('')}</select><button class="btn red" data-batch-sell="white">批次賣白裝</button><button class="btn" data-batch-sell="trash">清材料</button></div><div class="small">背包總數 ${total}｜目前顯示 ${shown}｜已裝備物品會標示「裝備中」且不會被批次賣出。</div></div>`;let html=rows.map(([k,it])=>{let d=DB.items[it.id]||{},equipped=Object.values(this.state.equip||{}).includes(k),canEquip=this.canEquipKey(k);let tags=[this.typeName(d.type),`戰力 ${this.itemPowerByKey(k)}`,it.enchant?`+${it.enchant}`:'',equipped?'裝備中':''].filter(Boolean).map(x=>`<span class="pill">${x}</span>`).join(' ');let buttons=[];if(canEquip&&!equipped)buttons.push(`<button class="btn green" data-equip="${k}">裝備</button>`);if(canEquip)buttons.push(`<button class="btn" data-enchant="${k}">強化</button>`);if(d.type==='potion'||d.type==='book')buttons.push(`<button class="btn green" data-use="${k}">使用</button>`);if(!equipped)buttons.push(`<button class="btn red" data-sell="${k}">賣出</button>`);return `<div class="item row"><span><b class="rarity-${d.rarity}">${this.itemName(k)}</b><br><span class="small">${tags}<br>${this.statLineForKey(k)}</span></span><span>${buttons.join(' ')}</span></div>`}).join('')||'<div class="small">沒有符合條件的物品</div>';return `<h3 class="title">背包</h3>${controls}${html}`},
+  renderTab(){oldRenderTab();let el=document.getElementById('tabContent');if(!this.state||!el)return;if(this.tab==='equipment')el.innerHTML=this.viewEquipmentV32();if(this.tab==='inventory')el.innerHTML=this.viewInventoryV32();if(this.tab==='equipment'||this.tab==='inventory'){el.querySelectorAll('[data-equip]').forEach(b=>b.onclick=()=>this.equip(b.dataset.equip));el.querySelectorAll('[data-enchant]').forEach(b=>b.onclick=()=>this.enchant(b.dataset.enchant));el.querySelectorAll('[data-use]').forEach(b=>b.onclick=()=>this.useItem(b.dataset.use));el.querySelectorAll('[data-sell]').forEach(b=>b.onclick=()=>this.sellItem(b.dataset.sell));el.querySelectorAll('[data-unequip]').forEach(b=>b.onclick=()=>this.unequip(b.dataset.unequip));el.querySelectorAll('[data-batch-sell]').forEach(b=>b.onclick=()=>this.batchSell(b.dataset.batchSell));let se=el.querySelector('[data-inv-search]');if(se)se.onchange=()=>this.setInvUI('invSearch',se.value);let fi=el.querySelector('[data-inv-filter]');if(fi)fi.onchange=()=>this.setInvUI('invFilter',fi.value);let so=el.querySelector('[data-inv-sort]');if(so)so.onchange=()=>this.setInvUI('invSort',so.value);}}
+ });
+})();
+
+
+/* =========================
+   V3.3 Shop Balance Patch
+   修正：商店販售品項合理化 / 開始畫面讀取文字
+   ========================= */
+(()=>{
+ const SHOP_RARITY_RANK={'白':1,'綠':2,'藍':3,'紫':4,'橘':5,'紅':6};
+ const SHOP_CATALOG=[
+  {title:'補給品',note:'常態販售，適合放置狩獵與自動補給。',items:[
+   ['potion_red',1,'基礎回血'],['potion_orange',12,'中階回血'],['potion_clear',28,'高階回血']
+  ]},
+  {title:'基礎卷軸',note:'只販售一般強化卷軸；祝福卷軸改由副本、BOSS、拍賣場與掉落取得。',items:[
+   ['scroll_armor',20,'防具安全強化'],['scroll_weapon',25,'武器安全強化'],['scroll_accessory',35,'飾品強化']
+  ]},
+  {title:'新手武器',note:'提供各職業入門武器，不販售橘紅終局裝備。',items:[
+   ['orc_dagger',1,'匕首入門'],['katana',12,'單手劍'],['crossbow',12,'妖精弓'],['staff_mana',18,'法師魔杖'],['dual_blade',30,'黑妖雙刀'],['dark_claw',35,'黑妖鋼爪'],['chain_sword',40,'龍騎士武器'],['kiringku',40,'幻術士武器'],['gold_spear',45,'槍騎武器'],['titan_axe',45,'戰士武器']
+  ]},
+  {title:'基礎防具',note:'販售白/綠/藍過渡裝，古代與龍系列保留給掉落、製作與拍賣。',items:[
+   ['tshirt',1,'內衣'],['iron_helm',10,'頭盔'],['iron_gloves',10,'手套'],['iron_boots',14,'鞋子'],['iron_leggings',18,'脛甲'],['prot_cloak',20,'斗篷'],['iron_armor',22,'盔甲'],['magic_cloak',32,'抗魔']
+  ]},
+  {title:'基礎飾品',note:'只販售前中期飾品；龍戒、神話耳環等高階飾品不進一般商店。',items:[
+   ['skull_necklace',15,'命中'],['brave_necklace',28,'傷害'],['def_ring',25,'防禦戒指'],['wisdom_ring',35,'法系戒指'],['mana_earring',45,'魔力耳環'],['ogre_belt',50,'生命腰帶']
+  ]},
+  {title:'技能書 / 魔法書',note:'只顯示目前職業可學的一般與職業技能書；已學會會標示，不建議重複購買。',dynamic:'books'}
+ ];
+ function shopLevel(id){for(const cat of SHOP_CATALOG){if(!cat.items)continue;let x=cat.items.find(v=>v[0]===id);if(x)return x[1]||1;}let d=DB.items[id]||{};if(d.skill&&DB.skills[d.skill])return DB.skills[d.skill].lv||1;return 1;}
+ function shopNote(id){for(const cat of SHOP_CATALOG){if(!cat.items)continue;let x=cat.items.find(v=>v[0]===id);if(x)return x[2]||'';}return '';}
+ function shopPrice(id){let d=DB.items[id]||{},base=d.price||100;
+  if(d.type==='potion')return base;
+  if(d.type==='scroll')return Math.ceil(base*1.1/100)*100;
+  if(d.type==='book'){let sk=DB.skills[d.skill]||{};let jobPremium=sk.job&&sk.job!=='general'?1.25:1;return Math.ceil((3500+Math.pow(sk.lv||1,1.55)*420)*jobPremium/100)*100;}
+  let rarity=SHOP_RARITY_RANK[d.rarity]||1, lv=shopLevel(id);
+  if(d.type==='weapon')return Math.ceil((base*1.15+lv*lv*90+rarity*2500)/100)*100;
+  if(['helmet','tshirt','armor','cloak','gloves','boots','leggings'].includes(d.type))return Math.ceil((base*1.05+lv*lv*55+rarity*1800)/100)*100;
+  if(['ring','earring','amulet','belt'].includes(d.type))return Math.ceil((base*1.2+lv*lv*80+rarity*3500)/100)*100;
+  return base;
+ }
+ function canShowBook(game,d){let sk=DB.skills[d.skill];if(!sk)return false;let c=game.cls();if(sk.job==='general')return c.magic>0&&sk.lv<=Math.max(8,c.magic*8+16);return sk.job===game.state.classId;}
+ function detailText(game,id,lvReq){let d=DB.items[id]||{},parts=[];if(lvReq>1)parts.push('Lv.'+lvReq);if(d.rarity)parts.push(d.rarity);if(d.weapon)parts.push(d.weapon);if(d.dmg)parts.push('傷害 '+d.dmg);if(d.ac!==undefined)parts.push('AC '+d.ac);if(d.heal)parts.push('HP +'+d.heal);if(d.stat)for(let [k,v] of Object.entries(d.stat))parts.push(`${k.toUpperCase()} ${v>0?'+':''}${v}`);if(d.skill&&DB.skills[d.skill]){let sk=DB.skills[d.skill];parts.push(sk.type);parts.push('MP '+sk.mp);if(game.state.skills[d.skill])parts.push('已學會');}
+  let note=shopNote(id);if(note)parts.push(note);return parts.join('｜');}
+ Object.assign(Game,{
+  shopPrice,
+  buy(id){let d=DB.items[id];if(!d)return;let price=this.shopPrice?this.shopPrice(id):(d.price||100);if(this.state.adena<price){alert('金幣不足');return}let lvReq=shopLevel(id);if(this.state.lv<lvReq&&!confirm(`建議 Lv.${lvReq} 後購買，仍要購買嗎？`))return;if(d.type==='book'&&this.state.skills?.[d.skill]&&!confirm('此技能已學會，仍要購買一本嗎？'))return;this.state.adena-=price;this.addItem(id,1,0);this.log(`購買 ${d.name}，花費 ${price.toLocaleString()} 金幣。`,'green');this.render();},
+  viewShop(){let html=`<h3 class="title">商店</h3><div class="small">V3.3 已重新整理商店：一般商店只販售補給、基礎卷軸、入門/過渡裝備與本職可用技能書；高階裝備、祝福卷軸、龍戒、神話耳環等改由掉落、製作、副本或拍賣場取得，避免前期直接買到終局裝。</div>`;
+   for(const cat of SHOP_CATALOG){let entries=[];
+    if(cat.dynamic==='books'){
+     entries=Object.values(DB.items).filter(d=>d.type==='book'&&canShowBook(this,d)).map(d=>[d.id,DB.skills[d.skill]?.lv||1,this.state.skills?.[d.skill]?'已學會':'可學習']).sort((a,b)=>a[1]-b[1]||DB.items[a[0]].name.localeCompare(DB.items[b[0]].name));
+    }else entries=cat.items||[];
+    if(!entries.length)continue;
+    html+=`<h3 class="title" style="margin-top:18px">${cat.title}</h3><div class="small">${cat.note||''}</div>`;
+    for(const [id,lvReq] of entries){let d=DB.items[id];if(!d)continue;let locked=this.state.lv<lvReq,price=shopPrice(id),learned=d.skill&&this.state.skills?.[d.skill];
+     html+=`<div class="item row"><span class="rarity-${d.rarity}"><b>${d.name}</b><br><span class="small">${detailText(this,id,lvReq)}</span></span><span><b class="c-gold">${price.toLocaleString()}</b> <button class="btn ${learned?'':'green'}" data-buy="${id}" ${locked?'':' '}>購買</button></span></div>`;
+    }
+   }
+   html+=`<h3 class="title" style="margin-top:18px">未在一般商店販售</h3><div class="small">高階裝備：死亡騎士烈炎劍、屠龍劍、古代盔甲、龍之盔甲、龍之戒指、神話耳環；高階卷軸：祝福武卷、祝福防卷。建議來源：BOSS 掉落、傲慢之塔、四龍地圖、副本、製作與拍賣場。</div>`;
+   return html;}
+ });
+})();
+
+
+/* =========================
+   V3.4 Core Fix Patch
+   修正：神聖劍士 / 組隊打王 / 狂戰斧頭掉落 / 變身平衡 / 武器等級限制 / 真離線掛機
+   ========================= */
+(()=>{
+ const VERSION='3.4';
+ document.title='Lineage Idle V4.1';
+ const titleEl=document.querySelector('.title');
+ if(titleEl&&titleEl.textContent.includes('Lineage Idle'))titleEl.textContent='Lineage Idle V4.1';
+
+ // 1) 新增神聖劍士職業與技能書
+ DB.classes.holyknight={
+  name:'神聖劍士',
+  stats:{str:15,dex:12,con:14,int:13,wis:12},
+  desc:'以神聖之力強化劍技，兼具近戰、恢復與對王能力。',
+  weapons:['sword','twohand','dagger'],
+  magic:3,
+  skills:['holy_blade','saint_heal','divine_stun','guardian_light']
+ };
+ const addSkill=(id,s)=>{DB.skills[id]=s;if(!DB.items['book_'+id])DB.items['book_'+id]={id:'book_'+id,name:'技術書 / 魔法書：'+s.name,type:'book',skill:id,rarity:'綠',price:5000+s.lv*450};};
+ addSkill('holy_blade',{name:'神聖之刃',lv:15,type:'buff',mp:14,dmg:4,hit:2,sec:240,job:'holyknight'});
+ addSkill('saint_heal',{name:'聖光治癒',lv:28,type:'heal',mp:22,power:150,job:'holyknight'});
+ addSkill('divine_stun',{name:'神聖制裁',lv:45,type:'attack',mp:34,power:310,stun:1,job:'holyknight'});
+ addSkill('guardian_light',{name:'守護之光',lv:60,type:'buff',mp:45,dr:8,mr:20,sec:240,job:'holyknight'});
+ if(!DB.items.holy_sword)DB.items.holy_sword={id:'holy_sword',name:'神聖長劍',type:'weapon',weapon:'sword',dmg:24,safe:6,rarity:'紫',price:160000,reqLv:55};
+ if(!DB.items.crusader_blade)DB.items.crusader_blade={id:'crusader_blade',name:'聖騎士之劍',type:'weapon',weapon:'twohand',dmg:34,safe:6,rarity:'橘',price:420000,reqLv:70};
+
+ // 2) 武器等級限制：買得到不代表馬上能裝；商店與裝備都明確阻擋
+ const REQ={orc_dagger:1,katana:12,damascus:18,tsurugi:35,red_sword:45,death_blade:65,dragon_slayer:85,crossbow:12,ancient_bow:45,staff_mana:18,ice_staff:45,dual_blade:30,dark_claw:35,chain_sword:40,kiringku:40,titan_axe:45,gold_spear:45,holy_sword:55,crusader_blade:70};
+ Object.entries(REQ).forEach(([id,lv])=>{if(DB.items[id])DB.items[id].reqLv=lv;});
+ const reqLvOf=id=>DB.items[id]?.reqLv||1;
+
+ // 3) 修狂戰士/戰士斧頭來源；中後期地圖可掉戰斧
+ const addDrop=(mapId,itemId,rate)=>{let m=DB.maps.find(x=>x.id===mapId);if(m&&DB.items[itemId]&&!m.drops.some(d=>d.id===itemId))m.drops.push({id:itemId,rate});};
+ addDrop('dragon_valley','titan_axe',2.2);
+ addDrop('toi_4','titan_axe',2.8);
+ addDrop('lastabad','titan_axe',3.5);
+ addDrop('antharas','titan_axe',3.0);
+
+ // 4) 變身能力平衡：65 巴風特應強於 55 死騎，且偏魔武雙修
+ if(DB.transforms.baphomet){
+  DB.transforms.baphomet.stat={spd:20,int:3,wis:2,dmg:6,hit:4,mr:18,mp:120};
+  DB.transforms.baphomet.desc='高階惡魔變身，定位為魔武雙修，整體能力高於死亡騎士但低於反王肯恩。';
+ }
+ if(DB.transforms.death_knight){
+  DB.transforms.death_knight.stat={spd:18,str:2,dmg:4,hit:3};
+  DB.transforms.death_knight.desc='經典高速近戰變身，適合 55 級後物理練功。';
+ }
+
+ const oldRenderClassList=Game.renderClassList.bind(Game);
+ const oldMigrate=Game.migrateState.bind(Game);
+ const oldInitMenus=Game.initMenus.bind(Game);
+ const oldRenderTab=Game.renderTab.bind(Game);
+ const oldEquip=Game.equip.bind(Game);
+ const oldBuy=Game.buy.bind(Game);
+ const oldFight=Game.fight.bind(Game);
+ const oldApplyOffline=Game.applyOffline.bind(Game);
+ const oldTick=Game.tick.bind(Game);
+ const oldSave=Game.save.bind(Game);
+ const oldViewSettings=Game.viewSettings.bind(Game);
+
+ const partyDefs=[
+  {id:'knight_tank',name:'騎士坦克',lv:20,cost:50000,role:'坦克',dmg:18,dr:3,desc:'打王時承受壓力並提供穩定近戰輸出。'},
+  {id:'elf_archer',name:'妖精弓手',lv:25,cost:70000,role:'遠攻',dmg:26,hit:4,desc:'遠距離輸出，適合長時間放置打王。'},
+  {id:'wizard_healer',name:'法師補師',lv:35,cost:120000,role:'補師',dmg:16,heal:90,desc:'每回合有機率恢復主角 HP。'},
+  {id:'dark_assassin',name:'黑妖刺客',lv:45,cost:180000,role:'爆發',dmg:42,crit:15,desc:'對 BOSS 額外造成高爆發傷害。'},
+  {id:'holy_support',name:'神聖劍士支援',lv:55,cost:260000,role:'支援',dmg:34,dr:4,heal:55,desc:'兼具輸出、減傷與恢復，適合挑戰高階王。'}
+ ];
+ const partyPower=(g,mdef)=>partyDefs.filter(p=>g.state.party?.members?.[p.id]).reduce((sum,p)=>sum+p.dmg+Math.floor(g.state.lv*0.45)+(mdef?.boss?Math.floor((p.crit||0)*1.6):0),0);
+
+ Object.assign(Game,{
+  migrateState(){oldMigrate();let s=this.state;if(!s)return;s.version=VERSION;s.party=s.party||{members:{}};s.offline=s.offline||{enabled:true,lastActive:Date.now(),totalSec:0};if(!s.settings)s.settings={};if(s.settings.offlineEnabled===undefined)s.settings.offlineEnabled=true;},
+  renderClassList(){oldRenderClassList();let box=document.getElementById('classList');if(box){box.querySelectorAll('button').forEach(b=>{if(b.dataset.class==='holyknight')b.onclick=()=>{this.selectedClass=b.dataset.class;box.querySelectorAll('button').forEach(x=>x.classList.remove('selected'));b.classList.add('selected');document.getElementById('confirmClass').disabled=false;};});}},
+  initMenus(){oldInitMenus();let tabs=document.getElementById('tabs');if(tabs&&!tabs.querySelector('[data-tab="party"]')){let btn=document.createElement('button');btn.className='btn tab';btn.dataset.tab='party';btn.textContent='隊伍/組隊';btn.onclick=()=>{this.tab='party';this.renderTab();};let before=tabs.querySelector('[data-tab="dungeon"]')||tabs.querySelector('[data-tab="pet"]')||tabs.children[3];tabs.insertBefore(btn,before||null);}},
+  save(show){if(this.state){this.state.offline=this.state.offline||{};this.state.offline.lastActive=Date.now();}oldSave(show);},
+  tick(){oldTick();if(this.state){this.state.offline=this.state.offline||{};this.state.offline.lastActive=Date.now();if(!this._v34AutoSaveAt||Date.now()-this._v34AutoSaveAt>15000){this._v34AutoSaveAt=Date.now();Store.save(this.state);}}},
+  applyOffline(){oldApplyOffline();let s=this.state;if(!s||s.settings?.offlineEnabled===false)return;let last=s.offline?.lastActive||s.lastSave||Date.now();let sec=Math.min(86400,Math.max(0,Math.floor((Date.now()-last)/1000)));if(sec<30)return;let cycles=Math.floor(sec/5);let stLv=s.lv||1;let partyBonus=Object.values(s.party?.members||{}).filter(Boolean).length*0.18;let petBonus=s.activePet?0.12:0;let guildBonus=s.guild?.name?Math.min(0.25,(s.guild.level||1)*0.025):0;let multiplier=1+partyBonus+petBonus+guildBonus;
+   let expGain=Math.floor(cycles*(stLv*7+25)*multiplier);let adenaGain=Math.floor(cycles*(stLv*14+60)*multiplier);let kills=Math.floor(cycles*0.7*multiplier);
+   s.exp=(s.exp||0)+expGain;s.adena=(s.adena||0)+adenaGain;s.v3Stats=s.v3Stats||{};s.v3Stats.kills=(s.v3Stats.kills||0)+kills;s.v3Stats.adenaEarned=(s.v3Stats.adenaEarned||0)+adenaGain;s.offline.totalSec=(s.offline.totalSec||0)+sec;s.offline.lastActive=Date.now();this.levelUp();this.log(`離線掛機：${Math.floor(sec/60)} 分鐘，EXP +${expGain.toLocaleString()}，金幣 +${adenaGain.toLocaleString()}，模擬擊殺 +${kills}`,'green');Store.save(s);},
+  equip(key){let it=this.invItem(key),d=it?DB.items[it.id]:null;if(d?.type==='weapon'&&this.state.lv<reqLvOf(it.id)){alert(`${d.name} 需要 Lv.${reqLvOf(it.id)} 才能裝備。`);return;}oldEquip(key);},
+  buy(id){let d=DB.items[id];if(d?.type==='weapon'&&this.state.lv<reqLvOf(id)){alert(`${d.name} 是 Lv.${reqLvOf(id)} 武器，目前等級不能購買，避免買了不能用。`);return;}oldBuy(id);},
+  recruitParty(id){let p=partyDefs.find(x=>x.id===id);if(!p)return;if(this.state.lv<p.lv){alert('等級不足，需要 Lv.'+p.lv);return}if(!this.state.party.members[id]){if(this.state.adena<p.cost){alert('金幣不足');return}this.state.adena-=p.cost;this.state.party.members[id]=true;this.log('隊友加入：'+p.name,'green');}this.render();},
+  dismissParty(id){if(this.state.party?.members?.[id]){delete this.state.party.members[id];this.log('隊友暫離隊伍。');this.render();}},
+  fight(){oldFight();let mon=this.mon();if(!mon||mon.hp<=0)return;let mdef=DB.mons[mon.id];let members=partyDefs.filter(p=>this.state.party?.members?.[p.id]);if(!members.length)return;let total=0;for(let p of members){let dmg=p.dmg+Math.floor(this.state.lv*0.45)+(mdef.boss?Math.floor((p.crit||0)*1.6):0);mon.hp-=dmg;total+=dmg;if(p.heal&&Math.random()<0.35)this.state.hp=Math.min(this.maxHp(),this.state.hp+p.heal);}this.blog(`隊伍協同攻擊 ${mdef.name}，造成 <span class="c-purple">${total}</span> 傷害。`);if(mon.hp<=0)this.kill(mdef);},
+  renderTab(){oldRenderTab();let el=document.getElementById('tabContent');if(!this.state||!el)return;if(this.tab==='party'){el.innerHTML=this.viewParty();el.querySelectorAll('[data-recruit-party]').forEach(b=>b.onclick=()=>this.recruitParty(b.dataset.recruitParty));el.querySelectorAll('[data-dismiss-party]').forEach(b=>b.onclick=()=>this.dismissParty(b.dataset.dismissParty));}},
+  viewParty(){let active=partyDefs.filter(p=>this.state.party?.members?.[p.id]);let bossDmg=active.reduce((a,p)=>a+p.dmg+Math.floor(this.state.lv*0.45)+Math.floor((p.crit||0)*1.6),0);let rows=partyDefs.map(p=>{let own=!!this.state.party?.members?.[p.id],lock=this.state.lv<p.lv;return `<div class="item row"><span><b class="${own?'c-gold':''}">${p.name}</b> <span class="pill">${p.role}</span><br><span class="small">需求 Lv.${p.lv}｜招募 ${p.cost.toLocaleString()} 金幣｜打王輸出約 ${p.dmg+Math.floor(this.state.lv*0.45)+Math.floor((p.crit||0)*1.6)} / 回合<br>${p.desc}</span></span><span>${own?`<button class="btn red" data-dismiss-party="${p.id}">離隊</button>`:`<button class="btn green" data-recruit-party="${p.id}" ${lock?'disabled':''}>招募</button>`}</span></div>`}).join('');return `<h3 class="title">隊伍 / 組隊打王</h3><div class="small">單機版無法真正同步雙開視窗，所以改為內建隊友系統。招募後，隊友會在戰鬥中自動協同攻擊，對 BOSS 特別有用。</div><div class="setting-card"><b class="c-gold">目前隊伍</b><br><span class="small">隊友 ${active.length}/5｜打王額外輸出約 ${bossDmg.toLocaleString()} / 回合｜離線收益加成 +${Math.floor(active.length*18)}%</span></div>${rows}`;},
+  viewSettings(){let html=oldViewSettings();let checked=this.state.settings?.offlineEnabled!==false?'checked':'';return html+`<div class="setting-card" style="margin-top:10px"><b class="c-gold">離線掛機</b><label class="row item"><span>啟用離線收益</span><input data-setting="offlineEnabled" type="checkbox" ${checked}></label><div class="small">離開目前視窗、瀏覽器節流或關閉後，下次讀取會依離線時間模擬經驗、金幣與擊殺。上限 24 小時。</div></div>`;}
+ });
+ window.addEventListener('beforeunload',()=>{try{if(Game.state){Game.state.offline=Game.state.offline||{};Game.state.offline.lastActive=Date.now();Store.save(Game.state);}}catch(e){}});
+ document.addEventListener('visibilitychange',()=>{try{if(Game.state&&document.hidden){Game.state.offline=Game.state.offline||{};Game.state.offline.lastActive=Date.now();Store.save(Game.state);}}catch(e){}});
+})();
+
+
+/* =========================
+   V3.5 Weapon / Equipment Progression Patch
+   修正：武器與防具進度 / 騎士武士刀與大馬過晚 / 妖精後期弓斷層 / 等級限制過硬
+   ========================= */
+(()=>{
+ const VERSION='3.5';
+ document.title='Lineage Idle V4.1';
+ document.querySelectorAll('.title').forEach(el=>{if(el.textContent.includes('Lineage Idle'))el.textContent='Lineage Idle V4.1';});
+ const startTitle=document.querySelector('#start h1'); if(startTitle)startTitle.textContent='Lineage Idle V4.1';
+
+ const addItem=(id,o)=>{DB.items[id]=Object.assign({id,rarity:'白',price:100,type:'material'},DB.items[id]||{},o,{id});};
+ const addWeapon=(id,name,weapon,dmg,rarity,price,reqLv,safe=6,stat={})=>addItem(id,{name,type:'weapon',weapon,dmg,safe,rarity,price,reqLv,stat});
+ const addArmor=(id,name,type,ac,rarity,price,reqLv,safe=4,stat={})=>addItem(id,{name,type,ac,safe,rarity,price,reqLv,stat});
+
+ // 1) 重新補足各職業武器曲線。舊裝備保留，但需求等級下修到掉落地圖可用。
+ addWeapon('long_sword','長劍','sword',8,'白',3500,8);
+ addWeapon('silver_sword','銀長劍','sword',11,'綠',9000,15)
+ addWeapon('rapier','細劍','sword',13,'綠',15000,22);
+ addWeapon('mail_breaker','破甲劍','sword',17,'藍',42000,35,6,{hit:2});
+ addWeapon('knight_valor_sword','騎士勇氣劍','sword',24,'紫',135000,52,6,{hit:3,dmg:2});
+ addWeapon('holy_avenger','神聖復仇者','sword',31,'橘',480000,72,6,{hit:5,dmg:5,mr:10});
+
+ addWeapon('short_bow','短弓','bow',7,'白',2800,5);
+ addWeapon('hunter_bow','獵人之弓','bow',13,'綠',12000,18,6,{hit:1});
+ addWeapon('elven_bow','妖精長弓','bow',18,'藍',38000,30,6,{dex:1,hit:2});
+ addWeapon('flame_bow','赤焰弓','bow',24,'紫',120000,48,6,{dmg:3});
+ addWeapon('moon_bow','月光弓','bow',31,'紫',260000,62,6,{dex:2,hit:4});
+ addWeapon('wind_bow','風靈神弓','bow',38,'橘',620000,78,6,{dex:3,spd:6,hit:6});
+ addWeapon('sayha_bow','沙哈之弓','bow',46,'紅',1500000,90,6,{dex:5,hit:9,dmg:8});
+
+ addWeapon('battle_axe','戰斧','axe',15,'綠',18000,22);
+ addWeapon('berserker_axe','狂戰士斧','axe',23,'藍',76000,42,6,{str:1,dmg:2});
+ addWeapon('giant_axe','巨人斧','axe',34,'紫',320000,65,6,{str:3,dmg:5,dr:2});
+ addWeapon('doom_axe','毀滅戰斧','axe',44,'橘',980000,84,6,{str:5,dmg:9,dr:4});
+
+ addWeapon('apprentice_staff','見習魔杖','staff',6,'白',2500,5,6,{int:1,mp:30});
+ addWeapon('sage_staff','賢者之杖','staff',16,'藍',60000,35,6,{int:2,wis:1,mp:80});
+ addWeapon('archmage_staff','大法師魔杖','staff',32,'橘',680000,78,6,{int:5,wis:3,mp:220});
+
+ addWeapon('steel_dualblade','鋼鐵雙刀','dualblade',14,'綠',22000,24,6,{dex:1});
+ addWeapon('assassin_dualblade','刺客雙刀','dualblade',28,'紫',190000,58,6,{dex:3,dmg:4});
+ addWeapon('shadow_claw','暗影鋼爪','claw',30,'紫',210000,60,6,{str:2,dex:2,dmg:4});
+
+ addWeapon('steel_spear','鋼鐵長槍','spear',15,'綠',19000,24,6,{hit:1});
+ addWeapon('storm_spear','暴風長槍','spear',30,'紫',240000,60,6,{str:2,hit:4});
+ addWeapon('dragon_spear','龍騎戰槍','spear',42,'橘',900000,82,6,{str:4,hit:7,dmg:6});
+
+ addWeapon('dragon_chain_sword','龍牙鎖鏈劍','chain_sword',33,'紫',280000,65,6,{str:2,hit:4});
+ addWeapon('phantom_kiringku','幻影奇古獸','kiringku',30,'紫',240000,62,6,{int:3,wis:2});
+
+ // 舊裝備需求等級下修，符合地圖節奏。
+ Object.assign(DB.items.katana||{}, {reqLv:12, price:12000, rarity:'綠'});
+ Object.assign(DB.items.damascus||{}, {reqLv:20, price:26000, rarity:'綠'});
+ Object.assign(DB.items.tsurugi||{}, {reqLv:32, price:60000, rarity:'藍'});
+ Object.assign(DB.items.red_sword||{}, {reqLv:45, price:115000, rarity:'紫'});
+ Object.assign(DB.items.death_blade||{}, {reqLv:60, price:360000, rarity:'橘'});
+ Object.assign(DB.items.dragon_slayer||{}, {reqLv:82, price:950000, rarity:'紅'});
+ Object.assign(DB.items.crossbow||{}, {reqLv:10, price:8000, rarity:'白'});
+ Object.assign(DB.items.ancient_bow||{}, {reqLv:38, price:75000, rarity:'藍', stat:Object.assign({dex:1,hit:2},DB.items.ancient_bow?.stat||{})});
+ Object.assign(DB.items.titan_axe||{}, {reqLv:55, price:210000, rarity:'紫'});
+ Object.assign(DB.items.gold_spear||{}, {reqLv:42, price:85000, rarity:'藍'});
+ Object.assign(DB.items.holy_sword||{}, {reqLv:45, price:130000, rarity:'紫'});
+ Object.assign(DB.items.crusader_blade||{}, {reqLv:65, price:360000, rarity:'橘'});
+
+ // 2) 防具也補中階曲線，避免只有鐵套跳古代/龍甲。
+ addArmor('bone_helm','骨盔','helmet',-3,'綠',9000,18);
+ addArmor('knight_helm','騎士頭盔','helmet',-5,'藍',42000,40,4,{hp:40});
+ addArmor('elven_chainmail','精靈鍊甲','armor',-9,'藍',56000,32,4,{dex:1,mr:8});
+ addArmor('plate_mail','金屬盔甲','armor',-10,'藍',65000,38,4,{hp:60});
+ addArmor('dark_robe','黑法師長袍','armor',-6,'藍',52000,35,4,{int:1,wis:1,mp:100});
+ addArmor('power_boots','力量長靴','boots',-4,'藍',50000,42,4,{str:1});
+ addArmor('wind_boots','風之長靴','boots',-4,'藍',50000,42,4,{dex:1,spd:3});
+ addArmor('guardian_cloak','守護斗篷','cloak',-5,'紫',140000,55,4,{dr:3,mr:12});
+ addArmor('hero_armor','英雄盔甲','armor',-15,'紫',260000,62,4,{hp:120,dr:3});
+
+ const addDrop=(mapId,itemId,rate)=>{let m=DB.maps.find(x=>x.id===mapId);if(m&&DB.items[itemId]&&!m.drops.some(d=>d.id===itemId))m.drops.push({id:itemId,rate});};
+ const bumpDrop=(mapId,itemId,rate)=>{let m=DB.maps.find(x=>x.id===mapId);if(!m)return;let d=m.drops.find(x=>x.id===itemId);if(d)d.rate=Math.max(d.rate,rate);else addDrop(mapId,itemId,rate);};
+
+ // 3) 掉落節奏重排：騎士早期就能取得武士刀/大馬，妖精一路都有弓。
+ bumpDrop('talking','long_sword',7.5); bumpDrop('talking','short_bow',7.5); bumpDrop('talking','apprentice_staff',5.5);
+ bumpDrop('talking','katana',2.8); // 騎士不用等到破關，早期小機率取得
+ bumpDrop('elf_forest','hunter_bow',8.5); bumpDrop('elf_forest','elven_bow',3.2); bumpDrop('elf_forest','bone_helm',4.5);
+ bumpDrop('gludin','katana',7.0); bumpDrop('gludin','damascus',4.0); bumpDrop('gludin','battle_axe',4.5); bumpDrop('gludin','steel_spear',4.5); bumpDrop('gludin','steel_dualblade',3.5);
+ bumpDrop('giran_prison','damascus',8.0); bumpDrop('giran_prison','rapier',5.0); bumpDrop('giran_prison','elven_bow',5.5); bumpDrop('giran_prison','sage_staff',3.5); bumpDrop('giran_prison','plate_mail',4.0); bumpDrop('giran_prison','elven_chainmail',4.0);
+ bumpDrop('dragon_valley','tsurugi',6.0); bumpDrop('dragon_valley','flame_bow',5.5); bumpDrop('dragon_valley','berserker_axe',4.5); bumpDrop('dragon_valley','gold_spear',4.5); bumpDrop('dragon_valley','holy_sword',3.5); bumpDrop('dragon_valley','power_boots',3.5); bumpDrop('dragon_valley','wind_boots',3.5);
+ bumpDrop('ivory','ice_staff',6.0); bumpDrop('ivory','sage_staff',5.5); bumpDrop('ivory','phantom_kiringku',2.8); bumpDrop('ivory','dark_robe',4.5); bumpDrop('ivory','moon_bow',2.4);
+ bumpDrop('toi_1','red_sword',4.8); bumpDrop('toi_1','moon_bow',4.2); bumpDrop('toi_1','assassin_dualblade',3.0); bumpDrop('toi_1','shadow_claw',3.0); bumpDrop('toi_1','guardian_cloak',3.5);
+ bumpDrop('toi_4','death_blade',4.0); bumpDrop('toi_4','wind_bow',3.2); bumpDrop('toi_4','giant_axe',3.5); bumpDrop('toi_4','storm_spear',3.5); bumpDrop('toi_4','crusader_blade',2.5); bumpDrop('toi_4','hero_armor',3.0);
+ bumpDrop('toi_10','wind_bow',4.2); bumpDrop('toi_10','dragon_chain_sword',3.8); bumpDrop('toi_10','phantom_kiringku',3.8); bumpDrop('toi_10','archmage_staff',2.8); bumpDrop('toi_10','doom_axe',2.4);
+ bumpDrop('lastabad','sayha_bow',2.8); bumpDrop('lastabad','doom_axe',3.0); bumpDrop('lastabad','dragon_spear',3.0); bumpDrop('lastabad','holy_avenger',2.5); bumpDrop('lastabad','archmage_staff',2.6);
+ ['antharas','fafu','valakas','lind'].forEach(m=>{bumpDrop(m,'sayha_bow',2.8);bumpDrop(m,'dragon_spear',2.8);bumpDrop(m,'doom_axe',2.8);bumpDrop(m,'holy_avenger',2.8);bumpDrop(m,'archmage_staff',2.8);});
+
+ const WEAPON_REQ=Object.fromEntries(Object.values(DB.items).filter(d=>d.type==='weapon').map(d=>[d.id,d.reqLv||1]));
+ const eqTypes=['weapon','helmet','tshirt','armor','cloak','gloves','boots','leggings','ring','earring','amulet','belt'];
+ const rank={'白':1,'綠':2,'藍':3,'紫':4,'橘':5,'紅':6};
+ const shopCats=[
+  {title:'補給品',note:'常態販售。',items:['potion_red','potion_orange','potion_clear']},
+  {title:'強化卷軸',note:'只販售一般卷軸，祝福卷軸保留給掉落/製作/副本。',items:['scroll_armor','scroll_weapon','scroll_accessory']},
+  {title:'近戰劍系',note:'王族、騎士、神聖劍士、劍士前中期武器。',items:['orc_dagger','long_sword','katana','damascus','rapier','tsurugi','red_sword','holy_sword']},
+  {title:'妖精弓系',note:'妖精從低階到後期都有弓，不再只靠第二張地圖兩把弓。',items:['short_bow','crossbow','hunter_bow','elven_bow','ancient_bow','flame_bow','moon_bow','wind_bow']},
+  {title:'法師 / 幻術',note:'魔杖與奇古獸路線。',items:['apprentice_staff','staff_mana','sage_staff','ice_staff','phantom_kiringku']},
+  {title:'黑妖 / 狂戰 / 槍騎 / 龍騎',note:'各職業過渡武器，不再只有後期才出。',items:['steel_dualblade','dual_blade','dark_claw','battle_axe','berserker_axe','titan_axe','steel_spear','gold_spear','chain_sword','dragon_chain_sword']},
+  {title:'防具過渡裝',note:'從鐵套到英雄裝中間補齊，不用直接跳終局防具。',items:['tshirt','iron_helm','bone_helm','iron_gloves','iron_boots','iron_leggings','prot_cloak','iron_armor','magic_cloak','elven_chainmail','plate_mail','dark_robe','power_boots','wind_boots','knight_helm','guardian_cloak','hero_armor']},
+  {title:'基礎飾品',note:'高階龍戒、神話耳環仍由掉落、副本、拍賣場取得。',items:['skull_necklace','brave_necklace','def_ring','wisdom_ring','mana_earring','ogre_belt']},
+  {title:'技能書 / 魔法書',dynamic:'books',note:'只顯示目前職業可學的技能書。'}
+ ];
+ const reqLv=id=>DB.items[id]?.reqLv||WEAPON_REQ[id]||1;
+ const canUseWeapon=(game,d)=>!d.weapon||game.cls().weapons.includes(d.weapon);
+ const canShowBook=(game,d)=>{let sk=DB.skills[d.skill];if(!sk)return false;let c=game.cls();return sk.job==='general'?(c.magic>0&&sk.lv<=Math.max(8,c.magic*8+16)):sk.job===game.state.classId;};
+ const priceOf=id=>{let d=DB.items[id]||{},base=d.price||100,lv=reqLv(id),r=rank[d.rarity]||1;if(d.type==='potion')return base;if(d.type==='scroll')return Math.ceil(base*1.05/100)*100;if(d.type==='book'){let sk=DB.skills[d.skill]||{};return Math.ceil((3200+Math.pow(sk.lv||1,1.5)*390*(sk.job==='general'?1:1.25))/100)*100;}if(d.type==='weapon')return Math.ceil((base+lv*lv*70+r*2200)/100)*100;if(eqTypes.includes(d.type))return Math.ceil((base+lv*lv*45+r*1600)/100)*100;return base;};
+ const statLine=d=>{let p=[];if(d.reqLv)p.push('Lv.'+d.reqLv);if(d.rarity)p.push(d.rarity);if(d.weapon)p.push(d.weapon);if(d.dmg)p.push('傷害 '+d.dmg);if(d.ac!==undefined)p.push('AC '+d.ac);if(d.heal)p.push('HP +'+d.heal);for(let [k,v] of Object.entries(d.stat||{}))p.push(`${k.toUpperCase()} ${v>0?'+':''}${v}`);if(d.skill&&DB.skills[d.skill]){let s=DB.skills[d.skill];p.push(s.type);p.push('MP '+s.mp);}return p.join('｜')||'一般道具';};
+ const oldMigrate=Game.migrateState.bind(Game);
+ const oldRenderTab=Game.renderTab.bind(Game);
+ Object.assign(Game,{
+  migrateState(){oldMigrate();if(this.state)this.state.version=VERSION;},
+  buy(id){let d=DB.items[id];if(!d)return;let price=priceOf(id);if(d.type==='weapon'&&!canUseWeapon(this,d)){alert(`${this.cls().name} 不能使用 ${d.name}。`);return;}if(this.state.lv<reqLv(id)){alert(`${d.name} 建議/需求 Lv.${reqLv(id)}，目前等級先不要購買，避免買了不能用。`);return;}if(d.type==='book'&&this.state.skills?.[d.skill]){alert('已學會此技能，不需要重複購買。');return;}if(this.state.adena<price){alert('金幣不足');return;}this.state.adena-=price;this.addItem(id,1,0);this.log(`購買 ${d.name}，花費 ${price.toLocaleString()} 金幣。`,'green');this.render();},
+  equip(key){let it=this.invItem(key),d=it&&DB.items[it.id];if(!d)return;if(d.type==='weapon'){if(!canUseWeapon(this,d)){alert(`${this.cls().name} 不能裝備 ${d.name}。`);return;}if(this.state.lv<reqLv(it.id)){alert(`${d.name} 需要 Lv.${reqLv(it.id)} 才能裝備。`);return;}}else if(eqTypes.includes(d.type)&&this.state.lv<reqLv(it.id)){alert(`${d.name} 需要 Lv.${reqLv(it.id)} 才能裝備。`);return;}let original=this.invItem(key);if(!original)return;key=this.splitOne(key);let slot=d.type;if(d.type==='ring')slot=!this.state.equip.ring1?'ring1':(!this.state.equip.ring2?'ring2':'ring1');if(d.type==='earring')slot=!this.state.equip.earring1?'earring1':(!this.state.equip.earring2?'earring2':'earring1');this.state.equip[slot]=key;if(this.state.inventory[key])this.state.inventory[key].qty=1;this.log('已裝備 '+d.name,'green');this.render();},
+  viewShop(){let html=`<h3 class="title">商店</h3><div class="small">V3.5 已重排武器與防具進度：商店販售前中期可用裝備；終局紅裝仍由高階地圖、副本、拍賣場取得。未達需求等級或職業不能用的武器不建議購買。</div>`;for(let cat of shopCats){let entries=[];if(cat.dynamic==='books')entries=Object.values(DB.items).filter(d=>d.type==='book'&&canShowBook(this,d)).sort((a,b)=>(DB.skills[a.skill]?.lv||1)-(DB.skills[b.skill]?.lv||1)||a.name.localeCompare(b.name)).map(d=>d.id);else entries=cat.items.filter(id=>DB.items[id]);if(!entries.length)continue;html+=`<h3 class="title" style="margin-top:18px">${cat.title}</h3><div class="small">${cat.note||''}</div>`;for(let id of entries){let d=DB.items[id];let locked=this.state.lv<reqLv(id)||(d.type==='weapon'&&!canUseWeapon(this,d));let learned=d.type==='book'&&this.state.skills?.[d.skill];html+=`<div class="item row"><span class="rarity-${d.rarity}"><b>${d.name}</b><br><span class="small">${statLine(d)}${d.type==='weapon'&&!canUseWeapon(this,d)?'｜本職不可用':''}${learned?'｜已學會':''}</span></span><span><b class="c-gold">${priceOf(id).toLocaleString()}</b> <button class="btn ${locked||learned?'':'green'}" data-buy="${id}" ${locked||learned?'disabled':''}>購買</button></span></div>`;}}
+   html+=`<h3 class="title" style="margin-top:18px">終局裝備來源</h3><div class="small">死亡騎士烈炎劍、屠龍劍、沙哈之弓、毀滅戰斧、龍槍、大法師魔杖、龍甲、龍戒、神話耳環等主要從傲慢高層、拉斯塔巴德、四龍地圖、副本、製作與拍賣場取得。</div>`;return html;},
+  viewMaps(){return DB.maps.map(m=>`<div class="item"><b class="c-gold">${m.name}</b> <span class="pill">Lv.${m.min}-${m.max}</span><br><span class="small">怪物：${m.monsters.map(id=>DB.mons[id].name).join('、')}</span><br><span class="small">掉落：${m.drops.map(d=>{let it=DB.items[d.id];return it?`${it.name}${it.reqLv?`(Lv.${it.reqLv})`:''}`:d.id}).join('、')}</span></div>`).join('')},
+  renderTab(){oldRenderTab();let el=document.getElementById('tabContent');if(!this.state||!el)return;if(this.tab==='shop'){el.querySelectorAll('[data-buy]').forEach(b=>b.onclick=()=>this.buy(b.dataset.buy));}}
+ });
+})();
+
+
+
+/* =========================================================
+   V4.0 Enchant System Upgrade Patch
+   - 獨立強化頁
+   - 武卷 / 祝武 / 防卷 / 祝防 / 飾品卷選擇
+   - 安定值與成功率顯示
+   - 強化紀錄與排行榜基礎
+   ========================================================= */
+(()=>{
+ const VERSION='4.0';
+ document.title='Lineage Idle V4.1';
+ document.querySelectorAll('.title').forEach(el=>{if(el.textContent.includes('Lineage Idle'))el.textContent='Lineage Idle V4.1';});
+ const startTitle=document.querySelector('#start h1'); if(startTitle)startTitle.textContent='Lineage Idle V4.1';
+ const topTitle=document.querySelector('.top .title'); if(topTitle)topTitle.textContent='Lineage Idle V4.1';
+ const loadBtn=document.getElementById('loadGame'); if(loadBtn)loadBtn.textContent='讀取存檔';
+
+ const EQUIP_TYPES=['weapon','helmet','tshirt','armor','cloak','gloves','boots','leggings','ring','earring','amulet','belt'];
+ const ARMOR_TYPES=['helmet','tshirt','armor','cloak','gloves','boots','leggings'];
+ const ACC_TYPES=['ring','earring','amulet','belt'];
+ const SCROLLS={
+   normal_weapon:{id:'scroll_weapon',label:'武卷強化',short:'武卷',bonus:0,desc:'一般武器強化卷軸。'},
+   bless_weapon:{id:'scroll_bless_weapon',label:'祝武強化',short:'祝武',bonus:.18,desc:'受祝福武器卷軸，超安定後成功率較高。'},
+   normal_armor:{id:'scroll_armor',label:'防卷強化',short:'防卷',bonus:0,desc:'一般防具強化卷軸。'},
+   bless_armor:{id:'scroll_bless_armor',label:'祝防強化',short:'祝防',bonus:.18,desc:'受祝福防具卷軸，超安定後成功率較高。'},
+   accessory:{id:'scroll_accessory',label:'飾品強化',short:'飾品卷',bonus:0,desc:'飾品專用卷軸。'}
+ };
+ const rank={'白':1,'綠':2,'藍':3,'紫':4,'橘':5,'紅':6};
+ const esc=s=>String(s??'').replace(/[&<>"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]));
+ const isEq=d=>d&&EQUIP_TYPES.includes(d.type);
+ const isWeapon=d=>d&&d.type==='weapon';
+ const isArmor=d=>d&&ARMOR_TYPES.includes(d.type);
+ const isAcc=d=>d&&ACC_TYPES.includes(d.type);
+ const scrollCount=(game,id)=>Object.values(game.state.inventory||{}).filter(x=>x.id===id).reduce((a,x)=>a+(x.qty||1),0);
+ const findScrollKey=(game,id)=>Object.keys(game.state.inventory||{}).find(k=>game.state.inventory[k].id===id);
+ const scrollModeFor=(d,bless=false)=>isWeapon(d)?(bless?'bless_weapon':'normal_weapon'):isArmor(d)?(bless?'bless_armor':'normal_armor'):isAcc(d)?'accessory':null;
+ const safeOf=d=>d?.safe??(isWeapon(d)?6:isArmor(d)?4:0);
+ const rateOf=(d,enchant,mode)=>{
+   const safe=safeOf(d), over=Math.max(0,(enchant||0)-safe+1);
+   if(over<=0)return 1;
+   if(isWeapon(d)){
+     const table=[.66,.45,.30,.18,.12,.08,.05];
+     let r=table[Math.min(over-1,table.length-1)];
+     if(mode==='bless_weapon')r=Math.min(.95,r+(SCROLLS.bless_weapon.bonus||0));
+     return Math.max(.03,r);
+   }
+   if(isArmor(d)){
+     const table=[.70,.50,.30,.15,.10,.07,.04];
+     let r=table[Math.min(over-1,table.length-1)];
+     if(mode==='bless_armor')r=Math.min(.95,r+(SCROLLS.bless_armor.bonus||0));
+     return Math.max(.03,r);
+   }
+   if(isAcc(d)){
+     const table=[.75,.55,.38,.24,.15,.09,.05];
+     return Math.max(.03,table[Math.min(over-1,table.length-1)]);
+   }
+   return 0;
+ };
+ const powerBy=(game,key)=>game.itemPowerByKey?game.itemPowerByKey(key):0;
+ const statLine=(game,key)=>game.statLineForKey?game.statLineForKey(key):'';
+ const itemHtml=(game,key)=>{
+   const it=game.invItem(key),d=it&&DB.items[it.id]; if(!d)return '';
+   const safe=safeOf(d),ench=it.enchant||0,equipped=Object.values(game.state.equip||{}).includes(key);
+   return `<b class="rarity-${d.rarity}">${game.itemName(key)}</b> ${equipped?'<span class="pill">裝備中</span>':''}<br><span class="small">${game.typeName(d.type)}｜安定值 +${safe}｜目前 +${ench}｜戰力 ${powerBy(game,key)}${statLine(game,key)?'｜'+statLine(game,key):''}</span>`;
+ };
+ const maxEnchant=(game)=>Object.values(game.state.inventory||{}).filter(x=>DB.items[x.id]&&EQUIP_TYPES.includes(DB.items[x.id].type)).reduce((m,x)=>Math.max(m,x.enchant||0),0);
+ const oldInitMenus=Game.initMenus.bind(Game);
+ const oldRenderTab=Game.renderTab.bind(Game);
+ const oldMigrate=Game.migrateState.bind(Game);
+ const oldAddItem=Game.addItem.bind(Game);
+ const oldKill=Game.kill.bind(Game);
+
+ Object.assign(Game,{
+   migrateState(){oldMigrate();if(!this.state)return;this.state.version=VERSION;this.state.enchantLog=this.state.enchantLog||[];this.state.stats2=this.state.stats2||{};this.state.stats2.enchantTry=this.state.stats2.enchantTry||0;this.state.stats2.enchantSuccess=this.state.stats2.enchantSuccess||0;},
+   initMenus(){oldInitMenus();let tabs=document.getElementById('tabs');if(tabs&&!tabs.querySelector('[data-tab="enchant"]')){let btn=document.createElement('button');btn.className='btn tab';btn.dataset.tab='enchant';btn.textContent='強化';btn.onclick=()=>{this.tab='enchant';this.renderTab();};let before=tabs.querySelector('[data-tab="refine"]')||tabs.querySelector('[data-tab="equipment"]')?.nextSibling;tabs.insertBefore(btn,before||null);}},
+   addItem(id,qty=1,enchant=0){oldAddItem(id,qty,enchant);},
+   kill(mdef){oldKill(mdef); if(mdef&&mdef.boss){
+      const bonusDrops=[['scroll_bless_weapon',8.0],['scroll_bless_armor',9.0],['scroll_accessory',6.0]];
+      bonusDrops.forEach(([id,rate])=>{if(DB.items[id]&&Math.random()*100<rate){this.addItem(id,1,0);this.log('BOSS 額外掉落：'+DB.items[id].name,'green');}});
+   }},
+   enchant(key){this.tab='enchant';this.state.ui=this.state.ui||{};this.state.ui.enchantTarget=key;this.render();},
+   canEnchantKey(key){let it=this.invItem(key),d=it&&DB.items[it.id];return !!(it&&isEq(d));},
+   chooseEnchantTarget(key){if(!this.canEnchantKey(key)){alert('此道具不能強化');return;}this.state.ui=this.state.ui||{};this.state.ui.enchantTarget=key;this.render();},
+   enchantModesForKey(key){let it=this.invItem(key),d=it&&DB.items[it.id];if(!d)return[];if(isWeapon(d))return ['normal_weapon','bless_weapon'];if(isArmor(d))return ['normal_armor','bless_armor'];if(isAcc(d))return ['accessory'];return[];},
+   doEnchant(key,mode){
+     if(!this.canEnchantKey(key)){alert('此道具不能強化');return;}
+     let it=this.invItem(key),d=DB.items[it.id],m=SCROLLS[mode];
+     if(!m){alert('卷軸種類錯誤');return;}
+     if(!this.enchantModesForKey(key).includes(mode)){alert('此卷軸不能用在這個裝備類型');return;}
+     let scrollKey=findScrollKey(this,m.id);
+     if(!scrollKey){alert('沒有 '+(DB.items[m.id]?.name||m.short));return;}
+     let oldEnchant=it.enchant||0,rate=rateOf(d,oldEnchant,mode),success=Math.random()<rate;
+     let equippedSlots=Object.keys(this.state.equip||{}).filter(s=>this.state.equip[s]===key);
+     this.removeItem(scrollKey,1);
+     this.state.stats2=this.state.stats2||{};this.state.stats2.enchantTry=(this.state.stats2.enchantTry||0)+1;
+     let log={time:Date.now(),item:d.name,before:oldEnchant,mode:m.short,rate:Math.round(rate*100),success};
+     if(success){
+       this.state.stats2.enchantSuccess=(this.state.stats2.enchantSuccess||0)+1;
+       let next=oldEnchant+1;
+       this.removeItem(key,1);
+       this.addItem(it.id,1,next);
+       let newKey=Object.keys(this.state.inventory).find(k=>this.state.inventory[k].id===it.id&&this.state.inventory[k].enchant===next&&!Object.values(this.state.equip||{}).includes(k));
+       equippedSlots.forEach(s=>this.state.equip[s]=newKey);
+       this.state.ui=this.state.ui||{};this.state.ui.enchantTarget=newKey;
+       log.after=next;
+       this.log(`${m.short}：${d.name} +${oldEnchant} → +${next} 強化成功。成功率 ${Math.round(rate*100)}%`,'green');
+       if(next>=9)this.log(`<span class="c-gold">高強化達成：+${next} ${d.name}</span>`,'green');
+     }else{
+       this.removeItem(key,1);
+       this.state.ui=this.state.ui||{};this.state.ui.enchantTarget=null;
+       log.destroyed=true;
+       this.log(`${m.short}：${d.name} +${oldEnchant} 強化失敗，裝備消失。成功率 ${Math.round(rate*100)}%`,'red');
+     }
+     this.state.enchantLog=this.state.enchantLog||[];this.state.enchantLog.unshift(log);this.state.enchantLog=this.state.enchantLog.slice(0,60);
+     this.save(false);this.render();
+   },
+   viewEnchant(){
+     this.state.ui=this.state.ui||{};
+     const rows=Object.entries(this.state.inventory||{}).filter(([k])=>this.canEnchantKey(k)).sort((a,b)=>{
+       let da=DB.items[a[1].id],db=DB.items[b[1].id];return (rank[db.rarity]||0)-(rank[da.rarity]||0)||(b[1].enchant||0)-(a[1].enchant||0)||da.name.localeCompare(db.name);
+     });
+     let target=this.state.ui.enchantTarget;if(!target||!this.canEnchantKey(target))target=rows[0]?.[0]||null;
+     this.state.ui.enchantTarget=target;
+     const list=rows.map(([k,it])=>`<div class="item row"><span>${itemHtml(this,k)}</span><span><button class="btn ${k===target?'green':''}" data-enchant-target="${k}">${k===target?'選取中':'選擇'}</button></span></div>`).join('')||'<div class="small">沒有可強化裝備。</div>';
+     let panel='';
+     if(target){
+       let it=this.invItem(target),d=DB.items[it.id],modes=this.enchantModesForKey(target),safe=safeOf(d),ench=it.enchant||0;
+       let modeRows=modes.map(mode=>{let m=SCROLLS[mode],count=scrollCount(this,m.id),rate=rateOf(d,ench,mode),over=ench>=safe;return `<div class="item row"><span><b class="c-gold">${m.label}</b> <span class="pill">持有 ${count}</span><br><span class="small">${m.desc}｜${over?'超過安定值':'安定內'}｜成功率 ${Math.round(rate*100)}%</span></span><span><button class="btn ${count?'green':''}" data-enchant-do="${mode}" data-key="${target}" ${count?'':'disabled'}>強化</button></span></div>`;}).join('');
+       panel=`<div class="setting-card"><h3 class="title">目標裝備</h3><div class="item">${itemHtml(this,target)}</div><div class="small">安定值 +${safe}。目前 +${ench}，${ench<safe?'仍在安定值內，成功率 100%。':'已超過安定值，失敗會消失。'}</div>${modeRows}</div>`;
+     }
+     let tryN=this.state.stats2?.enchantTry||0,suc=this.state.stats2?.enchantSuccess||0;
+     let logs=(this.state.enchantLog||[]).slice(0,15).map(x=>`<div class="item"><span class="${x.success?'c-green':'c-red'}">${new Date(x.time).toLocaleString()}｜${x.mode}｜${x.item} +${x.before}${x.success?' → +'+x.after:' 失敗消失'}｜${x.rate}%</span></div>`).join('')||'<div class="small">尚無強化紀錄。</div>';
+     return `<h3 class="title">裝備強化 V4</h3><div class="small">可手動選擇武卷、祝武、防卷、祝防或飾品卷。祝福卷軸不再被系統自動吃掉，會顯示成功率與安定值。</div><div class="setting-grid"><div class="setting-card"><b class="c-gold">強化統計</b><div class="stat" style="margin-top:8px"><div>嘗試 ${tryN}</div><div>成功 ${suc}</div><div>成功率 ${tryN?Math.round(suc/tryN*100):0}%</div><div>最高強化 +${maxEnchant(this)}</div></div><div class="small" style="margin-top:8px">BOSS 會額外機率掉落祝武、祝防、飾品卷。</div></div>${panel}</div><h3 class="title" style="margin-top:18px">可強化裝備</h3>${list}<h3 class="title" style="margin-top:18px">強化紀錄</h3>${logs}`;
+   },
+   viewShop(){
+     let base=(typeof Game.__v4OldViewShop==='function'?Game.__v4OldViewShop.call(this):(this.__proto__.viewShop?this.__proto__.viewShop.call(this):''));
+     return base;
+   },
+   renderTab(){oldRenderTab();let el=document.getElementById('tabContent');if(!this.state||!el)return;if(this.tab==='enchant')el.innerHTML=this.viewEnchant();
+     if(this.tab==='enchant'){
+       el.querySelectorAll('[data-enchant-target]').forEach(b=>b.onclick=()=>this.chooseEnchantTarget(b.dataset.enchantTarget));
+       el.querySelectorAll('[data-enchant-do]').forEach(b=>b.onclick=()=>this.doEnchant(b.dataset.key,b.dataset.enchantDo));
+     }
+   }
+ });
+ // 保留 V3.5 商店，但補強說明與確保祝福卷軸不在一般強化中被自動消耗。
+ Game.__v4OldViewShop=Game.viewShop.bind(Game);
+ const oldViewShop=Game.viewShop.bind(Game);
+ Game.viewShop=function(){let html=oldViewShop();return String(html).replace('<h3 class="title">商店</h3>','<h3 class="title">商店</h3><div class="small">V4：一般商店販售武卷、防卷、飾品卷；祝武/祝防主要由 BOSS、副本、製作或拍賣場取得，強化頁可手動選擇。</div>');};
+})();
+
+
+
+/* ==============================
+   V4.1 Patch
+   重構：武器/防具官方化、商店移除裝備販售、加入經驗藥水
+   ============================== */
+(()=>{
+ const VERSION='4.1';
+ const rarityRank={'白':1,'綠':2,'藍':3,'紫':4,'橘':5,'紅':6};
+ const esc=s=>String(s??'').replace(/[&<>\"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;'}[m]||m));
+ const put=(id,o)=>{DB.items[id]=Object.assign(DB.items[id]||{id},o,{id});return DB.items[id];};
+ const weapon=(id,name,weapon,small,large,rarity='白',reqLv=1,safe=6,stat={},extra={})=>put(id,{name,type:'weapon',weapon,small,large,dmg:Math.max(1,Math.round((small+large)/2)),safe,rarity,reqLv,price:0,stat,officialLike:true,...extra});
+ const armor=(id,name,type,ac,rarity='白',reqLv=1,safe=4,stat={},extra={})=>put(id,{name,type,ac,safe,rarity,reqLv,price:0,stat,officialLike:true,...extra});
+ const acc=(id,name,type,stat={},rarity='白',reqLv=1,safe=0)=>put(id,{name,type,stat,rarity,reqLv,safe,price:0,officialLike:true});
+ const consumable=(id,o)=>put(id,o);
+
+ // 1) 官方風格武器資料：名稱、大小怪攻擊、安定值、職業武器類型。
+ weapon('orc_dagger','短劍','dagger',4,2,'白',1,6,{hit:1});
+ weapon('silver_dagger','銀短劍','dagger',4,2,'白',8,6,{hit:1},{undead:true});
+ weapon('mail_breaker','破甲劍','dagger',4,5,'綠',22,6,{hit:3});
+ weapon('long_sword','長劍','sword',8,12,'白',8,6,{hit:1});
+ weapon('silver_sword','銀長劍','sword',8,12,'綠',16,6,{hit:1},{undead:true});
+ weapon('damascus','大馬士革刀','sword',10,11,'綠',20,6,{hit:2},{unbreakable:true});
+ weapon('katana','武士刀','sword',10,12,'綠',24,6,{hit:2,dmg:1});
+ weapon('rapier','細劍','sword',11,6,'綠',28,6,{hit:3},{undead:true});
+ weapon('tsurugi','瑟魯基之劍','sword',16,10,'藍',40,6,{hit:2,dmg:2});
+ weapon('red_sword','赤焰之劍','sword',14,14,'紫',52,6,{hit:3,dmg:4});
+ weapon('death_blade','死亡騎士烈炎劍','sword',18,10,'橘',65,6,{hit:5,dmg:7,spd:3});
+ weapon('holy_sword','神聖長劍','sword',15,15,'紫',50,6,{hit:3,dmg:4,mr:5});
+ weapon('holy_avenger','神聖復仇者','sword',19,18,'橘',72,6,{hit:5,dmg:7,mr:12});
+ weapon('twohand_sword','雙手劍','twohand',12,13,'綠',25,6,{dmg:2});
+ weapon('great_sword','巨劍','twohand',14,12,'藍',42,6,{dmg:3});
+ weapon('crusader_blade','聖騎士之劍','twohand',17,17,'橘',66,6,{hit:4,dmg:6,dr:3});
+ weapon('dragon_slayer','屠龍劍','twohand',21,24,'紅',85,6,{hit:6,dmg:12,dr:5});
+ weapon('short_bow','短弓','bow',3,3,'白',1,6,{hit:1});
+ weapon('bow','弓','bow',4,4,'白',8,6,{hit:1});
+ weapon('hunter_bow','獵人之弓','bow',5,5,'綠',18,6,{hit:2});
+ weapon('crossbow','十字弓','bow',6,6,'綠',24,6,{hit:3});
+ weapon('elven_bow','妖精長弓','bow',7,7,'藍',34,6,{hit:4,dex:1});
+ weapon('ancient_bow','古代妖精弓','bow',8,8,'紫',48,6,{hit:5,dmg:3,dex:2});
+ weapon('flame_bow','赤焰之弓','bow',9,9,'紫',56,6,{hit:5,dmg:5});
+ weapon('moon_bow','月光弓','bow',10,10,'橘',65,6,{hit:6,dmg:7,dex:2});
+ weapon('wind_bow','風靈神弓','bow',11,11,'橘',74,6,{hit:7,dmg:9,dex:3,spd:5});
+ weapon('sayha_bow','沙哈之弓','bow',12,12,'紅',86,6,{hit:9,dmg:13,dex:4,spd:8});
+ weapon('staff','魔杖','staff',2,3,'白',1,6,{int:1,mp:20});
+ weapon('wizard_staff','巫術魔杖','staff',3,3,'綠',18,6,{int:1,wis:1,mp:40});
+ weapon('staff_mana','瑪那魔杖','staff',7,7,'藍',30,6,{int:1,wis:1,mp:80});
+ weapon('sage_staff','賢者之杖','staff',8,8,'紫',45,6,{int:2,wis:1,mp:120});
+ weapon('ice_staff','冰之女王魔杖','staff',9,9,'紫',55,6,{int:3,mp:150});
+ weapon('archmage_staff','大法師魔杖','staff',12,12,'橘',75,6,{int:5,wis:3,mp:240});
+ weapon('steel_dualblade','鋼鐵雙刀','dualblade',10,8,'綠',28,6,{hit:2,dmg:2});
+ weapon('dual_blade','幽暗雙刀','dualblade',13,10,'藍',40,6,{hit:3,dmg:4});
+ weapon('assassin_dualblade','暗殺軍王雙刀','dualblade',15,12,'紫',58,6,{hit:4,dmg:6});
+ weapon('dark_claw','黑暗鋼爪','claw',16,14,'藍',42,6,{hit:3,dmg:5});
+ weapon('shadow_claw','暗影鋼爪','claw',18,16,'紫',60,6,{hit:5,dmg:7});
+ weapon('chain_sword','鎖鏈劍','chain_sword',17,13,'藍',45,6,{hit:3,dmg:4});
+ weapon('dragon_chain_sword','消滅者鎖鏈劍','chain_sword',20,16,'橘',70,6,{hit:5,dmg:8});
+ weapon('kiringku','奇古獸','kiringku',15,15,'藍',42,6,{int:1,wis:1,dmg:3});
+ weapon('phantom_kiringku','幻象奇古獸','kiringku',18,18,'紫',62,6,{int:3,wis:2,dmg:5});
+ weapon('silver_axe','銀斧','axe',17,24,'綠',24,6,{dmg:2},{undead:true});
+ weapon('battle_axe','戰斧','axe',14,16,'綠',28,6,{dmg:3});
+ weapon('berserker_axe','狂戰士斧','axe',18,20,'藍',45,6,{dmg:6});
+ weapon('titan_axe','泰坦戰斧','axe',22,24,'紫',62,6,{dmg:9,dr:3});
+ weapon('doom_axe','毀滅戰斧','axe',25,28,'橘',78,6,{dmg:13,dr:5});
+ weapon('spear','槍','spear',8,12,'白',10,6,{hit:1});
+ weapon('steel_spear','鋼鐵長槍','spear',12,16,'綠',30,6,{hit:3});
+ weapon('gold_spear','黃金槍','spear',15,18,'藍',45,6,{hit:4,dmg:4});
+ weapon('storm_spear','風暴長槍','spear',18,22,'紫',64,6,{hit:5,dmg:7,spd:3});
+ weapon('dragon_spear','龍槍','spear',22,26,'橘',80,6,{hit:7,dmg:11,dr:4});
+
+ // 2) 官方風格防具/飾品：安定值以防具+4、飾品+0為主，名稱與部位回歸天堂常見裝備。
+ armor('tshirt','T恤','tshirt',0,'白',1,4,{});
+ armor('leather_helm','皮帽','helmet',-1,'白',1,4,{});
+ armor('iron_helm','鋼盔','helmet',-2,'白',10,4,{});
+ armor('bone_helm','骨盔','helmet',-3,'綠',20,4,{});
+ armor('knight_helm','騎士面甲','helmet',-5,'藍',42,4,{hp:40});
+ armor('mage_hat','法師之帽','helmet',-2,'藍',35,4,{int:1,mp:60});
+ armor('leather_armor','皮盔甲','armor',-3,'白',1,4,{});
+ armor('chain_mail','鏈甲','armor',-5,'白',14,4,{});
+ armor('iron_armor','鋼鐵金屬盔甲','armor',-7,'綠',24,4,{hp:30});
+ armor('elven_chainmail','精靈鍊甲','armor',-6,'藍',35,6,{dex:1,mr:8});
+ armor('plate_mail','金屬盔甲','armor',-8,'藍',40,4,{hp:70});
+ armor('dark_robe','黑法師長袍','armor',-4,'藍',38,4,{int:1,wis:1,mp:120});
+ armor('ancient_armor','古代盔甲','armor',-12,'紫',60,4,{hp:120,dr:2});
+ armor('hero_armor','英雄盔甲','armor',-14,'紫',68,4,{hp:160,dr:4});
+ armor('dragon_armor','龍之盔甲','armor',-18,'紅',85,4,{hp:240,mp:80,dr:7,mr:20});
+ armor('prot_cloak','保護者斗篷','cloak',-3,'綠',22,4,{});
+ armor('magic_cloak','抗魔法斗篷','cloak',-2,'綠',26,4,{mr:10});
+ armor('guardian_cloak','守護斗篷','cloak',-5,'紫',55,4,{dr:3,mr:12});
+ armor('iron_gloves','鋼鐵手套','gloves',-1,'白',12,4,{});
+ armor('power_gloves','力量手套','gloves',-1,'藍',40,4,{str:2});
+ armor('dex_gloves','敏捷手套','gloves',-1,'藍',40,4,{dex:2});
+ armor('wizard_gloves','魔力手套','gloves',-1,'藍',42,4,{int:1,mp:50});
+ armor('iron_boots','鋼鐵長靴','boots',-3,'白',18,4,{});
+ armor('power_boots','力量長靴','boots',-4,'藍',45,4,{str:1});
+ armor('wind_boots','風之長靴','boots',-4,'藍',45,4,{dex:1,spd:3});
+ armor('iron_leggings','鋼鐵脛甲','leggings',-4,'白',18,4,{});
+ armor('iron_shield','鋼鐵盾牌','shield',-3,'白',18,4,{dr:1});
+ acc('skull_necklace','骷髏項鍊','amulet',{hit:1},'白',10,0);
+ acc('brave_necklace','勇氣項鍊','amulet',{dmg:2},'綠',24,0);
+ acc('wisdom_ring','智慧戒指','ring',{int:1,wis:1},'綠',30,0);
+ acc('def_ring','防禦戒指','ring',{ac:-1},'綠',20,0);
+ acc('transform_ring','變身戒指','ring',{spd:5},'藍',45,0);
+ acc('dark_earring','黑妖耳環','earring',{dmg:3},'藍',45,0);
+ acc('mana_earring','魔力耳環','earring',{mp:80},'藍',40,0);
+ acc('ogre_belt','歐吉皮帶','belt',{hp:100},'藍',35,0);
+ acc('dragon_ring','龍之戒指','ring',{dmg:6,hit:4,ac:-4},'橘',70,0);
+ acc('myth_earring','神話耳環','earring',{str:2,dex:2,int:2,wis:2},'紅',85,0);
+
+ // 3) 商店補給：移除所有裝備/武器販售，新增經驗藥水。
+ consumable('exp_potion_30',{name:'經驗藥水 30分鐘',type:'exp_potion',rarity:'綠',price:50000,expBonus:0.3,duration:1800,desc:'30分鐘內狩獵經驗 +30%'});
+ consumable('exp_potion_60',{name:'高級經驗藥水 60分鐘',type:'exp_potion',rarity:'藍',price:150000,expBonus:0.5,duration:3600,desc:'60分鐘內狩獵經驗 +50%'});
+ consumable('exp_potion_180',{name:'英雄經驗藥水 180分鐘',type:'exp_potion',rarity:'紫',price:500000,expBonus:1.0,duration:10800,desc:'180分鐘內狩獵經驗 +100%'});
+
+ // 4) 職業武器修正：讓新增官方武器類型能被正確使用。
+ if(DB.classes.prince) DB.classes.prince.weapons=['sword','dagger','twohand'];
+ if(DB.classes.knight) DB.classes.knight.weapons=['sword','twohand','spear','dagger','axe'];
+ if(DB.classes.elf) DB.classes.elf.weapons=['bow','dagger','sword','staff'];
+ if(DB.classes.wizard) DB.classes.wizard.weapons=['staff','dagger'];
+ if(DB.classes.darkelf) DB.classes.darkelf.weapons=['dualblade','claw','dagger','sword'];
+ if(DB.classes.dragon) DB.classes.dragon.weapons=['chain_sword','spear'];
+ if(DB.classes.illusion) DB.classes.illusion.weapons=['kiringku','staff'];
+ if(DB.classes.warrior) DB.classes.warrior.weapons=['axe','twohand'];
+ if(DB.classes.fencer) DB.classes.fencer.weapons=['sword','dagger'];
+ if(DB.classes.lancer) DB.classes.lancer.weapons=['spear'];
+ if(DB.classes.holyknight) DB.classes.holyknight.weapons=['sword','twohand'];
+
+ const addDrop=(mapId,itemId,rate)=>{let m=DB.maps.find(x=>x.id===mapId);if(m&&DB.items[itemId])m.drops.push({id:itemId,rate});};
+ const setDrops=(mapId,arr)=>{let m=DB.maps.find(x=>x.id===mapId);if(!m)return;m.drops=[];arr.forEach(x=>addDrop(mapId,x[0],x[1]));};
+ setDrops('talking', [['orc_dagger',10],['short_bow',9],['staff',7],['leather_helm',6],['leather_armor',6],['tshirt',6],['potion_red',14],['book_heal',5],['book_shield',4]]);
+ setDrops('elf_forest', [['bow',8],['hunter_bow',7],['silver_dagger',5],['iron_gloves',5],['iron_boots',5],['prot_cloak',4],['dex_gloves',2.4],['book_triple_arrow',4],['book_wind_walk',3],['scroll_armor',3]]);
+ setDrops('gludin', [['long_sword',7],['silver_sword',5],['katana',4],['spear',4],['battle_axe',4],['wizard_staff',4],['chain_mail',5],['iron_helm',5],['iron_armor',4],['iron_leggings',4],['book_haste',3],['scroll_weapon',3]]);
+ setDrops('giran_prison', [['damascus',5.5],['rapier',4.5],['twohand_sword',4],['crossbow',4.5],['steel_dualblade',3.8],['silver_axe',3.5],['steel_spear',3.5],['staff_mana',3.5],['mail_breaker',3],['plate_mail',4],['elven_chainmail',3.5],['magic_cloak',3.5],['power_gloves',2.4],['book_shock_stun',2.2],['book_burning_spirit',2.2],['scroll_bless_armor',1.2]]);
+ setDrops('dragon_valley', [['tsurugi',4],['great_sword',3.5],['elven_bow',4],['ancient_bow',2.5],['dark_claw',3],['berserker_axe',3],['gold_spear',3],['chain_sword',3],['kiringku',3],['holy_sword',2.5],['power_boots',2.5],['wind_boots',2.5],['skull_necklace',3],['brave_necklace',2.5],['book_foe_slayer',2],['book_greater_heal',2],['scroll_bless_weapon',1.2]]);
+ setDrops('ivory', [['sage_staff',4],['ice_staff',3],['moon_bow',2],['dark_robe',3.8],['mage_hat',3.5],['wizard_gloves',2.5],['wisdom_ring',2.8],['mana_earring',2.4],['book_fireball',2.4],['book_ice_lance',2.2],['book_holy_walk',2.4]]);
+ setDrops('toi_1', [['red_sword',3.5],['flame_bow',3],['assassin_dualblade',2.5],['shadow_claw',2.5],['phantom_kiringku',2.4],['knight_helm',3],['guardian_cloak',2.2],['def_ring',2.4],['ogre_belt',2.2],['book_counter_barrier',1.6],['book_double_break',1.6],['scroll_accessory',1.8]]);
+ setDrops('toi_4', [['death_blade',2.6],['wind_bow',2.5],['titan_axe',2.5],['storm_spear',2.5],['dragon_chain_sword',2.2],['crusader_blade',2.0],['ancient_armor',2.2],['hero_armor',1.6],['dark_earring',2.2],['book_meteor_strike',1.5],['book_titan_rock',1.6],['scroll_bless_weapon',1.8]]);
+ setDrops('toi_10', [['death_blade',2.8],['moon_bow',2.8],['wind_bow',2.4],['dragon_chain_sword',2.4],['phantom_kiringku',2.4],['archmage_staff',1.8],['doom_axe',1.8],['dragon_ring',1.6],['transform_ring',1.8],['book_disintegrate',1.2],['book_infinity_blitz',1.4],['book_maelstrom',1.4],['scroll_bless_armor',2.0],['scroll_accessory',2.0]]);
+ setDrops('lastabad', [['holy_avenger',2.2],['sayha_bow',2],['doom_axe',2.3],['dragon_spear',2.3],['archmage_staff',2.2],['dragon_slayer',1.8],['dragon_armor',1.4],['dragon_ring',1.8],['myth_earring',1.0],['book_desperado',1.5],['book_crusader',1.5],['scroll_bless_weapon',2.2],['scroll_bless_armor',2.2]]);
+ ['antharas','fafu','valakas','lind'].forEach(m=>setDrops(m,[['dragon_slayer',2.4],['dragon_armor',2.0],['sayha_bow',2.0],['doom_axe',2.0],['dragon_spear',2.0],['holy_avenger',2.0],['archmage_staff',2.0],['dragon_ring',2.2],['myth_earring',1.4],['scroll_bless_weapon',2.8],['scroll_bless_armor',2.8],['scroll_accessory',2.2]]));
+
+ const oldMigrate=Game.migrateState.bind(Game);
+ const oldUseItem=Game.useItem.bind(Game);
+ const oldKill=Game.kill.bind(Game);
+ const oldRenderStatus=Game.renderStatus.bind(Game);
+ const priceOf=id=>{let d=DB.items[id]||{};if(d.type==='potion'||d.type==='exp_potion')return d.price||100;if(d.type==='scroll')return d.price||1000;if(d.type==='book'){let s=DB.skills[d.skill]||{};return Math.ceil((3500+Math.pow(s.lv||1,1.45)*420*(s.job==='general'?1:1.2))/100)*100;}return 0;};
+ const canShowBook=(game,d)=>{let sk=DB.skills[d.skill];if(!sk)return false;let c=game.cls();return sk.job==='general'?(c.magic>0&&sk.lv<=Math.max(12,c.magic*8+16)):sk.job===game.state.classId;};
+ const statLine=d=>{let p=[];if(d.reqLv)p.push('Lv.'+d.reqLv);if(d.rarity)p.push(d.rarity);if(d.small&&d.large)p.push(`${d.small}/${d.large}`);if(d.weapon)p.push(d.weapon);if(d.safe!==undefined)p.push('安定+'+d.safe);if(d.ac!==undefined)p.push('AC '+d.ac);if(d.desc)p.push(d.desc);for(let [k,v] of Object.entries(d.stat||{}))p.push(`${k.toUpperCase()} ${v>0?'+':''}${v}`);return p.join('｜')||'一般道具';};
+ const sourceLine=()=>'<div class="small">V4.1：商店不再販售武器與防具，裝備改由狩獵掉落、BOSS、副本、製作與拍賣場取得。商店只保留補給、卷軸、技能書與經驗藥水。</div>';
+ Object.assign(Game,{
+   migrateState(){oldMigrate();if(!this.state)return;this.state.version=VERSION;this.state.expBuff=this.state.expBuff||null;},
+   currentExpBonus(){let b=this.state?.expBuff;if(!b||Date.now()>b.until){if(this.state)this.state.expBuff=null;return 0;}return b.bonus||0;},
+   useItem(key){let it=this.invItem(key);let d=it&&DB.items[it.id];if(d&&d.type==='exp_potion'){this.state.expBuff={bonus:d.expBonus||0,until:Date.now()+(d.duration||1800)*1000,name:d.name};this.removeItem(key,1);this.log(`使用 ${d.name}，狩獵經驗 +${Math.round((d.expBonus||0)*100)}%。`,'green');this.render();return;}return oldUseItem(key);},
+   kill(mdef){let before=this.state.exp||0;oldKill(mdef);let bonus=this.currentExpBonus();if(mdef&&bonus>0){let add=Math.floor((mdef.exp||0)*bonus);this.state.exp+=add;this.log(`經驗藥水加成 EXP +${add}`,'green');this.levelUp();}},
+   buy(id){let d=DB.items[id];if(!d)return;if(d.type!=='potion'&&d.type!=='scroll'&&d.type!=='book'&&d.type!=='exp_potion'){alert('V4.1 商店不販售武器與防具，請透過狩獵、BOSS、副本、製作或拍賣場取得。');return;}if(d.type==='book'&&!canShowBook(this,d)){alert('此技能書不適合目前職業。');return;}if(d.type==='book'&&this.state.skills?.[d.skill]){alert('已學會此技能，不需要重複購買。');return;}let price=priceOf(id);if(this.state.adena<price){alert('金幣不足');return;}this.state.adena-=price;this.addItem(id,1,0);this.log(`購買 ${d.name}，花費 ${price.toLocaleString()} 金幣。`,'green');this.render();},
+   renderStatus(){oldRenderStatus();let sub=document.getElementById('subTitle');if(sub&&this.state){let b=this.state.expBuff;if(b&&Date.now()<b.until){sub.textContent += `｜${b.name} ${Math.ceil((b.until-Date.now())/60000)}分`;}}},
+   viewShop(){let potions=['potion_red','potion_orange','potion_clear'];let scrolls=['scroll_weapon','scroll_armor','scroll_accessory'];let exps=['exp_potion_30','exp_potion_60','exp_potion_180'];let books=Object.values(DB.items).filter(d=>d.type==='book'&&canShowBook(this,d)).sort((a,b)=>(DB.skills[a.skill]?.lv||1)-(DB.skills[b.skill]?.lv||1)||a.name.localeCompare(b.name)).map(d=>d.id);
+     const section=(title,note,ids)=>`<h3 class="title" style="margin-top:18px">${title}</h3><div class="small">${note||''}</div>`+ids.filter(id=>DB.items[id]).map(id=>{let d=DB.items[id],learned=d.type==='book'&&this.state.skills?.[d.skill];return `<div class="item row"><span class="rarity-${d.rarity}"><b>${esc(d.name)}</b><br><span class="small">${statLine(d)}${learned?'｜已學會':''}</span></span><span><b class="c-gold">${priceOf(id).toLocaleString()}</b> <button class="btn ${learned?'':'green'}" data-buy="${id}" ${learned?'disabled':''}>購買</button></span></div>`;}).join('');
+     return `<h3 class="title">商店 V4.1</h3>${sourceLine()}${section('補給藥水','只販售消耗品。',potions)}${section('經驗藥水','新增掛機練等用經驗加成藥水。',exps)}${section('一般強化卷軸','祝武/祝防不在商店販售，保留給BOSS、副本、製作與拍賣場。',scrolls)}${section('技能書 / 魔法書','只顯示目前職業可學內容。',books)}<h3 class="title" style="margin-top:18px">裝備取得規則</h3><div class="small">武器、防具、飾品已從商店移除。請從地圖掉落、BOSS、限時副本、製作、拍賣場取得；地圖掉落頁可查看各地區裝備來源。</div>`;},
+   viewMaps(){return DB.maps.map(m=>`<div class="item"><b class="c-gold">${m.name}</b> <span class="pill">Lv.${m.min}-${m.max}</span><br><span class="small">怪物：${m.monsters.map(id=>DB.mons[id]?.name||id).join('、')}</span><br><span class="small">主要掉落：${m.drops.map(d=>{let it=DB.items[d.id];return it?`${it.name}${it.reqLv?`(Lv.${it.reqLv})`:''}`:d.id}).join('、')}</span></div>`).join('');}
+ });
+ const oldRenderTab=Game.renderTab.bind(Game);
+ Game.renderTab=function(){oldRenderTab();let el=document.getElementById('tabContent');if(!this.state||!el)return;if(this.tab==='shop')el.querySelectorAll('[data-buy]').forEach(b=>b.onclick=()=>this.buy(b.dataset.buy));};
+})();
+
+window.addEventListener('DOMContentLoaded',()=>Game.init());
+</script>
+</body>
+</html>
