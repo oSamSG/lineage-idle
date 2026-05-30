@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Lineage Idle V4.4</title>
+<title>Lineage Idle V4.2</title>
 <style>
 :root{--bg:#05070a;--panel:#0d1117;--panel2:#111827;--line:#334155;--text:#dbeafe;--muted:#94a3b8;--gold:#facc15;--green:#22c55e;--red:#ef4444;--blue:#60a5fa;--purple:#c084fc;--orange:#fb923c}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:"Microsoft JhengHei",Consolas,monospace;font-size:15px;user-select:none}.hidden{display:none!important}.app{height:100vh;display:flex;flex-direction:column;padding:12px;gap:10px}.panel{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px}.top{display:flex;justify-content:space-between;align-items:center}.title{color:var(--gold);font-weight:700}.grid{display:grid;gap:10px}.main{flex:1;display:grid;grid-template-columns:300px 1fr 330px;gap:10px;min-height:0}.col{display:flex;flex-direction:column;gap:10px;min-height:0}.scroll{overflow:auto}.btn,select,input{background:#1f2937;color:var(--text);border:1px solid #475569;border-radius:8px;padding:8px 10px;font:inherit}.btn{cursor:pointer}.btn:hover{background:#334155}.btn:disabled{opacity:.45;cursor:not-allowed}.btn.green{color:#86efac}.btn.blue{color:#93c5fd}.btn.red{color:#fca5a5}.row{display:flex;align-items:center;justify-content:space-between;gap:8px}.tabs{display:flex;gap:6px;flex-wrap:wrap}.tab{padding:8px 12px}.tab.active{border-color:var(--gold);color:var(--gold)}.bar{height:18px;background:#020617;border:1px solid #475569;border-radius:99px;overflow:hidden;position:relative}.bar i{display:block;height:100%;width:0}.hp{background:#991b1b}.mp{background:#1d4ed8}.exp{background:#a16207}.bar span{position:absolute;inset:0;text-align:center;font-size:12px;line-height:16px;text-shadow:1px 1px #000}.stat{display:grid;grid-template-columns:1fr 1fr;gap:6px}.item{border-bottom:1px dashed #293548;padding:7px 0}.log{font-size:14px;line-height:1.55}.c-gold{color:var(--gold)}.c-green{color:var(--green)}.c-red{color:var(--red)}.c-blue{color:var(--blue)}.c-purple{color:var(--purple)}.c-orange{color:var(--orange)}.modal{position:fixed;inset:0;background:rgba(0,0,0,.86);display:flex;align-items:center;justify-content:center;z-index:50}.modal-card{width:min(760px,94vw);max-height:92vh;overflow:auto}.classes{grid-template-columns:repeat(auto-fit,minmax(150px,1fr))}.class-card{text-align:left;min-height:96px}.class-card.selected{border-color:var(--gold);background:#1e293b}.small{font-size:13px;color:var(--muted)}.pill{display:inline-block;border:1px solid #475569;border-radius:99px;padding:2px 7px;margin:2px;color:#cbd5e1}.rarity-白{color:#e5e7eb}.rarity-綠{color:#4ade80}.rarity-藍{color:#60a5fa}.rarity-紫{color:#c084fc}.rarity-橘{color:#fb923c}.rarity-紅{color:#f87171}.kbd{background:#020617;border:1px solid #334155;border-radius:5px;padding:1px 5px;color:#cbd5e1}.setting-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:10px}.setting-card{background:#0b1220;border:1px solid #26364f;border-radius:10px;padding:12px}@media(max-width:1100px){.main{grid-template-columns:1fr}.app{height:auto}.col{min-height:500px}}
 </style>
@@ -11,12 +11,12 @@
 <body>
 <div id="start" class="modal">
   <div class="panel modal-card">
-    <h1 class="title" style="font-size:42px;text-align:center;margin:20px 0 8px">Lineage Idle V4.4</h1>
+    <h1 class="title" style="font-size:42px;text-align:center;margin:20px 0 8px">Lineage Idle V4.2</h1>
     <p class="small" style="text-align:center;margin-bottom:24px">單機版</p>
     <div class="grid">
       <button id="newGame" class="btn green" style="font-size:22px;padding:14px">新冒險</button>
       <button id="loadGame" class="btn blue" style="font-size:22px;padding:14px">讀取存檔</button>
-      <button id="importBtn" class="btn" style="font-size:18px;padding:12px">匯入存檔檔案</button>
+      <button id="importBtn" class="btn" style="font-size:18px;padding:12px">匯入存檔 JSON</button>
       <input id="importFile" type="file" accept="application/json,.json" class="hidden">
     </div>
   </div>
@@ -32,7 +32,7 @@
 
 <div class="app hidden" id="app">
   <div class="panel top">
-    <div><span class="title">Lineage Idle V4.4</span> <span id="subTitle" class="small"></span></div>
+    <div><span class="title">Lineage Idle V4.1</span> <span id="subTitle" class="small"></span></div>
     <div class="row"><button class="btn blue" id="saveBtn">儲存</button><button class="btn" id="exportBtn">匯出</button><button class="btn red" id="resetBtn">刪除</button></div>
   </div>
   <div class="main">
@@ -40,9 +40,9 @@
       <div class="panel">
         <div class="row"><div class="title">角色</div><div id="className" class="c-gold"></div></div>
         <div class="row"><span>等級 <b id="lv">1</b></span><span>金幣 <b id="adena" class="c-gold">0</b></span></div>
-        <div>體力<div class="bar"><i id="hpBar" class="hp"></i><span id="hpTxt"></span></div></div>
-        <div>魔力<div class="bar"><i id="mpBar" class="mp"></i><span id="mpTxt"></span></div></div>
-        <div>經驗值<div class="bar"><i id="expBar" class="exp"></i><span id="expTxt"></span></div></div>
+        <div>HP<div class="bar"><i id="hpBar" class="hp"></i><span id="hpTxt"></span></div></div>
+        <div>MP<div class="bar"><i id="mpBar" class="mp"></i><span id="mpTxt"></span></div></div>
+        <div>EXP<div class="bar"><i id="expBar" class="exp"></i><span id="expTxt"></span></div></div>
         <div class="stat" id="statBox" style="margin-top:10px"></div>
       </div>
       <div class="panel hidden" id="legacyAutoPanel">
@@ -439,9 +439,9 @@ viewTransform(){let active=this.activeTransform();let rows=Object.values(DB.tran
    ========================= */
 (()=>{
  const VERSION='3.4';
- document.title='Lineage Idle V4.4';
+ document.title='Lineage Idle V4.1';
  const titleEl=document.querySelector('.title');
- if(titleEl&&titleEl.textContent.includes('Lineage Idle'))titleEl.textContent='Lineage Idle V4.4';
+ if(titleEl&&titleEl.textContent.includes('Lineage Idle'))titleEl.textContent='Lineage Idle V4.1';
 
  // 1) 新增神聖劍士職業與技能書
  DB.classes.holyknight={
@@ -532,9 +532,9 @@ viewTransform(){let active=this.activeTransform();let rows=Object.values(DB.tran
    ========================= */
 (()=>{
  const VERSION='3.5';
- document.title='Lineage Idle V4.4';
- document.querySelectorAll('.title').forEach(el=>{if(el.textContent.includes('Lineage Idle'))el.textContent='Lineage Idle V4.4';});
- const startTitle=document.querySelector('#start h1'); if(startTitle)startTitle.textContent='Lineage Idle V4.4';
+ document.title='Lineage Idle V4.1';
+ document.querySelectorAll('.title').forEach(el=>{if(el.textContent.includes('Lineage Idle'))el.textContent='Lineage Idle V4.1';});
+ const startTitle=document.querySelector('#start h1'); if(startTitle)startTitle.textContent='Lineage Idle V4.1';
 
  const addItem=(id,o)=>{DB.items[id]=Object.assign({id,rarity:'白',price:100,type:'material'},DB.items[id]||{},o,{id});};
  const addWeapon=(id,name,weapon,dmg,rarity,price,reqLv,safe=6,stat={})=>addItem(id,{name,type:'weapon',weapon,dmg,safe,rarity,price,reqLv,stat});
@@ -661,10 +661,10 @@ viewTransform(){let active=this.activeTransform();let rows=Object.values(DB.tran
    ========================================================= */
 (()=>{
  const VERSION='4.0';
- document.title='Lineage Idle V4.4';
- document.querySelectorAll('.title').forEach(el=>{if(el.textContent.includes('Lineage Idle'))el.textContent='Lineage Idle V4.4';});
- const startTitle=document.querySelector('#start h1'); if(startTitle)startTitle.textContent='Lineage Idle V4.4';
- const topTitle=document.querySelector('.top .title'); if(topTitle)topTitle.textContent='Lineage Idle V4.4';
+ document.title='Lineage Idle V4.1';
+ document.querySelectorAll('.title').forEach(el=>{if(el.textContent.includes('Lineage Idle'))el.textContent='Lineage Idle V4.1';});
+ const startTitle=document.querySelector('#start h1'); if(startTitle)startTitle.textContent='Lineage Idle V4.1';
+ const topTitle=document.querySelector('.top .title'); if(topTitle)topTitle.textContent='Lineage Idle V4.1';
  const loadBtn=document.getElementById('loadGame'); if(loadBtn)loadBtn.textContent='讀取存檔';
 
  const EQUIP_TYPES=['weapon','helmet','tshirt','armor','cloak','gloves','boots','leggings','ring','earring','amulet','belt'];
@@ -1067,112 +1067,6 @@ viewTransform(){let active=this.activeTransform();let rows=Object.values(DB.tran
    viewMaps(){let html=oldViewMaps();return String(html).replace('<h3 class="title">地圖掉落</h3>','<h3 class="title">地圖掉落</h3><div class="small">V4.2：奇岩監獄以後全部地圖都會掉落一般防卷，高階地圖另有祝防與紅裝機率。</div>');},
    renderTab(){oldRenderTab();let el=document.getElementById('tabContent');if(!this.state||!el)return;if(this.tab==='pet'){el.querySelectorAll('[data-summon-pet-slot]').forEach(b=>b.onclick=()=>this.summonPetToSlot(b.dataset.summonPetSlot,+b.dataset.slot));el.querySelectorAll('[data-buy-pet-slot]').forEach(b=>b.onclick=()=>this.buySecondPetSlot());el.querySelectorAll('[data-refund-pet]').forEach(b=>b.onclick=()=>this.refundPetUpgrade(b.dataset.refundPet));}if(this.tab==='inventory'){el.querySelectorAll('[data-enchant]').forEach(b=>b.remove());}}
  });
-})();
-
-
-
-/* V4.4 Sam patch：修復啟動畫面按鈕 + 背包即時刷新 + 介面中文化 */
-(function(){
- const VERSION='4.4';
- const statZh={str:'力量',dex:'敏捷',con:'體質',int:'智力',wis:'精神',ac:'防禦',dmg:'傷害',hit:'命中',mr:'魔法防禦',dr:'傷害減免',spd:'攻擊速度',hp:'體力',mp:'魔力',exp:'經驗值'};
- const typeZh={heal:'治癒',buff:'輔助',attack:'攻擊',weapon:'武器',armor:'防具',scroll:'卷軸',book:'技能書',potion:'藥水'};
- function zText(v){
-   return String(v??'')
-    .replace(/Lineage Idle V4\.\d+/g,'Lineage Idle V4.4')
-    .replace(/\bJSON\b/g,'存檔檔案')
-    .replace(/\bBOSS\b/g,'首領')
-    .replace(/\bAUTO\b/g,'自動')
-    .replace(/\bEXP\b/g,'經驗值')
-    .replace(/\bHP\b/g,'體力')
-    .replace(/\bMP\b/g,'魔力')
-    .replace(/\bSTR\b/g,'力量')
-    .replace(/\bDEX\b/g,'敏捷')
-    .replace(/\bCON\b/g,'體質')
-    .replace(/\bINT\b/g,'智力')
-    .replace(/\bWIS\b/g,'精神')
-    .replace(/\bDMG\b/g,'傷害')
-    .replace(/\bHIT\b/g,'命中')
-    .replace(/\bSPD\b/g,'攻擊速度')
-    .replace(/\bMR\b/g,'魔法防禦')
-    .replace(/\bDR\b/g,'傷害減免')
-    .replace(/\bAC\b/g,'防禦')
-    .replace(/Lv\.?/g,'等級')
-    .replace(/\bheal\b/g,'治癒')
-    .replace(/\bbuff\b/g,'輔助')
-    .replace(/\battack\b/g,'攻擊');
- }
- function walkZh(root){
-   if(!root)return;
-   const w=document.createTreeWalker(root,NodeFilter.SHOW_TEXT);
-   const nodes=[]; while(w.nextNode())nodes.push(w.currentNode);
-   nodes.forEach(n=>{const s=zText(n.nodeValue); if(s!==n.nodeValue)n.nodeValue=s;});
- }
- function statText(obj){return Object.entries(obj||{}).map(([k,v])=>`${statZh[k]||k} ${v>0?'+':''}${v}`).join('、')||'無';}
- function queueInventoryRefresh(game){
-   if(!game||game._v43Refreshing)return;
-   game._v43Refreshing=true;
-   Promise.resolve().then(()=>{
-     game._v43Refreshing=false;
-     try{
-       game.renderStatus&&game.renderStatus();
-       if(game.tab==='inventory'||game.tab==='equipment'||game.tab==='shop'||game.tab==='pet'||game.tab==='enhance')game.renderTab&&game.renderTab();
-     }catch(e){console.warn('V4.3 refresh skipped',e);}
-   });
- }
- function bindInventoryRefresh(game,name){
-   if(!game||typeof game[name]!=='function'||game[name]._v43)return;
-   const old=game[name].bind(game);
-   const fn=function(...args){const r=old(...args); queueInventoryRefresh(this); return r;};
-   fn._v43=true; game[name]=fn;
- }
- function patchGame(){
-   if(!window.Game||Game._v43Patched)return;
-   Game._v43Patched=true;
-   document.title='Lineage Idle V4.4';
-   const title=document.querySelector('.title'); if(title&&title.textContent.includes('Lineage Idle'))title.textContent='Lineage Idle V4.4';
-   const importBtn=document.getElementById('importBtn'); if(importBtn)importBtn.textContent='匯入存檔檔案';
-   const oldRenderClassList=Game.renderClassList?.bind(Game);
-   if(oldRenderClassList)Game.renderClassList=function(){oldRenderClassList();walkZh(document.getElementById('classList'));};
-   const oldLog=Game.log?.bind(Game), oldBlog=Game.blog?.bind(Game);
-   if(oldLog)Game.log=function(msg,type=''){return oldLog(zText(msg),type);};
-   if(oldBlog)Game.blog=function(msg){return oldBlog(zText(msg));};
-   const oldMigrate=Game.migrateState?.bind(Game);
-   if(oldMigrate)Game.migrateState=function(){oldMigrate(); if(this.state)this.state.version=VERSION;};
-   const oldSync=Game.syncVitals?.bind(Game);
-   if(oldSync)Game.syncVitals=function(){const r=oldSync();walkZh(document.getElementById('app'));return r;};
-   const oldRenderStatus=Game.renderStatus?.bind(Game);
-   if(oldRenderStatus)Game.renderStatus=function(){
-     const r=oldRenderStatus();
-     if(!this.state)return r;
-     const st=this.totalStats();
-     const sub=document.getElementById('subTitle');
-     if(sub)sub.textContent=`等級${this.state.lv} ${this.cls().name}${this.activeTransform()?'｜變身 '+this.activeTransform().name:''}｜${this.map().name}`;
-     const statBox=document.getElementById('statBox');
-     if(statBox)statBox.innerHTML=[`力量 ${st.str}`,`敏捷 ${st.dex}`,`體質 ${st.con}`,`智力 ${st.int}`,`精神 ${st.wis}`,`防禦 ${st.ac}`,`傷害 +${Math.floor(st.dmg+this.state.lv*1.8)}`,`命中 ${st.hit||0}`,`魔法防禦 ${st.mr||0}%`,`傷害減免 ${st.dr||0}`,`攻擊速度 ${st.spd||0}%`].map(x=>`<div>${x}</div>`).join('');
-     const labels=document.querySelectorAll('.panel'); walkZh(document.getElementById('app'));
-     return r;
-   };
-   const oldRenderTab=Game.renderTab?.bind(Game);
-   if(oldRenderTab)Game.renderTab=function(){
-     const r=oldRenderTab();
-     const el=document.getElementById('tabContent');
-     if(el){
-       if(this.tab==='inventory')el.querySelectorAll('[data-enchant]').forEach(b=>b.remove());
-       walkZh(el);
-     }
-     walkZh(document.getElementById('tabs'));
-     return r;
-   };
-   const oldViewInventory=Game.viewInventory?.bind(Game);
-   if(oldViewInventory)Game.viewInventory=function(){return zText(oldViewInventory()).replace(/<button class="btn" data-enchant="[^"]+">強化<\/button>/g,'').replace('裝備可裝備、強化或賣出','裝備可裝備或賣出，強化請到「強化」頁');};
-   ['addItem','removeItem','useItem','sellItem','buy','equip','unequip','enchant','autoPotion','autoBuyConsumable','kill','sellWhite','batchSell','deposit','withdraw','craft','summonPet','summonPetToSlot','upgradePet','refundPetUpgrade','buySecondPetSlot'].forEach(n=>bindInventoryRefresh(Game,n));
-   Game.refreshInventory=function(){queueInventoryRefresh(this);};
-   const oldStatText=Game.statText?.bind(Game);
-   Game.statText=function(obj){return statText(obj)|| (oldStatText?zText(oldStatText(obj)):'');};
-   if(Game.renderClassList)Game.renderClassList();
-   walkZh(document.body);
- }
- if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',patchGame,{once:true}); else patchGame();
 })();
 
 window.addEventListener('DOMContentLoaded',()=>Game.init());
