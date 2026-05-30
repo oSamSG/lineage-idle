@@ -40,9 +40,9 @@
       <div class="panel">
         <div class="row"><div class="title">角色</div><div id="className" class="c-gold"></div></div>
         <div class="row"><span>等級 <b id="lv">1</b></span><span>金幣 <b id="adena" class="c-gold">0</b></span></div>
-        <div>生命值<div class="bar"><i id="hpBar" class="hp"></i><span id="hpTxt"></span></div></div>
-        <div>魔力值<div class="bar"><i id="mpBar" class="mp"></i><span id="mpTxt"></span></div></div>
-        <div>經驗值<div class="bar"><i id="expBar" class="exp"></i><span id="expTxt"></span></div></div>
+        <div>HP<div class="bar"><i id="hpBar" class="hp"></i><span id="hpTxt"></span></div></div>
+        <div>MP<div class="bar"><i id="mpBar" class="mp"></i><span id="mpTxt"></span></div></div>
+        <div>EXP<div class="bar"><i id="expBar" class="exp"></i><span id="expTxt"></span></div></div>
         <div class="stat" id="statBox" style="margin-top:10px"></div>
       </div>
       <div class="panel hidden" id="legacyAutoPanel">
@@ -1417,135 +1417,88 @@ viewTransform(){let active=this.activeTransform();let rows=Object.values(DB.tran
 })();
 
 
-// === V4.4 Complete Traditional Chinese UI patch ===
+
+// === V4.4.1 Hotfix: 背包 / 裝備頁即時刷新強化 ===
 (()=>{
-  if(!window.Game || !window.DB) return;
-  const UI_ZH_MAP = [
-    ['STR','力量'],['DEX','敏捷'],['CON','體質'],['INT','智力'],['WIS','精神'],
-    ['AC','防禦力'],['DMG','傷害'],['MR','魔法防禦'],
-    ['HP','生命值'],['MP','魔力值'],['EXP','經驗值'],
-    ['BOSS','首領'],['Boss','首領'],['boss','首領'],
-    ['Skill','技能'],['Auto','自動'],['Transform','變身'],
-    ['Inventory','背包'],['Equipment','裝備'],['Shop','商店'],['Collection','收藏圖鑑'],
-    ['Save','儲存'],['Load','讀取'],['Export','匯出'],['Import','匯入'],
-    ['Weapon','武器'],['Armor','防具'],['Ring','戒指'],['Earring','耳環'],['Belt','腰帶'],
-    ['Cloak','斗篷'],['Gloves','手套'],['Boots','鞋子'],['Leggings','脛甲'],['Helmet','頭盔'],
-    ['Potion','藥水'],['Scroll','卷軸'],['Book','技能書'],
-    ['Critical','爆擊'],['Hit','命中'],['Dodge','閃避'],['Speed','速度'],
-    ['Damage Reduction','傷害減免'],['DPS','每秒傷害'],['Top 5','前 5 名'],['Lv.','等級 '],['Lv','等級']
-  ];
-  Game.zhText=function(text){
-    let out=String(text);
-    UI_ZH_MAP.forEach(([a,b])=>{ out=out.split(a).join(b); });
-    out=out.replace(/預估每秒傷害/g,'預估每秒傷害');
-    out=out.replace(/首領保底/g,'首領保底');
-    return out;
+  if(!window.Game) return;
+  Game.invSignatureV441=function(){
+    const inv=this.state&&this.state.inventory||{};
+    const eq=this.state&&this.state.equip||{};
+    const invPart=Object.keys(inv).sort().map(k=>{
+      const it=inv[k]||{};
+      return [k,it.id,it.qty||0,it.enchant||0,it.refine?JSON.stringify(it.refine):'',it.enchantAttr?JSON.stringify(it.enchantAttr):''].join(':');
+    }).join('|');
+    const eqPart=Object.keys(eq).sort().map(k=>k+':' +(eq[k]||'')).join('|');
+    return invPart+'#'+eqPart+'#'+(this.state?this.state.adena:0)+'#'+(this.tab||'');
   };
-  Game.localizeVisibleText=function(root=document.body){
-    if(!root) return;
-    const walker=document.createTreeWalker(root,NodeFilter.SHOW_TEXT,{acceptNode:n=>{
-      const p=n.parentElement;
-      if(!p || ['SCRIPT','STYLE','TEXTAREA','INPUT','SELECT'].includes(p.tagName)) return NodeFilter.FILTER_REJECT;
-      return /[A-Za-z]/.test(n.nodeValue||'')?NodeFilter.FILTER_ACCEPT:NodeFilter.FILTER_SKIP;
-    }});
-    let nodes=[]; while(walker.nextNode()) nodes.push(walker.currentNode);
-    nodes.forEach(n=>{ const t=this.zhText(n.nodeValue); if(t!==n.nodeValue) n.nodeValue=t; });
+  Game.refreshBackpackV441=function(force=false){
+    if(!this.state) return;
+    const sig=this.invSignatureV441();
+    const changed=force || sig!==this._lastInvSignatureV441;
+    this._lastInvSignatureV441=sig;
+    this.renderStatus();
+    if(changed && ['inventory','equipment','shop','collection'].includes(this.tab)){
+      this.renderTab();
+    }
   };
-  Game.statName=function(k){
-    return ({str:'力量',dex:'敏捷',con:'體質',int:'智力',wis:'精神',ac:'防禦力',dmg:'傷害',hit:'命中',mr:'魔法防禦',dr:'傷害減免',spd:'攻擊速度',hp:'生命值',mp:'魔力值',bossDmg:'首領傷害',exp:'經驗加成',drop:'掉寶率'}[k]||this.zhText(k));
+  Game.queueBackpackV441=function(force=false){
+    if(!this.state) return;
+    clearTimeout(this._backpackRefreshTimerV441);
+    this._backpackRefreshTimerV441=setTimeout(()=>this.refreshBackpackV441(force),0);
   };
-  Game.statText=function(obj){
-    return Object.entries(obj||{}).map(([k,v])=>`${this.statName(k)} ${v>0?'+':''}${v}${['mr','spd','bossDmg','exp','drop'].includes(k)?'%':''}`).join('、')||'無';
+  const wrap=(name,force=true)=>{
+    const old=Game[name];
+    if(typeof old!=='function' || old._v441Wrapped) return;
+    const fn=function(...args){
+      const r=old.apply(this,args);
+      this.queueBackpackV441(force);
+      return r;
+    };
+    fn._v441Wrapped=true;
+    Game[name]=fn;
   };
-  Game.statCellV44=function(label,value,bonus,suffix=''){
-    const plus=bonus?` <span class="c-green">(${bonus>0?'+':''}${bonus}${suffix})</span>`:'';
-    return `<div>${label} ${value}${suffix}${plus}</div>`;
-  };
-  Game.combatSummaryV44=function(st){
-    const baseDmg=Math.floor((st.dmg||0)+this.state.lv*1.8+(st.str||0)*1.4+(st.dex||0)*0.5);
-    const dps=Math.max(1,Math.floor(baseDmg*(1+(st.spd||0)/100)));
-    const cp=Math.max(1,Math.floor(this.maxHp()*0.45+this.maxMp()*0.2+((st.str||0)+(st.dex||0)+(st.con||0)+(st.int||0)+(st.wis||0))*18+Math.max(0,10-(st.ac||0))*26+(st.dmg||0)*45+(st.hit||0)*24+(st.dr||0)*36+(st.mr||0)*5+(st.spd||0)*12));
-    return {cp,dps};
-  };
-  Game.statLineForKey=function(k){
-    let it=this.invItem(k); if(!it) return '無';
-    let d=DB.items[it.id]||{}, parts=[];
-    if(d.dmg) parts.push(`傷害 +${d.dmg+(it.enchant||0)}`);
-    if(d.ac!==undefined) parts.push(`防禦力 ${d.ac-(it.enchant||0)}`);
-    const collect=o=>{for(let [a,v] of Object.entries(o||{})) parts.push(`${this.statName(a)} ${v>0?'+':''}${v}${['mr','spd','bossDmg','exp','drop'].includes(a)?'%':''}`);};
-    collect(d.stat); if(it.refine) collect(it.refine.stat); if(it.enchantAttr) collect(it.enchantAttr.stat);
-    return parts.join('、')||'無';
-  };
-  Game.renderStatBoxV44=function(){
-    const box=document.getElementById('statBox'); if(!box||!this.state) return;
-    const st=this.totalStats(), base=this.state.stats||{}, sum=this.combatSummaryV44(st);
-    box.innerHTML=[
-      this.statCellV44('力量',st.str,(st.str||0)-(base.str||0)),
-      this.statCellV44('敏捷',st.dex,(st.dex||0)-(base.dex||0)),
-      this.statCellV44('體質',st.con,(st.con||0)-(base.con||0)),
-      this.statCellV44('智力',st.int,(st.int||0)-(base.int||0)),
-      this.statCellV44('精神',st.wis,(st.wis||0)-(base.wis||0)),
-      this.statCellV44('防禦力',st.ac,0),
-      this.statCellV44('傷害','+'+Math.floor((st.dmg||0)+this.state.lv*1.8),0),
-      this.statCellV44('命中','+'+(st.hit||0),0),
-      this.statCellV44('魔法防禦',st.mr||0,0,'%'),
-      this.statCellV44('攻擊速度',st.spd||0,0,'%'),
-      `<div>戰鬥力 ${sum.cp.toLocaleString()}</div>`,
-      `<div>預估每秒傷害 ${sum.dps.toLocaleString()}</div>`
-    ].join('');
-  };
-  const oldRenderStatusV44Full=Game.renderStatus;
-  Game.renderStatus=function(){
-    oldRenderStatusV44Full.call(this);
-    this.renderStatBoxV44();
-    this.localizeVisibleText(document.getElementById('app')||document.body);
-  };
-  Game.viewEquipmentV32=function(){
-    let st=this.totalStats(), base=this.state.stats||{}, names=this.slotNames(), sum=this.combatSummaryV44(st);
-    let statHtml=[
-      this.statCellV44('力量',st.str,(st.str||0)-(base.str||0)),
-      this.statCellV44('敏捷',st.dex,(st.dex||0)-(base.dex||0)),
-      this.statCellV44('體質',st.con,(st.con||0)-(base.con||0)),
-      this.statCellV44('智力',st.int,(st.int||0)-(base.int||0)),
-      this.statCellV44('精神',st.wis,(st.wis||0)-(base.wis||0)),
-      this.statCellV44('防禦力',st.ac,0),
-      this.statCellV44('傷害','+'+Math.floor((st.dmg||0)+this.state.lv*1.8),0),
-      this.statCellV44('命中','+'+(st.hit||0),0),
-      this.statCellV44('魔法防禦',st.mr||0,0,'%'),
-      this.statCellV44('攻擊速度',st.spd||0,0,'%'),
-      this.statCellV44('傷害減免',st.dr||0,0),
-      `<div>戰鬥力 ${sum.cp.toLocaleString()}</div>`,
-      `<div>預估每秒傷害 ${sum.dps.toLocaleString()}</div>`
-    ].join('');
-    let cards=this.equipOrder().map(slot=>{
-      let k=this.state.equip[slot], cands=this.equipCandidates?this.equipCandidates(slot):[];
-      let current=k?`<b class="c-gold">${this.itemName(k,false)}</b><br><span class="small">戰力 ${this.itemPowerByKey?this.itemPowerByKey(k):0}｜${this.statLineForKey(k)}</span>`:'<b class="small">未裝備</b>';
-      let candHtml=(cands||[]).map(([ck])=>`<div class="item row"><span><span class="rarity-${DB.items[this.invItem(ck).id].rarity}">${this.itemName(ck)}</span><br><span class="small">戰力 ${this.itemPowerByKey?this.itemPowerByKey(ck):0}｜差異 ${(this.itemPowerByKey?this.itemPowerByKey(ck):0)-(k&&this.itemPowerByKey?this.itemPowerByKey(k):0)>=0?'+':''}${(this.itemPowerByKey?this.itemPowerByKey(ck):0)-(k&&this.itemPowerByKey?this.itemPowerByKey(k):0)}｜${this.statLineForKey(ck)}</span></span><button class="btn green" data-equip="${ck}">裝備</button></div>`).join('')||'<div class="small">沒有可替換裝備</div>';
-      return `<div class="setting-card"><div class="row"><b>${names[slot]||slot}</b><span>${k?`<button class="btn" data-unequip="${slot}">卸下</button> <button class="btn" data-enchant="${k}">強化</button>`:''}</span></div><div class="item">${current}</div><details><summary class="small">可替換裝備前 5 名</summary>${candHtml}</details></div>`;
-    }).join('');
-    return `<h3 class="title">裝備</h3><div class="setting-grid"><div class="setting-card"><b class="c-gold">角色總覽</b><div class="stat" style="margin-top:8px">${statHtml}</div><div class="small" style="margin-top:8px">V4.4：角色總覽已完整中文化，括號顯示裝備、變身、增益效果等額外加成。</div></div>${cards}</div>`;
-  };
-  Game.viewEquipment=Game.viewEquipmentV32;
-  const oldRenderTabV44Full=Game.renderTab;
-  Game.renderTab=function(){
-    oldRenderTabV44Full.call(this);
-    if(this.tab==='equipment'){
+  ['addItem','removeItem','splitOne','useItem','sellItem','buy','equip','unequip','enchant','autoPotion','autoBuyConsumable','sellWhite','kill','levelUp','learnByLevel'].forEach(n=>wrap(n,true));
+  const oldTick=Game.tick;
+  if(typeof oldTick==='function' && !oldTick._v441Wrapped){
+    const fn=function(...args){
+      const before=this.invSignatureV441?this.invSignatureV441():'';
+      const r=oldTick.apply(this,args);
+      const after=this.invSignatureV441?this.invSignatureV441():'';
+      if(before!==after || ['inventory','equipment','shop'].includes(this.tab)) this.refreshBackpackV441(before!==after);
+      return r;
+    };
+    fn._v441Wrapped=true;
+    Game.tick=fn;
+  }
+  const oldRenderTab=Game.renderTab;
+  if(typeof oldRenderTab==='function' && !oldRenderTab._v441Rebind){
+    const fn=function(...args){
+      const r=oldRenderTab.apply(this,args);
       const el=document.getElementById('tabContent');
       if(el){
-        el.innerHTML=this.viewEquipmentV32();
         el.querySelectorAll('[data-equip]').forEach(b=>b.onclick=()=>this.equip(b.dataset.equip));
         el.querySelectorAll('[data-enchant]').forEach(b=>b.onclick=()=>this.enchant(b.dataset.enchant));
+        el.querySelectorAll('[data-use]').forEach(b=>b.onclick=()=>this.useItem(b.dataset.use));
+        el.querySelectorAll('[data-sell]').forEach(b=>b.onclick=()=>this.sellItem(b.dataset.sell));
         el.querySelectorAll('[data-unequip]').forEach(b=>b.onclick=()=>this.unequip(b.dataset.unequip));
+        el.querySelectorAll('[data-buy]').forEach(b=>b.onclick=()=>this.buy(b.dataset.buy));
       }
-    }
-    this.localizeVisibleText(document.getElementById('tabContent'));
-  };
-  const oldSpawnV44Full=Game.spawn;
-  Game.spawn=function(){
-    oldSpawnV44Full.call(this);
-    this.localizeVisibleText(document.getElementById('battleLog'));
-  };
-  document.title='Lineage Idle V4.4 完整中文版';
+      if(this.state) this._lastInvSignatureV441=this.invSignatureV441();
+      return r;
+    };
+    fn._v441Rebind=true;
+    Game.renderTab=fn;
+  }
+  const oldEnter=Game.enter;
+  if(typeof oldEnter==='function' && !oldEnter._v441Wrapped){
+    const fn=function(...args){
+      const r=oldEnter.apply(this,args);
+      this.refreshBackpackV441(true);
+      return r;
+    };
+    fn._v441Wrapped=true;
+    Game.enter=fn;
+  }
 })();
 
 window.addEventListener('DOMContentLoaded',()=>Game.init());
