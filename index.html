@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Lineage Idle V4.3</title>
+<title>Lineage Idle V4.4</title>
 <style>
 :root{--bg:#05070a;--panel:#0d1117;--panel2:#111827;--line:#334155;--text:#dbeafe;--muted:#94a3b8;--gold:#facc15;--green:#22c55e;--red:#ef4444;--blue:#60a5fa;--purple:#c084fc;--orange:#fb923c}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:"Microsoft JhengHei",Consolas,monospace;font-size:15px;user-select:none}.hidden{display:none!important}.app{height:100vh;display:flex;flex-direction:column;padding:12px;gap:10px}.panel{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px}.top{display:flex;justify-content:space-between;align-items:center}.title{color:var(--gold);font-weight:700}.grid{display:grid;gap:10px}.main{flex:1;display:grid;grid-template-columns:300px 1fr 330px;gap:10px;min-height:0}.col{display:flex;flex-direction:column;gap:10px;min-height:0}.scroll{overflow:auto}.btn,select,input{background:#1f2937;color:var(--text);border:1px solid #475569;border-radius:8px;padding:8px 10px;font:inherit}.btn{cursor:pointer}.btn:hover{background:#334155}.btn:disabled{opacity:.45;cursor:not-allowed}.btn.green{color:#86efac}.btn.blue{color:#93c5fd}.btn.red{color:#fca5a5}.row{display:flex;align-items:center;justify-content:space-between;gap:8px}.tabs{display:flex;gap:6px;flex-wrap:wrap}.tab{padding:8px 12px}.tab.active{border-color:var(--gold);color:var(--gold)}.bar{height:18px;background:#020617;border:1px solid #475569;border-radius:99px;overflow:hidden;position:relative}.bar i{display:block;height:100%;width:0}.hp{background:#991b1b}.mp{background:#1d4ed8}.exp{background:#a16207}.bar span{position:absolute;inset:0;text-align:center;font-size:12px;line-height:16px;text-shadow:1px 1px #000}.stat{display:grid;grid-template-columns:1fr 1fr;gap:6px}.item{border-bottom:1px dashed #293548;padding:7px 0}.log{font-size:14px;line-height:1.55}.c-gold{color:var(--gold)}.c-green{color:var(--green)}.c-red{color:var(--red)}.c-blue{color:var(--blue)}.c-purple{color:var(--purple)}.c-orange{color:var(--orange)}.modal{position:fixed;inset:0;background:rgba(0,0,0,.86);display:flex;align-items:center;justify-content:center;z-index:50}.modal-card{width:min(760px,94vw);max-height:92vh;overflow:auto}.classes{grid-template-columns:repeat(auto-fit,minmax(150px,1fr))}.class-card{text-align:left;min-height:96px}.class-card.selected{border-color:var(--gold);background:#1e293b}.small{font-size:13px;color:var(--muted)}.pill{display:inline-block;border:1px solid #475569;border-radius:99px;padding:2px 7px;margin:2px;color:#cbd5e1}.rarity-白{color:#e5e7eb}.rarity-綠{color:#4ade80}.rarity-藍{color:#60a5fa}.rarity-紫{color:#c084fc}.rarity-橘{color:#fb923c}.rarity-紅{color:#f87171}.kbd{background:#020617;border:1px solid #334155;border-radius:5px;padding:1px 5px;color:#cbd5e1}.setting-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:10px}.setting-card{background:#0b1220;border:1px solid #26364f;border-radius:10px;padding:12px}@media(max-width:1100px){.main{grid-template-columns:1fr}.app{height:auto}.col{min-height:500px}}
 </style>
@@ -11,7 +11,7 @@
 <body>
 <div id="start" class="modal">
   <div class="panel modal-card">
-    <h1 class="title" style="font-size:42px;text-align:center;margin:20px 0 8px">Lineage Idle V4.3</h1>
+    <h1 class="title" style="font-size:42px;text-align:center;margin:20px 0 8px">Lineage Idle V4.4</h1>
     <p class="small" style="text-align:center;margin-bottom:24px">單機版</p>
     <div class="grid">
       <button id="newGame" class="btn green" style="font-size:22px;padding:14px">新冒險</button>
@@ -32,7 +32,7 @@
 
 <div class="app hidden" id="app">
   <div class="panel top">
-    <div><span class="title">Lineage Idle V4.3</span> <span id="subTitle" class="small"></span></div>
+    <div><span class="title">Lineage Idle V4.4</span> <span id="subTitle" class="small"></span></div>
     <div class="row"><button class="btn blue" id="saveBtn">儲存</button><button class="btn" id="exportBtn">匯出</button><button class="btn red" id="resetBtn">刪除</button></div>
   </div>
   <div class="main">
@@ -439,9 +439,9 @@ viewTransform(){let active=this.activeTransform();let rows=Object.values(DB.tran
    ========================= */
 (()=>{
  const VERSION='3.4';
- document.title='Lineage Idle V4.3';
+ document.title='Lineage Idle V4.4';
  const titleEl=document.querySelector('.title');
- if(titleEl&&titleEl.textContent.includes('Lineage Idle'))titleEl.textContent='Lineage Idle V4.3';
+ if(titleEl&&titleEl.textContent.includes('Lineage Idle'))titleEl.textContent='Lineage Idle V4.4';
 
  // 1) 新增神聖劍士職業與技能書
  DB.classes.holyknight={
@@ -532,9 +532,9 @@ viewTransform(){let active=this.activeTransform();let rows=Object.values(DB.tran
    ========================= */
 (()=>{
  const VERSION='3.5';
- document.title='Lineage Idle V4.3';
- document.querySelectorAll('.title').forEach(el=>{if(el.textContent.includes('Lineage Idle'))el.textContent='Lineage Idle V4.3';});
- const startTitle=document.querySelector('#start h1'); if(startTitle)startTitle.textContent='Lineage Idle V4.3';
+ document.title='Lineage Idle V4.4';
+ document.querySelectorAll('.title').forEach(el=>{if(el.textContent.includes('Lineage Idle'))el.textContent='Lineage Idle V4.4';});
+ const startTitle=document.querySelector('#start h1'); if(startTitle)startTitle.textContent='Lineage Idle V4.4';
 
  const addItem=(id,o)=>{DB.items[id]=Object.assign({id,rarity:'白',price:100,type:'material'},DB.items[id]||{},o,{id});};
  const addWeapon=(id,name,weapon,dmg,rarity,price,reqLv,safe=6,stat={})=>addItem(id,{name,type:'weapon',weapon,dmg,safe,rarity,price,reqLv,stat});
@@ -661,10 +661,10 @@ viewTransform(){let active=this.activeTransform();let rows=Object.values(DB.tran
    ========================================================= */
 (()=>{
  const VERSION='4.0';
- document.title='Lineage Idle V4.3';
- document.querySelectorAll('.title').forEach(el=>{if(el.textContent.includes('Lineage Idle'))el.textContent='Lineage Idle V4.3';});
- const startTitle=document.querySelector('#start h1'); if(startTitle)startTitle.textContent='Lineage Idle V4.3';
- const topTitle=document.querySelector('.top .title'); if(topTitle)topTitle.textContent='Lineage Idle V4.3';
+ document.title='Lineage Idle V4.4';
+ document.querySelectorAll('.title').forEach(el=>{if(el.textContent.includes('Lineage Idle'))el.textContent='Lineage Idle V4.4';});
+ const startTitle=document.querySelector('#start h1'); if(startTitle)startTitle.textContent='Lineage Idle V4.4';
+ const topTitle=document.querySelector('.top .title'); if(topTitle)topTitle.textContent='Lineage Idle V4.4';
  const loadBtn=document.getElementById('loadGame'); if(loadBtn)loadBtn.textContent='讀取存檔';
 
  const EQUIP_TYPES=['weapon','helmet','tshirt','armor','cloak','gloves','boots','leggings','ring','earring','amulet','belt'];
@@ -1071,15 +1071,14 @@ viewTransform(){let active=this.activeTransform();let rows=Object.values(DB.tran
 
 
 
-<script>
-/* V4.3 Sam patch：背包即時刷新 + 介面中文化 */
+/* V4.4 Sam patch：修復啟動畫面按鈕 + 背包即時刷新 + 介面中文化 */
 (function(){
- const VERSION='4.3';
+ const VERSION='4.4';
  const statZh={str:'力量',dex:'敏捷',con:'體質',int:'智力',wis:'精神',ac:'防禦',dmg:'傷害',hit:'命中',mr:'魔法防禦',dr:'傷害減免',spd:'攻擊速度',hp:'體力',mp:'魔力',exp:'經驗值'};
  const typeZh={heal:'治癒',buff:'輔助',attack:'攻擊',weapon:'武器',armor:'防具',scroll:'卷軸',book:'技能書',potion:'藥水'};
  function zText(v){
    return String(v??'')
-    .replace(/Lineage Idle V4\.\d+/g,'Lineage Idle V4.3')
+    .replace(/Lineage Idle V4\.\d+/g,'Lineage Idle V4.4')
     .replace(/\bJSON\b/g,'存檔檔案')
     .replace(/\bBOSS\b/g,'首領')
     .replace(/\bAUTO\b/g,'自動')
@@ -1129,8 +1128,8 @@ viewTransform(){let active=this.activeTransform();let rows=Object.values(DB.tran
  function patchGame(){
    if(!window.Game||Game._v43Patched)return;
    Game._v43Patched=true;
-   document.title='Lineage Idle V4.3';
-   const title=document.querySelector('.title'); if(title&&title.textContent.includes('Lineage Idle'))title.textContent='Lineage Idle V4.3';
+   document.title='Lineage Idle V4.4';
+   const title=document.querySelector('.title'); if(title&&title.textContent.includes('Lineage Idle'))title.textContent='Lineage Idle V4.4';
    const importBtn=document.getElementById('importBtn'); if(importBtn)importBtn.textContent='匯入存檔檔案';
    const oldRenderClassList=Game.renderClassList?.bind(Game);
    if(oldRenderClassList)Game.renderClassList=function(){oldRenderClassList();walkZh(document.getElementById('classList'));};
@@ -1175,7 +1174,6 @@ viewTransform(){let active=this.activeTransform();let rows=Object.values(DB.tran
  }
  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',patchGame,{once:true}); else patchGame();
 })();
-</script>
 
 window.addEventListener('DOMContentLoaded',()=>Game.init());
 </script>
