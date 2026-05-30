@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Lineage Idle V4.4</title>
+<title>Lineage Idle V4.5</title>
 <style>
 :root{--bg:#05070a;--panel:#0d1117;--panel2:#111827;--line:#334155;--text:#dbeafe;--muted:#94a3b8;--gold:#facc15;--green:#22c55e;--red:#ef4444;--blue:#60a5fa;--purple:#c084fc;--orange:#fb923c}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:"Microsoft JhengHei",Consolas,monospace;font-size:15px;user-select:none}.hidden{display:none!important}.app{height:100vh;display:flex;flex-direction:column;padding:12px;gap:10px}.panel{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px}.top{display:flex;justify-content:space-between;align-items:center}.title{color:var(--gold);font-weight:700}.grid{display:grid;gap:10px}.main{flex:1;display:grid;grid-template-columns:300px 1fr 330px;gap:10px;min-height:0}.col{display:flex;flex-direction:column;gap:10px;min-height:0}.scroll{overflow:auto}.btn,select,input{background:#1f2937;color:var(--text);border:1px solid #475569;border-radius:8px;padding:8px 10px;font:inherit}.btn{cursor:pointer}.btn:hover{background:#334155}.btn:disabled{opacity:.45;cursor:not-allowed}.btn.green{color:#86efac}.btn.blue{color:#93c5fd}.btn.red{color:#fca5a5}.row{display:flex;align-items:center;justify-content:space-between;gap:8px}.tabs{display:flex;gap:6px;flex-wrap:wrap}.tab{padding:8px 12px}.tab.active{border-color:var(--gold);color:var(--gold)}.bar{height:18px;background:#020617;border:1px solid #475569;border-radius:99px;overflow:hidden;position:relative}.bar i{display:block;height:100%;width:0}.hp{background:#991b1b}.mp{background:#1d4ed8}.exp{background:#a16207}.bar span{position:absolute;inset:0;text-align:center;font-size:12px;line-height:16px;text-shadow:1px 1px #000}.stat{display:grid;grid-template-columns:1fr 1fr;gap:6px}.item{border-bottom:1px dashed #293548;padding:7px 0}.log{font-size:14px;line-height:1.55}.c-gold{color:var(--gold)}.c-green{color:var(--green)}.c-red{color:var(--red)}.c-blue{color:var(--blue)}.c-purple{color:var(--purple)}.c-orange{color:var(--orange)}.modal{position:fixed;inset:0;background:rgba(0,0,0,.86);display:flex;align-items:center;justify-content:center;z-index:50}.modal-card{width:min(760px,94vw);max-height:92vh;overflow:auto}.classes{grid-template-columns:repeat(auto-fit,minmax(150px,1fr))}.class-card{text-align:left;min-height:96px}.class-card.selected{border-color:var(--gold);background:#1e293b}.small{font-size:13px;color:var(--muted)}.pill{display:inline-block;border:1px solid #475569;border-radius:99px;padding:2px 7px;margin:2px;color:#cbd5e1}.rarity-白{color:#e5e7eb}.rarity-綠{color:#4ade80}.rarity-藍{color:#60a5fa}.rarity-紫{color:#c084fc}.rarity-橘{color:#fb923c}.rarity-紅{color:#f87171}.kbd{background:#020617;border:1px solid #334155;border-radius:5px;padding:1px 5px;color:#cbd5e1}.setting-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:10px}.setting-card{background:#0b1220;border:1px solid #26364f;border-radius:10px;padding:12px}@media(max-width:1100px){.main{grid-template-columns:1fr}.app{height:auto}.col{min-height:500px}}
 </style>
@@ -11,7 +11,7 @@
 <body>
 <div id="start" class="modal">
   <div class="panel modal-card">
-    <h1 class="title" style="font-size:42px;text-align:center;margin:20px 0 8px">Lineage Idle V4.4</h1>
+    <h1 class="title" style="font-size:42px;text-align:center;margin:20px 0 8px">Lineage Idle V4.5</h1>
     <p class="small" style="text-align:center;margin-bottom:24px">單機版</p>
     <div class="grid">
       <button id="newGame" class="btn green" style="font-size:22px;padding:14px">新冒險</button>
@@ -32,7 +32,7 @@
 
 <div class="app hidden" id="app">
   <div class="panel top">
-    <div><span class="title">Lineage Idle V4.4</span> <span id="subTitle" class="small"></span></div>
+    <div><span class="title">Lineage Idle V4.5</span> <span id="subTitle" class="small"></span></div>
     <div class="row"><button class="btn blue" id="saveBtn">儲存</button><button class="btn" id="exportBtn">匯出</button><button class="btn red" id="resetBtn">刪除</button></div>
   </div>
   <div class="main">
@@ -439,9 +439,9 @@ viewTransform(){let active=this.activeTransform();let rows=Object.values(DB.tran
    ========================= */
 (()=>{
  const VERSION='3.4';
- document.title='Lineage Idle V4.4';
+ document.title='Lineage Idle V4.5';
  const titleEl=document.querySelector('.title');
- if(titleEl&&titleEl.textContent.includes('Lineage Idle'))titleEl.textContent='Lineage Idle V4.4';
+ if(titleEl&&titleEl.textContent.includes('Lineage Idle'))titleEl.textContent='Lineage Idle V4.5';
 
  // 1) 新增神聖劍士職業與技能書
  DB.classes.holyknight={
@@ -532,9 +532,9 @@ viewTransform(){let active=this.activeTransform();let rows=Object.values(DB.tran
    ========================= */
 (()=>{
  const VERSION='3.5';
- document.title='Lineage Idle V4.4';
- document.querySelectorAll('.title').forEach(el=>{if(el.textContent.includes('Lineage Idle'))el.textContent='Lineage Idle V4.4';});
- const startTitle=document.querySelector('#start h1'); if(startTitle)startTitle.textContent='Lineage Idle V4.4';
+ document.title='Lineage Idle V4.5';
+ document.querySelectorAll('.title').forEach(el=>{if(el.textContent.includes('Lineage Idle'))el.textContent='Lineage Idle V4.5';});
+ const startTitle=document.querySelector('#start h1'); if(startTitle)startTitle.textContent='Lineage Idle V4.5';
 
  const addItem=(id,o)=>{DB.items[id]=Object.assign({id,rarity:'白',price:100,type:'material'},DB.items[id]||{},o,{id});};
  const addWeapon=(id,name,weapon,dmg,rarity,price,reqLv,safe=6,stat={})=>addItem(id,{name,type:'weapon',weapon,dmg,safe,rarity,price,reqLv,stat});
@@ -661,10 +661,10 @@ viewTransform(){let active=this.activeTransform();let rows=Object.values(DB.tran
    ========================================================= */
 (()=>{
  const VERSION='4.0';
- document.title='Lineage Idle V4.4';
- document.querySelectorAll('.title').forEach(el=>{if(el.textContent.includes('Lineage Idle'))el.textContent='Lineage Idle V4.4';});
- const startTitle=document.querySelector('#start h1'); if(startTitle)startTitle.textContent='Lineage Idle V4.4';
- const topTitle=document.querySelector('.top .title'); if(topTitle)topTitle.textContent='Lineage Idle V4.4';
+ document.title='Lineage Idle V4.5';
+ document.querySelectorAll('.title').forEach(el=>{if(el.textContent.includes('Lineage Idle'))el.textContent='Lineage Idle V4.5';});
+ const startTitle=document.querySelector('#start h1'); if(startTitle)startTitle.textContent='Lineage Idle V4.5';
+ const topTitle=document.querySelector('.top .title'); if(topTitle)topTitle.textContent='Lineage Idle V4.5';
  const loadBtn=document.getElementById('loadGame'); if(loadBtn)loadBtn.textContent='讀取存檔';
 
  const EQUIP_TYPES=['weapon','helmet','tshirt','armor','cloak','gloves','boots','leggings','ring','earring','amulet','belt'];
@@ -1070,7 +1070,7 @@ viewTransform(){let active=this.activeTransform();let rows=Object.values(DB.tran
 })();
 
 
-/* Lineage Idle V4.4 patch: job weapons/equipment, boss encounter tuning, transform stat optimization */
+/* Lineage Idle V4.5 patch: job weapons/equipment, boss encounter tuning, transform stat optimization */
 (function(){
   'use strict';
   if(!window.DB || !window.Game) return;
@@ -1413,7 +1413,7 @@ viewTransform(){let active=this.activeTransform();let rows=Object.values(DB.tran
     }).join('');
     return `<h3 class="title">變身</h3><div class="small">V4.4：變身能力完整中文化，並顯示力量、敏捷、智力等加成。</div>${active?`<div class="setting-card">目前變身：<b class="c-gold">${active.name}</b></div>`:''}${rows}`;
   };
-  document.title='Lineage Idle V4.4';
+  document.title='Lineage Idle V4.5';
 })();
 
 
@@ -1499,6 +1499,109 @@ viewTransform(){let active=this.activeTransform();let rows=Object.values(DB.tran
     fn._v441Wrapped=true;
     Game.enter=fn;
   }
+})();
+
+
+
+// === V4.5 Major Patch: Red gear system, combat score, DPS, collection bonus, drops and save migration ===
+(function(){
+  'use strict';
+  if(!window.DB || !window.Game) return;
+  const VERSION='4.5';
+  const esc=s=>String(s??'').replace(/[&<>\"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]));
+  const put=(id,o)=>{DB.items[id]=Object.assign(DB.items[id]||{id},o,{id});return DB.items[id];};
+  const merge=(a,b)=>{let r=Object.assign({},a||{});for(let [k,v] of Object.entries(b||{})) if(typeof v==='number') r[k]=(r[k]||0)+v; return r;};
+  const equipTypes=['weapon','helmet','tshirt','armor','cloak','gloves','boots','leggings','ring','earring','amulet','belt'];
+  const redSetItems=['red_v45_helm','red_v45_armor','red_v45_gloves','red_v45_boots','red_v45_cloak'];
+  const redClass={
+    prince:{weapon:['red_v45_royal_sword','王族專屬・紅焰君主劍','sword',{str:4,wis:2,hit:10,dmg:16,dr:6,hp:260}], armor:['red_v45_royal_mail','王族專屬・紅焰君主鎧','armor',{str:2,wis:3,hp:420,dr:12,mr:35}]},
+    knight:{weapon:['red_v45_knight_sword','騎士專屬・紅焰騎士劍','sword',{str:5,hit:12,dmg:18,dr:7,hp:300}], armor:['red_v45_knight_plate','騎士專屬・紅焰重甲','armor',{str:3,con:3,hp:520,dr:16,mr:25}]},
+    elf:{weapon:['red_v45_elven_bow','妖精專屬・紅焰沙哈弓','bow',{dex:6,hit:16,dmg:17,spd:10,mp:120}], armor:['red_v45_elven_chain','妖精專屬・紅焰精靈甲','armor',{dex:4,wis:2,hp:360,mp:180,dr:10,mr:40}]},
+    wizard:{weapon:['red_v45_wizard_staff','法師專屬・紅焰賢者杖','staff',{int:7,wis:5,mp:420,dmg:16,mr:35}], armor:['red_v45_wizard_robe','法師專屬・紅焰賢者袍','armor',{int:5,wis:4,hp:260,mp:520,dr:8,mr:60}]},
+    darkelf:{weapon:['red_v45_darkelf_dual','黑妖專屬・紅焰暗影雙刀','dualblade',{dex:5,str:3,hit:15,dmg:20,spd:12}], armor:['red_v45_darkelf_armor','黑妖專屬・紅焰暗影甲','armor',{dex:4,str:2,hp:360,dr:10,mr:35,spd:8}]},
+    dragon:{weapon:['red_v45_dragon_chain','龍騎士專屬・紅焰鎖鏈劍','chain_sword',{str:5,int:3,hit:12,dmg:19,dr:8}], armor:['red_v45_dragon_scale','龍騎士專屬・紅焰龍鱗甲','armor',{str:3,int:2,hp:460,dr:14,mr:35}]},
+    illusion:{weapon:['red_v45_illusion_kiringku','幻術士專屬・紅焰奇古獸','kiringku',{int:6,wis:4,mp:360,dmg:17,hit:8}], armor:['red_v45_illusion_robe','幻術士專屬・紅焰幻術袍','armor',{int:4,wis:4,hp:320,mp:360,dr:9,mr:50}]},
+    warrior:{weapon:['red_v45_warrior_axe','戰士專屬・紅焰泰坦斧','axe',{str:7,con:4,hp:520,dmg:22,dr:10}], armor:['red_v45_warrior_plate','戰士專屬・紅焰泰坦甲','armor',{str:4,con:5,hp:680,dr:18,mr:20}]},
+    fencer:{weapon:['red_v45_fencer_blade','劍士專屬・紅焰幻影劍','sword',{str:4,dex:4,hit:14,dmg:19,spd:12}], armor:['red_v45_fencer_coat','劍士專屬・紅焰幻影甲','armor',{str:2,dex:4,hp:380,dr:11,mr:35,spd:8}]},
+    lancer:{weapon:['red_v45_lancer_spear','黃金槍騎專屬・紅焰聖槍','spear',{str:6,dex:2,hit:13,dmg:20,dr:8}], armor:['red_v45_lancer_plate','黃金槍騎專屬・紅焰聖甲','armor',{str:3,dex:2,hp:480,dr:15,mr:30}]}
+  };
+  Object.entries(redClass).forEach(([cls,cfg])=>{
+    const w=cfg.weapon, a=cfg.armor;
+    put(w[0],{name:w[1],type:'weapon',weapon:w[2],dmg:46,safe:6,rarity:'紅',reqLv:1,price:2200000,stat:w[3],v45Class:cls,v45Red:true});
+    put(a[0],{name:a[1],type:a[2],ac:-24,safe:4,rarity:'紅',reqLv:1,price:2000000,stat:a[3],v45Class:cls,v45Red:true});
+  });
+  [
+    ['red_v45_helm','紅焰套裝・頭盔','helmet',-10,{hp:180,dr:4,mr:15}],
+    ['red_v45_armor','紅焰套裝・鎧甲','armor',-23,{hp:420,dr:12,mr:30}],
+    ['red_v45_gloves','紅焰套裝・手套','gloves',-7,{str:2,dex:2,hit:8,dmg:8}],
+    ['red_v45_boots','紅焰套裝・長靴','boots',-8,{hp:200,spd:10,dr:4}],
+    ['red_v45_cloak','紅焰套裝・斗篷','cloak',-9,{mp:150,mr:40,dr:5}]
+  ].forEach(x=>put(x[0],{name:x[1],type:x[2],ac:x[3],safe:4,rarity:'紅',reqLv:1,price:1800000,stat:x[4],v45Red:true,v45Set:'red_flame'}));
+  [
+    ['artifact_antharas_v45','四龍神器・安塔瑞斯之心',{con:5,hp:700,dr:18,mr:20}],
+    ['artifact_fafurion_v45','四龍神器・法利昂之淚',{wis:5,mp:500,dr:8,mr:55}],
+    ['artifact_valakas_v45','四龍神器・巴拉卡斯之焰',{str:5,int:3,dmg:28,hit:12}],
+    ['artifact_lindvior_v45','四龍神器・林德拜爾之翼',{dex:5,spd:22,hit:18,dmg:16}]
+  ].forEach(x=>put(x[0],{name:x[1],type:'amulet',safe:0,rarity:'紅',reqLv:1,price:5000000,stat:x[2],v45Artifact:true,v45Red:true}));
+
+  const addDrop=(mapId,id,rate)=>{let m=DB.maps.find(x=>x.id===mapId);if(!m||!DB.items[id])return;let d=m.drops.find(x=>x.id===id);if(d)d.rate=Math.max(d.rate,rate);else m.drops.push({id,rate});};
+  const giranIndex=DB.maps.findIndex(m=>m.id==='giran_prison');
+  DB.maps.forEach((m,i)=>{ if(i>=giranIndex){ addDrop(m.id,'scroll_armor',Math.max(2.2,(i-giranIndex+1)*0.55)); } });
+  ['toi_1','toi_4','toi_10','lastabad','antharas','fafu','valakas','lind'].forEach(id=>addDrop(id,'scroll_bless_armor',1.25));
+  Object.entries(redClass).forEach(([cls,cfg])=>['lastabad','toi_10','antharas','fafu','valakas','lind'].forEach(mid=>{addDrop(mid,cfg.weapon[0],0.35);addDrop(mid,cfg.armor[0],0.3);}));
+  redSetItems.forEach(id=>['toi_4','toi_10','lastabad','antharas','fafu','valakas','lind'].forEach(mid=>addDrop(mid,id,0.45)));
+  addDrop('antharas','artifact_antharas_v45',0.45); addDrop('fafu','artifact_fafurion_v45',0.45); addDrop('valakas','artifact_valakas_v45',0.45); addDrop('lind','artifact_lindvior_v45',0.45);
+
+  const oldMigrate=Game.migrateState.bind(Game), oldTotal=Game.totalStats.bind(Game), oldInit=Game.initMenus.bind(Game), oldRender=Game.renderTab.bind(Game), oldFight=Game.fight.bind(Game), oldKill=Game.kill.bind(Game), oldSettings=Game.viewSettings.bind(Game), oldCollection=Game.viewCollection.bind(Game), oldEquip=Game.viewEquipment.bind(Game), oldInventory=Game.viewInventory.bind(Game), oldMaps=Game.viewMaps.bind(Game), oldExport=Game.exportSave.bind(Game), oldImport=Game.importSave.bind(Game);
+
+  Game.v45EquipScore=function(key){let it=this.invItem(key),d=it&&DB.items[it.id]; if(!d) return 0; let st=d.stat||{}; let ac=Math.abs(d.ac||0)*16, dmg=(d.dmg||0)*22, ench=(it.enchant||0)*65; let stat=0; Object.entries(st).forEach(([k,v])=>{let w={str:90,dex:85,con:70,int:92,wis:65,hp:0.22,mp:0.16,dmg:120,hit:55,dr:110,mr:9,spd:45,ac:45}[k]||25; stat+=v*w;}); let rarity={白:1,綠:1.15,藍:1.35,紫:1.65,橘:2.05,紅:2.8}[d.rarity]||1; return Math.floor((ac+dmg+ench+stat)*rarity); };
+  Game.v45Power=function(){let st=this.totalStats();let eq=Object.values(this.state.equip||{}).reduce((a,k)=>a+(k?this.v45EquipScore(k):0),0);let base=(this.state.lv||1)*120+(st.str||0)*65+(st.dex||0)*60+(st.int||0)*70+(st.wis||0)*45+(st.con||0)*50+Math.max(0,10-(st.ac||10))*80+(st.dmg||0)*135+(st.hit||0)*55+(st.dr||0)*120+(st.mr||0)*10+(st.spd||0)*45+this.maxHp()*0.35+this.maxMp()*0.22;return Math.floor(base+eq);};
+  Game.v45Dps=function(){let now=Date.now(), arr=(this.state.v45Combat?.dps||[]).filter(x=>now-x.t<=10000);let sum=arr.reduce((a,x)=>a+x.d,0);return Math.round(sum/10);};
+  Game.v45SetBonus=function(){let ids=Object.values(this.state.equip||{}).map(k=>this.invItem(k)?.id).filter(Boolean);let cnt=redSetItems.filter(id=>ids.includes(id)).length;let b={}; if(cnt>=2)b=merge(b,{hp:200,dr:5}); if(cnt>=3)b=merge(b,{dmg:8,hit:8,mr:20}); if(cnt>=5)b=merge(b,{str:3,dex:3,int:3,wis:3,hp:500,dmg:18,dr:15,spd:10});return {cnt,b};};
+  Game.v45CollectionBonus=function(){let col=this.state.collection||{}, got=Object.keys(col).filter(id=>col[id]&&DB.items[id]).length, red=Object.keys(col).filter(id=>col[id]&&DB.items[id]?.rarity==='紅').length, boss=Object.keys(col).filter(id=>col[id]&&DB.items[id]?.v45Artifact).length;let b={}; if(got>=30)b=merge(b,{hp:120,dmg:3}); if(got>=60)b=merge(b,{mp:160,hit:4,mr:10}); if(red>=3)b=merge(b,{dmg:8,dr:5}); if(red>=8)b=merge(b,{str:2,dex:2,int:2,wis:2}); if(boss>=1)b=merge(b,{dr:6,mr:25}); if(boss>=4)b=merge(b,{dmg:25,spd:15,hp:600});return {got,red,boss,b};};
+  Game.v45StatText=function(stat){return Object.entries(stat||{}).map(([k,v])=>`${k.toUpperCase()} ${v>0?'+':''}${v}`).join('、')||'無';};
+  Game.v45CompareText=function(key){let it=this.invItem(key),d=it&&DB.items[it.id]; if(!d||!equipTypes.includes(d.type))return ''; let slot=d.type;if(d.type==='ring')slot='ring1';if(d.type==='earring')slot='earring1';let cur=this.state.equip?.[slot];let diff=this.v45EquipScore(key)-(cur?this.v45EquipScore(cur):0);return `｜戰力 ${this.v45EquipScore(key).toLocaleString()}｜比較 ${diff>=0?'+':''}${diff.toLocaleString()}`;};
+  Game.migrateState=function(){oldMigrate(); if(!this.state)return; this.state.version=VERSION; this.state.v45=this.state.v45||{migratedAt:Date.now()}; this.state.v45Combat=this.state.v45Combat||{dps:[],lastDamage:0,lastKill:0}; this.state.settings=this.state.settings||{}; if(this.state.settings.autoArrow===undefined)this.state.settings.autoArrow=true; if(this.state.settings.autoPetSummon===undefined)this.state.settings.autoPetSummon=true; Object.values(DB.items).forEach(d=>{if(equipTypes.includes(d.type))d.reqLv=1;});};
+  Game.totalStats=function(){let s=oldTotal(); let set=this.v45SetBonus(); s=merge(s,set.b); let col=this.v45CollectionBonus(); s=merge(s,col.b); return s;};
+  Game.initMenus=function(){oldInit();let tabs=document.getElementById('tabs'); if(tabs&&!tabs.querySelector('[data-tab="v45combat"]')){let b=document.createElement('button');b.className='btn tab';b.dataset.tab='v45combat';b.textContent='戰力/DPS';b.onclick=()=>{this.tab='v45combat';this.renderTab();};tabs.insertBefore(b,tabs.firstChild?.nextSibling||null);}};
+  Game.autoArrowV45=function(){let hasBow=Object.values(this.state.equip||{}).some(k=>DB.items[this.invItem(k)?.id]?.weapon==='bow'); if(!hasBow||!this.state.settings?.autoArrow)return; let cnt=Object.values(this.state.inventory||{}).filter(x=>x.id==='arrow').reduce((a,x)=>a+(x.qty||0),0); if(cnt<200){let price=1, need=1000-cnt, buy=Math.min(need,Math.floor((this.state.adena||0)/price)); if(buy>0){this.state.adena-=buy*price; this.addItem('arrow',buy,0); this.log(`自動補箭：箭矢 ×${buy}`,'green');}}};
+  put('arrow',{name:'箭矢',type:'material',rarity:'白',price:1});
+  Game.fight=function(){let before=this.mon()?this.mon().hp:0; this.autoArrowV45(); oldFight(); let after=this.mon()?this.mon().hp:0; let dmg=Math.max(0,before-after); if(dmg>0){this.state.v45Combat=this.state.v45Combat||{dps:[]}; let now=Date.now(); this.state.v45Combat.dps=(this.state.v45Combat.dps||[]).filter(x=>now-x.t<=10000); this.state.v45Combat.dps.push({t:now,d:dmg}); this.state.v45Combat.lastDamage=dmg;}};
+  Game.kill=function(mdef){oldKill(mdef); if(this.state?.v45Combat)this.state.v45Combat.lastKill=Date.now(); if(mdef?.boss){let bossMap={antharas:'artifact_antharas_v45',fafu:'artifact_fafurion_v45',valakas:'artifact_valakas_v45',lindvior:'artifact_lindvior_v45'};let id=bossMap[mdef.id]; if(id&&Math.random()<0.008){this.addItem(id,1,0);this.log('BOSS 專屬掉落：'+DB.items[id].name,'green');}}};
+  Game.viewV45Combat=function(){let st=this.totalStats(), set=this.v45SetBonus(), col=this.v45CollectionBonus();return `<h3 class="title">戰力 / DPS</h3><div class="setting-grid"><div class="setting-card"><b class="c-gold">即時戰鬥資訊</b><div class="stat" style="margin-top:8px"><div>戰力評分 ${this.v45Power().toLocaleString()}</div><div>DPS ${this.v45Dps().toLocaleString()}</div><div>最近傷害 ${this.state.v45Combat?.lastDamage||0}</div><div>HP ${Math.floor(this.state.hp)}/${this.maxHp()}</div><div>MP ${Math.floor(this.state.mp)}/${this.maxMp()}</div><div>目前地圖 ${esc(this.map().name)}</div></div><div class="small">每秒刷新，DPS 以最近 10 秒造成傷害估算。</div></div><div class="setting-card"><b class="c-gold">紅裝套裝效果</b><div>紅焰套裝：${set.cnt}/5</div><div class="small">2件：HP+200、DR+5；3件：DMG+8、HIT+8、MR+20；5件：全主屬+3、HP+500、DMG+18、DR+15、攻速+10%。</div><div class="small">目前加成：${this.v45StatText(set.b)}</div></div><div class="setting-card"><b class="c-gold">收藏加成</b><div>總收藏 ${col.got}｜紅裝 ${col.red}｜四龍神器 ${col.boss}</div><div class="small">目前加成：${this.v45StatText(col.b)}</div></div></div>`;};
+  Game.viewSettings=function(){let html=oldSettings();return String(html).replace('</div></div>',`<label class="row item"><span>自動補箭</span><input data-setting="autoArrow" type="checkbox" ${this.state.settings.autoArrow?'checked':''}></label><label class="row item"><span>自動召喚寵物</span><input data-setting="autoPetSummon" type="checkbox" ${this.state.settings.autoPetSummon?'checked':''}></label></div></div>`);};
+  Game.viewEquipment=function(){let html=oldEquip();return String(html).replace('<h3 class="title">裝備</h3>',`<h3 class="title">裝備</h3><div class="setting-card"><b class="c-gold">V4.5 裝備評分</b><div class="stat" style="margin-top:8px"><div>總戰力 ${this.v45Power().toLocaleString()}</div><div>即時 DPS ${this.v45Dps().toLocaleString()}</div></div></div>`).replace('<h3 class="title">目前裝備</h3>',`<h3 class="title">目前裝備</h3><div class="small">V4.5：已移除等級穿戴限制，背包會顯示裝備比較差值。</div>`);};
+  Game.viewInventory=function(){let html=oldInventory();return String(html).replace(/<span class="small">([^<]*)<\/span><\/span><span>/g,(m,a)=>`<span class="small">${a}</span></span><span>`);};
+  Game.viewCollection=function(){let base=oldCollection();let col=this.v45CollectionBonus();return `<h3 class="title">收藏圖鑑 / 加成</h3><div class="setting-card"><div>總收藏 ${col.got}｜紅裝收藏 ${col.red}｜四龍神器 ${col.boss}</div><div class="small">收藏加成：${this.v45StatText(col.b)}</div></div>`+String(base).replace('<h3 class="title">收藏','<h3 class="title">完整收藏');};
+  Game.viewMaps=function(){let html=oldMaps();return String(html).replace('<h3 class="title">地圖掉落</h3>',`<h3 class="title">地圖掉落</h3><div class="small">V4.5 掉落重構：奇岩監獄後全地圖掉防卷；高階地圖追加祝防卷；BOSS 與四龍地圖追加專屬紅裝與四龍神器。</div>`);};
+  Game.renderTab=function(){oldRender();let el=document.getElementById('tabContent'); if(!this.state||!el)return; if(this.tab==='v45combat')el.innerHTML=this.viewV45Combat(); el.querySelectorAll('[data-setting]').forEach(x=>x.onchange=()=>{let k=x.dataset.setting;let v=x.type==='checkbox'?x.checked:(x.type==='number'?+x.value:x.value);this.state.settings[k]=v;this.save(false);this.render();});};
+  Game.exportSave=function(){this.save(false);let blob=new Blob([JSON.stringify(this.state,null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='lineage_idle_v45_save.json';a.click();URL.revokeObjectURL(a.href)};
+  Game.importSave=function(e){let f=e.target.files[0];if(!f)return;let r=new FileReader();r.onload=()=>{try{this.state=JSON.parse(r.result);this.migrateState();this.save(false);this.enter();this.log('V4.5 已自動轉換匯入存檔。','green');}catch(err){alert('存檔格式錯誤')}};r.readAsText(f)};
+  const oldStatus=Game.renderStatus.bind(Game);
+  Game.renderStatus=function(){oldStatus();let box=document.getElementById('statBox');if(box&&!box.querySelector('[data-v45-power]'))box.innerHTML+=`<div data-v45-power>戰力 ${this.v45Power().toLocaleString()}</div><div>DPS ${this.v45Dps().toLocaleString()}</div>`;};
+  setInterval(()=>{if(Game.state){Game.renderStatus(); if(Game.tab==='v45combat')Game.renderTab();}},1000);
+  document.title='Lineage Idle V4.5';
+  document.querySelectorAll('.title').forEach(el=>{if(el.textContent.includes('Lineage Idle'))el.textContent='Lineage Idle V4.5';});
+  const startTitle=document.querySelector('#start h1'); if(startTitle)startTitle.textContent='Lineage Idle V4.5';
+  const topTitle=document.querySelector('.top .title'); if(topTitle)topTitle.textContent='Lineage Idle V4.5';
+  Game.log('Lineage Idle 已套用 V4.5：紅裝、套裝、收藏加成、掉落重構、戰力/DPS、裝備比較、存檔轉換。','green');
+})();
+
+
+
+// === V4.5.1 Hotfix: 背包裝備比較顯示 ===
+(function(){
+ if(!window.Game||!window.DB) return;
+ const esc=s=>String(s??'').replace(/[&<>\"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]));
+ const equipTypes=['weapon','helmet','tshirt','armor','cloak','gloves','boots','leggings','ring','earring','amulet','belt'];
+ const typeName=t=>({weapon:'武器',helmet:'頭盔',tshirt:'內衣',armor:'盔甲',cloak:'斗篷',gloves:'手套',boots:'鞋子',leggings:'脛甲',ring:'戒指',earring:'耳環',amulet:'項鍊',belt:'腰帶',potion:'藥水',scroll:'卷軸',book:'技能書',material:'材料',exp_potion:'經驗藥水'}[t]||t);
+ const oldRender=Game.renderTab.bind(Game);
+ Game.viewInventory=function(){
+   const entries=Object.entries(this.state.inventory||{}).sort((a,b)=>(DB.items[a[1].id]?.type||'').localeCompare(DB.items[b[1].id]?.type||'')||(DB.items[a[1].id]?.name||'').localeCompare(DB.items[b[1].id]?.name||''));
+   const rows=entries.map(([k,it])=>{let d=DB.items[it.id]||{};let canEquip=equipTypes.includes(d.type);let name=`${it.enchant?`+${it.enchant} `:''}${d.name||it.id}${it.qty>1?' ×'+it.qty:''}`;let compare=canEquip&&this.v45CompareText?this.v45CompareText(k):'';let buttons=[];if(canEquip)buttons.push(`<button class="btn" data-equip="${esc(k)}">裝備</button>`);if(d.type==='potion'||d.type==='book'||d.type==='exp_potion')buttons.push(`<button class="btn green" data-use="${esc(k)}">使用</button>`);if(!Object.values(this.state.equip||{}).includes(k))buttons.push(`<button class="btn red" data-sell="${esc(k)}">賣出</button>`);return `<div class="item row"><span class="rarity-${d.rarity||'白'}"><b>${esc(name)}</b><br><span class="small">${typeName(d.type)}${d.stat?`｜${this.v45StatText?this.v45StatText(d.stat):''}`:''}${compare}</span></span><span>${buttons.join(' ')}</span></div>`;}).join('');
+   return `<h3 class="title">背包</h3><div class="small">V4.5：裝備列會顯示戰力分數與目前同欄位裝備比較；強化請到「強化」頁。</div>${rows||'<div class="small">空</div>'}`;
+ };
+ Game.renderTab=function(){oldRender();let el=document.getElementById('tabContent');if(!this.state||!el)return;if(this.tab==='inventory')el.innerHTML=this.viewInventory();el.querySelectorAll('[data-equip]').forEach(b=>b.onclick=()=>this.equip(b.dataset.equip));el.querySelectorAll('[data-use]').forEach(b=>b.onclick=()=>this.useItem(b.dataset.use));el.querySelectorAll('[data-sell]').forEach(b=>b.onclick=()=>this.sellItem(b.dataset.sell));};
 })();
 
 window.addEventListener('DOMContentLoaded',()=>Game.init());
