@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Lineage Idle V4.2</title>
+<title>Lineage Idle V4.3</title>
 <style>
 :root{--bg:#05070a;--panel:#0d1117;--panel2:#111827;--line:#334155;--text:#dbeafe;--muted:#94a3b8;--gold:#facc15;--green:#22c55e;--red:#ef4444;--blue:#60a5fa;--purple:#c084fc;--orange:#fb923c}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:"Microsoft JhengHei",Consolas,monospace;font-size:15px;user-select:none}.hidden{display:none!important}.app{height:100vh;display:flex;flex-direction:column;padding:12px;gap:10px}.panel{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px}.top{display:flex;justify-content:space-between;align-items:center}.title{color:var(--gold);font-weight:700}.grid{display:grid;gap:10px}.main{flex:1;display:grid;grid-template-columns:300px 1fr 330px;gap:10px;min-height:0}.col{display:flex;flex-direction:column;gap:10px;min-height:0}.scroll{overflow:auto}.btn,select,input{background:#1f2937;color:var(--text);border:1px solid #475569;border-radius:8px;padding:8px 10px;font:inherit}.btn{cursor:pointer}.btn:hover{background:#334155}.btn:disabled{opacity:.45;cursor:not-allowed}.btn.green{color:#86efac}.btn.blue{color:#93c5fd}.btn.red{color:#fca5a5}.row{display:flex;align-items:center;justify-content:space-between;gap:8px}.tabs{display:flex;gap:6px;flex-wrap:wrap}.tab{padding:8px 12px}.tab.active{border-color:var(--gold);color:var(--gold)}.bar{height:18px;background:#020617;border:1px solid #475569;border-radius:99px;overflow:hidden;position:relative}.bar i{display:block;height:100%;width:0}.hp{background:#991b1b}.mp{background:#1d4ed8}.exp{background:#a16207}.bar span{position:absolute;inset:0;text-align:center;font-size:12px;line-height:16px;text-shadow:1px 1px #000}.stat{display:grid;grid-template-columns:1fr 1fr;gap:6px}.item{border-bottom:1px dashed #293548;padding:7px 0}.log{font-size:14px;line-height:1.55}.c-gold{color:var(--gold)}.c-green{color:var(--green)}.c-red{color:var(--red)}.c-blue{color:var(--blue)}.c-purple{color:var(--purple)}.c-orange{color:var(--orange)}.modal{position:fixed;inset:0;background:rgba(0,0,0,.86);display:flex;align-items:center;justify-content:center;z-index:50}.modal-card{width:min(760px,94vw);max-height:92vh;overflow:auto}.classes{grid-template-columns:repeat(auto-fit,minmax(150px,1fr))}.class-card{text-align:left;min-height:96px}.class-card.selected{border-color:var(--gold);background:#1e293b}.small{font-size:13px;color:var(--muted)}.pill{display:inline-block;border:1px solid #475569;border-radius:99px;padding:2px 7px;margin:2px;color:#cbd5e1}.rarity-白{color:#e5e7eb}.rarity-綠{color:#4ade80}.rarity-藍{color:#60a5fa}.rarity-紫{color:#c084fc}.rarity-橘{color:#fb923c}.rarity-紅{color:#f87171}.kbd{background:#020617;border:1px solid #334155;border-radius:5px;padding:1px 5px;color:#cbd5e1}.setting-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:10px}.setting-card{background:#0b1220;border:1px solid #26364f;border-radius:10px;padding:12px}@media(max-width:1100px){.main{grid-template-columns:1fr}.app{height:auto}.col{min-height:500px}}
 </style>
@@ -11,7 +11,7 @@
 <body>
 <div id="start" class="modal">
   <div class="panel modal-card">
-    <h1 class="title" style="font-size:42px;text-align:center;margin:20px 0 8px">Lineage Idle V4.2</h1>
+    <h1 class="title" style="font-size:42px;text-align:center;margin:20px 0 8px">Lineage Idle V4.3</h1>
     <p class="small" style="text-align:center;margin-bottom:24px">單機版</p>
     <div class="grid">
       <button id="newGame" class="btn green" style="font-size:22px;padding:14px">新冒險</button>
@@ -32,7 +32,7 @@
 
 <div class="app hidden" id="app">
   <div class="panel top">
-    <div><span class="title">Lineage Idle V4.1</span> <span id="subTitle" class="small"></span></div>
+    <div><span class="title">Lineage Idle V4.3</span> <span id="subTitle" class="small"></span></div>
     <div class="row"><button class="btn blue" id="saveBtn">儲存</button><button class="btn" id="exportBtn">匯出</button><button class="btn red" id="resetBtn">刪除</button></div>
   </div>
   <div class="main">
@@ -129,10 +129,10 @@ const DB=(()=>{
 const Store={key:'lineage_idle_v30',save(s){localStorage.setItem(this.key,JSON.stringify(s));},load(){try{return JSON.parse(localStorage.getItem(this.key)||'null')}catch{return null}},clear(){localStorage.removeItem(this.key)}};
 const Game={
  state:null,timer:null,tab:'inventory',selectedClass:null,
- baseState(cls){let c=DB.classes[cls];return {version:'3.0',classId:cls,lv:1,exp:0,adena:300,stats:{...c.stats},hp:0,mp:0,inventory:{potion_red:{id:'potion_red',qty:50,enchant:0}},equip:{weapon:null,helmet:null,tshirt:null,armor:null,cloak:null,gloves:null,boots:null,leggings:null,amulet:null,belt:null,earring1:null,earring2:null,ring1:null,ring2:null},skills:{},buffs:{},map:'talking',monster:null,settings:{hpLimit:45,autoSell:false,autoBoss:true,autoSkill:'none',autoSkills:[],autoBuyPotion:false,autoBuyPotionId:'potion_red',autoBuyPotionQty:50,autoTransform:'none'},collection:{},transform:null,lastSave:Date.now()};},
+ baseState(cls){let c=DB.classes[cls];return {version:'4.3',classId:cls,lv:1,exp:0,adena:300,stats:{...c.stats},hp:0,mp:0,inventory:{potion_red:{id:'potion_red',qty:50,enchant:0}},equip:{weapon:null,helmet:null,tshirt:null,armor:null,cloak:null,gloves:null,boots:null,leggings:null,amulet:null,belt:null,earring1:null,earring2:null,ring1:null,ring2:null},skills:{},buffs:{},map:'talking',monster:null,settings:{hpLimit:45,autoSell:false,autoBoss:true,autoSkill:'none',autoSkills:[],autoBuyPotion:false,autoBuyPotionId:'potion_red',autoBuyPotionQty:50,autoTransform:'none'},collection:{},transform:null,lastSave:Date.now()};},
  init(){this.bind();this.renderClassList();document.getElementById('loadGame').disabled=!Store.load();},
  bind(){const $=id=>document.getElementById(id);$('newGame').onclick=()=>this.showClass();$('loadGame').onclick=()=>this.load();$('backStart').onclick=()=>this.showStart();$('confirmClass').onclick=()=>this.startNew();$('saveBtn').onclick=()=>this.save(true);$('exportBtn').onclick=()=>this.exportSave();$('resetBtn').onclick=()=>{if(confirm('確定刪除存檔？')){Store.clear();location.reload();}};$('importBtn').onclick=()=>$('importFile').click();$('importFile').onchange=e=>this.importSave(e);$('mapSelect').onchange=e=>{this.state.map=e.target.value;this.state.monster=null;this.log('切換地圖：'+this.map().name);this.render();};$('hpLimit').onchange=e=>{this.state.settings.hpLimit=+e.target.value;this.save(false)};$('autoSell').onchange=e=>{this.state.settings.autoSell=e.target.checked;this.save(false)};$('autoBoss').onchange=e=>{this.state.settings.autoBoss=e.target.checked;this.save(false)};$('autoSkill').onchange=e=>{this.state.settings.autoSkill=e.target.value;this.save(false)};},
- renderClassList(){let box=document.getElementById('classList');box.innerHTML=Object.entries(DB.classes).map(([id,c])=>`<button class="btn class-card" data-class="${id}"><b class="c-gold">${c.name}</b><br><span class="small">${c.desc}</span><br><span class="small">STR ${c.stats.str} / DEX ${c.stats.dex} / INT ${c.stats.int}</span></button>`).join('');box.querySelectorAll('button').forEach(b=>b.onclick=()=>{this.selectedClass=b.dataset.class;box.querySelectorAll('button').forEach(x=>x.classList.remove('selected'));b.classList.add('selected');document.getElementById('confirmClass').disabled=false;});},
+ renderClassList(){let box=document.getElementById('classList');box.innerHTML=Object.entries(DB.classes).map(([id,c])=>`<button class="btn class-card" data-class="${id}"><b class="c-gold">${c.name}</b><br><span class="small">${c.desc}</span><br><span class="small">力量 ${c.stats.str} / 敏捷 ${c.stats.dex} / 智力 ${c.stats.int}</span></button>`).join('');box.querySelectorAll('button').forEach(b=>b.onclick=()=>{this.selectedClass=b.dataset.class;box.querySelectorAll('button').forEach(x=>x.classList.remove('selected'));b.classList.add('selected');document.getElementById('confirmClass').disabled=false;});},
  showStart(){document.getElementById('start').classList.remove('hidden');document.getElementById('classModal').classList.add('hidden');},showClass(){document.getElementById('start').classList.add('hidden');document.getElementById('classModal').classList.remove('hidden');},
  startNew(){this.state=this.baseState(this.selectedClass);this.recalc();this.state.hp=this.maxHp();this.state.mp=this.maxMp();this.learnByLevel();this.enter();this.log('新冒險開始。職業：'+this.cls().name);this.log('劇情：殷海薩的光芒逐漸黯淡，亞丁各地出現魔物暴動。你從說話之島出發，追查四龍甦醒的徵兆。','green');this.save(false);},
  load(){let s=Store.load();if(!s){alert('沒有存檔');return}this.state=s;this.applyOffline();this.recalc();this.enter();this.log('讀取存檔完成。');},
@@ -168,7 +168,7 @@ const Game={
  buy(id){let d=DB.items[id];if(this.state.adena<d.price){alert('金幣不足');return}this.state.adena-=d.price;this.addItem(id,1,0);this.render();},rand(a,b){return Math.floor(a+Math.random()*(b-a+1))},
  render(){this.renderStatus();this.renderTab();},
  syncVitals(){if(!this.state)return;let s=this.state;s.hp=Math.max(0,Math.min(s.hp,this.maxHp()));s.mp=Math.max(0,Math.min(s.mp,this.maxMp()));this.bar('hp',s.hp,this.maxHp());this.bar('mp',s.mp,this.maxMp());this.bar('exp',s.exp,this.needExp(),true);let mon=this.mon();document.getElementById('monsterName').innerHTML=mon?DB.mons[mon.id].name:'尋找中';this.bar('mon',mon?mon.hp:0,mon?mon.maxHp:1);document.getElementById('lv').textContent=s.lv;document.getElementById('adena').textContent=s.adena.toLocaleString();},
- renderStatus(){if(!this.state)return;let s=this.state,st=this.totalStats();s.hp=Math.max(0,Math.min(s.hp,this.maxHp()));s.mp=Math.max(0,Math.min(s.mp,this.maxMp()));document.getElementById('subTitle').textContent=`Lv.${s.lv} ${this.cls().name}${this.activeTransform()?'｜變身 '+this.activeTransform().name:''}｜${this.map().name}`;document.getElementById('className').textContent=this.cls().name;document.getElementById('lv').textContent=s.lv;document.getElementById('adena').textContent=s.adena.toLocaleString();this.bar('hp',s.hp,this.maxHp());this.bar('mp',s.mp,this.maxMp());this.bar('exp',s.exp,this.needExp(),true);document.getElementById('statBox').innerHTML=[`STR ${st.str}`,`DEX ${st.dex}`,`CON ${st.con}`,`INT ${st.int}`,`WIS ${st.wis}`,`AC ${st.ac}`,`DMG +${Math.floor(st.dmg+s.lv*1.8)}`,`MR ${st.mr||0}%`].map(x=>`<div>${x}</div>`).join('');document.getElementById('mapSelect').value=s.map;document.getElementById('mapInfo').textContent=`${this.map().name}｜建議 Lv.${this.map().min}-${this.map().max}`;let hpLimitEl=document.getElementById('hpLimit'),autoSellEl=document.getElementById('autoSell'),autoBossEl=document.getElementById('autoBoss'),auto=document.getElementById('autoSkill');if(hpLimitEl)hpLimitEl.value=s.settings.hpLimit;if(autoSellEl)autoSellEl.checked=s.settings.autoSell;if(autoBossEl)autoBossEl.checked=s.settings.autoBoss;let sk=[['none','無']].concat(Object.keys(s.skills).map(id=>[id,DB.skills[id].name]));if(auto){auto.innerHTML=sk.map(x=>`<option value="${x[0]}">${x[1]}</option>`).join('');auto.value=s.settings.autoSkill||'none';}let mon=this.mon();document.getElementById('monsterName').innerHTML=mon?DB.mons[mon.id].name:'尋找中';this.bar('mon',mon?mon.hp:0,mon?mon.maxHp:1);},
+ renderStatus(){if(!this.state)return;let s=this.state,st=this.totalStats();s.hp=Math.max(0,Math.min(s.hp,this.maxHp()));s.mp=Math.max(0,Math.min(s.mp,this.maxMp()));document.getElementById('subTitle').textContent=`Lv.${s.lv} ${this.cls().name}${this.activeTransform()?'｜變身 '+this.activeTransform().name:''}｜${this.map().name}`;document.getElementById('className').textContent=this.cls().name;document.getElementById('lv').textContent=s.lv;document.getElementById('adena').textContent=s.adena.toLocaleString();this.bar('hp',s.hp,this.maxHp());this.bar('mp',s.mp,this.maxMp());this.bar('exp',s.exp,this.needExp(),true);document.getElementById('statBox').innerHTML=[`力量 ${st.str}`,`敏捷 ${st.dex}`,`體質 ${st.con}`,`智力 ${st.int}`,`精神 ${st.wis}`,`防禦 ${st.ac}`,`傷害 +${Math.floor(st.dmg+s.lv*1.8)}`,`魔防 ${st.mr||0}%`].map(x=>`<div>${x}</div>`).join('');document.getElementById('mapSelect').value=s.map;document.getElementById('mapInfo').textContent=`${this.map().name}｜建議 Lv.${this.map().min}-${this.map().max}`;let hpLimitEl=document.getElementById('hpLimit'),autoSellEl=document.getElementById('autoSell'),autoBossEl=document.getElementById('autoBoss'),auto=document.getElementById('autoSkill');if(hpLimitEl)hpLimitEl.value=s.settings.hpLimit;if(autoSellEl)autoSellEl.checked=s.settings.autoSell;if(autoBossEl)autoBossEl.checked=s.settings.autoBoss;let sk=[['none','無']].concat(Object.keys(s.skills).map(id=>[id,DB.skills[id].name]));if(auto){auto.innerHTML=sk.map(x=>`<option value="${x[0]}">${x[1]}</option>`).join('');auto.value=s.settings.autoSkill||'none';}let mon=this.mon();document.getElementById('monsterName').innerHTML=mon?DB.mons[mon.id].name:'尋找中';this.bar('mon',mon?mon.hp:0,mon?mon.maxHp:1);},
  bar(id,v,m,pct=false){let p=Math.max(0,Math.min(100,v/m*100));document.getElementById(id+'Bar').style.width=p+'%';document.getElementById(id+'Txt').textContent=pct?`${p.toFixed(2)}%`:`${Math.floor(v)}/${Math.floor(m)}`},
  renderTab(){document.querySelectorAll('.tab').forEach(b=>b.classList.toggle('active',b.dataset.tab===this.tab));let el=document.getElementById('tabContent');if(!this.state)return;if(this.tab==='equipment')el.innerHTML=this.viewEquipment();if(this.tab==='inventory')el.innerHTML=this.viewInventory();if(this.tab==='settings')el.innerHTML=this.viewSettings();if(this.tab==='transform')el.innerHTML=this.viewTransform();if(this.tab==='skills')el.innerHTML=this.viewSkills();if(this.tab==='story')el.innerHTML=this.viewStory();if(this.tab==='maps')el.innerHTML=this.viewMaps();if(this.tab==='collection')el.innerHTML=this.viewCollection();if(this.tab==='shop')el.innerHTML=this.viewShop();el.querySelectorAll('[data-equip]').forEach(b=>b.onclick=()=>this.equip(b.dataset.equip));el.querySelectorAll('[data-enchant]').forEach(b=>b.onclick=()=>this.enchant(b.dataset.enchant));el.querySelectorAll('[data-use]').forEach(b=>b.onclick=()=>this.useItem(b.dataset.use));el.querySelectorAll('[data-sell]').forEach(b=>b.onclick=()=>this.sellItem(b.dataset.sell));el.querySelectorAll('[data-unequip]').forEach(b=>b.onclick=()=>this.unequip(b.dataset.unequip));el.querySelectorAll('[data-buy]').forEach(b=>b.onclick=()=>this.buy(b.dataset.buy));el.querySelectorAll('[data-transform]').forEach(b=>b.onclick=()=>this.transform(b.dataset.transform));el.querySelectorAll('[data-setting]').forEach(x=>x.onchange=()=>{let k=x.dataset.setting;let v=x.type==='checkbox'?x.checked:(x.type==='number'?+x.value:x.value);this.state.settings[k]=v;if(k==='autoTransform'&&v&&v!=='none')this.transform(v);this.save(false);this.render();});el.querySelectorAll('[data-skill-toggle]').forEach(x=>x.onchange=()=>{let id=x.dataset.skillToggle;let arr=this.state.settings.autoSkills||[];if(x.checked&&!arr.includes(id))arr.push(id);if(!x.checked)arr=arr.filter(v=>v!==id);this.state.settings.autoSkills=arr;this.state.settings.autoSkill=arr[0]||'none';this.save(false);this.render();});},
  slotNames(){return {weapon:'武器',helmet:'頭盔',tshirt:'內衣',armor:'盔甲',cloak:'斗篷',gloves:'手套',boots:'鞋子',leggings:'脛甲',amulet:'項鍊',belt:'腰帶',earring1:'耳環(左)',earring2:'耳環(右)',ring1:'戒指(左)',ring2:'戒指(右)'}},equipOrder(){return ['weapon','helmet','tshirt','armor','cloak','gloves','leggings','boots','amulet','earring1','earring2','ring1','ring2','belt']},typeName(t){return {weapon:'武器',helmet:'頭盔',tshirt:'內衣',armor:'盔甲',cloak:'斗篷',gloves:'手套',boots:'鞋子',leggings:'脛甲',ring:'戒指',earring:'耳環',amulet:'項鍊',belt:'腰帶',potion:'藥水',scroll:'卷軸',book:'技能書',material:'材料'}[t]||t},
@@ -439,9 +439,9 @@ viewTransform(){let active=this.activeTransform();let rows=Object.values(DB.tran
    ========================= */
 (()=>{
  const VERSION='3.4';
- document.title='Lineage Idle V4.1';
+ document.title='Lineage Idle V4.3';
  const titleEl=document.querySelector('.title');
- if(titleEl&&titleEl.textContent.includes('Lineage Idle'))titleEl.textContent='Lineage Idle V4.1';
+ if(titleEl&&titleEl.textContent.includes('Lineage Idle'))titleEl.textContent='Lineage Idle V4.3';
 
  // 1) 新增神聖劍士職業與技能書
  DB.classes.holyknight={
@@ -532,9 +532,9 @@ viewTransform(){let active=this.activeTransform();let rows=Object.values(DB.tran
    ========================= */
 (()=>{
  const VERSION='3.5';
- document.title='Lineage Idle V4.1';
- document.querySelectorAll('.title').forEach(el=>{if(el.textContent.includes('Lineage Idle'))el.textContent='Lineage Idle V4.1';});
- const startTitle=document.querySelector('#start h1'); if(startTitle)startTitle.textContent='Lineage Idle V4.1';
+ document.title='Lineage Idle V4.3';
+ document.querySelectorAll('.title').forEach(el=>{if(el.textContent.includes('Lineage Idle'))el.textContent='Lineage Idle V4.3';});
+ const startTitle=document.querySelector('#start h1'); if(startTitle)startTitle.textContent='Lineage Idle V4.3';
 
  const addItem=(id,o)=>{DB.items[id]=Object.assign({id,rarity:'白',price:100,type:'material'},DB.items[id]||{},o,{id});};
  const addWeapon=(id,name,weapon,dmg,rarity,price,reqLv,safe=6,stat={})=>addItem(id,{name,type:'weapon',weapon,dmg,safe,rarity,price,reqLv,stat});
@@ -661,10 +661,10 @@ viewTransform(){let active=this.activeTransform();let rows=Object.values(DB.tran
    ========================================================= */
 (()=>{
  const VERSION='4.0';
- document.title='Lineage Idle V4.1';
- document.querySelectorAll('.title').forEach(el=>{if(el.textContent.includes('Lineage Idle'))el.textContent='Lineage Idle V4.1';});
- const startTitle=document.querySelector('#start h1'); if(startTitle)startTitle.textContent='Lineage Idle V4.1';
- const topTitle=document.querySelector('.top .title'); if(topTitle)topTitle.textContent='Lineage Idle V4.1';
+ document.title='Lineage Idle V4.3';
+ document.querySelectorAll('.title').forEach(el=>{if(el.textContent.includes('Lineage Idle'))el.textContent='Lineage Idle V4.3';});
+ const startTitle=document.querySelector('#start h1'); if(startTitle)startTitle.textContent='Lineage Idle V4.3';
+ const topTitle=document.querySelector('.top .title'); if(topTitle)topTitle.textContent='Lineage Idle V4.3';
  const loadBtn=document.getElementById('loadGame'); if(loadBtn)loadBtn.textContent='讀取存檔';
 
  const EQUIP_TYPES=['weapon','helmet','tshirt','armor','cloak','gloves','boots','leggings','ring','earring','amulet','belt'];
@@ -1067,6 +1067,234 @@ viewTransform(){let active=this.activeTransform();let rows=Object.values(DB.tran
    viewMaps(){let html=oldViewMaps();return String(html).replace('<h3 class="title">地圖掉落</h3>','<h3 class="title">地圖掉落</h3><div class="small">V4.2：奇岩監獄以後全部地圖都會掉落一般防卷，高階地圖另有祝防與紅裝機率。</div>');},
    renderTab(){oldRenderTab();let el=document.getElementById('tabContent');if(!this.state||!el)return;if(this.tab==='pet'){el.querySelectorAll('[data-summon-pet-slot]').forEach(b=>b.onclick=()=>this.summonPetToSlot(b.dataset.summonPetSlot,+b.dataset.slot));el.querySelectorAll('[data-buy-pet-slot]').forEach(b=>b.onclick=()=>this.buySecondPetSlot());el.querySelectorAll('[data-refund-pet]').forEach(b=>b.onclick=()=>this.refundPetUpgrade(b.dataset.refundPet));}if(this.tab==='inventory'){el.querySelectorAll('[data-enchant]').forEach(b=>b.remove());}}
  });
+})();
+
+
+/* Lineage Idle V4.3 patch: job weapons/equipment, boss encounter tuning, transform stat optimization */
+(function(){
+  'use strict';
+  if(!window.DB || !window.Game) return;
+
+  const V43 = {
+    weaponTypeName:{sword:'單手劍',dagger:'匕首',twohand:'雙手劍',spear:'槍',bow:'弓',staff:'魔杖',dualblade:'雙刀',claw:'鋼爪',chain_sword:'鎖鏈劍',kiringku:'奇古獸',axe:'斧'},
+    classGear:{
+      prince:{weapon:'royal_sword_v43',armor:'royal_mail_v43',drops:['royal_sword_v43','royal_mail_v43','royal_guard_shield_v43']},
+      knight:{weapon:'knight_sword_v43',armor:'knight_plate_v43',drops:['knight_sword_v43','knight_plate_v43','tower_shield_v43']},
+      elf:{weapon:'elven_bow_v43',armor:'elven_chain_v43',drops:['elven_bow_v43','elven_chain_v43','elven_boots_v43']},
+      wizard:{weapon:'wizard_staff_v43',armor:'wizard_robe_v43',drops:['wizard_staff_v43','wizard_robe_v43','sage_cloak_v43']},
+      darkelf:{weapon:'darkelf_dualblade_v43',armor:'shadow_armor_v43',drops:['darkelf_dualblade_v43','shadow_armor_v43','shadow_boots_v43']},
+      dragon:{weapon:'dragon_chain_sword_v43',armor:'dragon_scale_mail_v43',drops:['dragon_chain_sword_v43','dragon_scale_mail_v43']},
+      illusion:{weapon:'illusion_kiringku_v43',armor:'illusion_robe_v43',drops:['illusion_kiringku_v43','illusion_robe_v43']},
+      warrior:{weapon:'warrior_axe_v43',armor:'warrior_mail_v43',drops:['warrior_axe_v43','warrior_mail_v43']},
+      fencer:{weapon:'fencer_rapier_v43',armor:'fencer_coat_v43',drops:['fencer_rapier_v43','fencer_coat_v43']},
+      lancer:{weapon:'lancer_spear_v43',armor:'lancer_armor_v43',drops:['lancer_spear_v43','lancer_armor_v43']}
+    }
+  };
+
+  function addItem(id,o){ if(!DB.items[id]) DB.items[id]=Object.assign({id,rarity:'綠',price:2500,type:'material'},o); }
+
+  const jobItems = {
+    royal_sword_v43:{name:'王族專用劍',type:'weapon',weapon:'sword',dmg:17,safe:6,rarity:'綠',price:6500,job:'prince',stat:{hit:2}},
+    royal_mail_v43:{name:'王族指揮官盔甲',type:'armor',ac:-8,safe:4,rarity:'綠',price:6000,job:'prince',stat:{hp:80,hit:1}},
+    royal_guard_shield_v43:{name:'王族守護盾',type:'shield',ac:-3,safe:4,rarity:'藍',price:8500,job:'prince',stat:{dr:2}},
+    knight_sword_v43:{name:'騎士專用劍',type:'weapon',weapon:'sword',dmg:19,safe:6,rarity:'綠',price:7000,job:'knight',stat:{str:1,hit:2}},
+    knight_plate_v43:{name:'騎士重甲',type:'armor',ac:-10,safe:4,rarity:'綠',price:7200,job:'knight',stat:{hp:120,dr:2}},
+    tower_shield_v43:{name:'騎士塔盾',type:'shield',ac:-4,safe:4,rarity:'藍',price:9500,job:'knight',stat:{dr:3}},
+    elven_bow_v43:{name:'妖精專用弓',type:'weapon',weapon:'bow',dmg:18,safe:6,rarity:'綠',price:7000,job:'elf',stat:{dex:1,hit:3}},
+    elven_chain_v43:{name:'妖精鎖子甲',type:'armor',ac:-7,safe:6,rarity:'綠',price:6200,job:'elf',stat:{dex:1,mp:40}},
+    elven_boots_v43:{name:'妖精疾風長靴',type:'boots',ac:-3,safe:4,rarity:'藍',price:7800,job:'elf',stat:{dex:1,spd:3}},
+    wizard_staff_v43:{name:'法師專用魔杖',type:'weapon',weapon:'staff',dmg:12,safe:6,rarity:'綠',price:7200,job:'wizard',stat:{int:2,mp:80}},
+    wizard_robe_v43:{name:'法師長袍',type:'armor',ac:-5,safe:4,rarity:'綠',price:6200,job:'wizard',stat:{int:1,wis:1,mp:120}},
+    sage_cloak_v43:{name:'賢者斗篷',type:'cloak',ac:-3,safe:4,rarity:'藍',price:8600,job:'wizard',stat:{int:1,mr:10}},
+    darkelf_dualblade_v43:{name:'黑暗妖精專用雙刀',type:'weapon',weapon:'dualblade',dmg:21,safe:6,rarity:'綠',price:7800,job:'darkelf',stat:{dex:1,dmg:2}},
+    shadow_armor_v43:{name:'暗影皮甲',type:'armor',ac:-8,safe:4,rarity:'綠',price:6500,job:'darkelf',stat:{dex:1,spd:3}},
+    shadow_boots_v43:{name:'暗影長靴',type:'boots',ac:-3,safe:4,rarity:'藍',price:8500,job:'darkelf',stat:{dex:1,dmg:1}},
+    dragon_chain_sword_v43:{name:'龍騎士專用鎖鏈劍',type:'weapon',weapon:'chain_sword',dmg:23,safe:6,rarity:'藍',price:9500,job:'dragon',stat:{str:1,dmg:2}},
+    dragon_scale_mail_v43:{name:'龍鱗戰甲',type:'armor',ac:-9,safe:4,rarity:'藍',price:9200,job:'dragon',stat:{str:1,dr:3}},
+    illusion_kiringku_v43:{name:'幻術士專用奇古獸',type:'weapon',weapon:'kiringku',dmg:20,safe:6,rarity:'藍',price:9500,job:'illusion',stat:{int:2,wis:1}},
+    illusion_robe_v43:{name:'幻術法袍',type:'armor',ac:-6,safe:4,rarity:'藍',price:8800,job:'illusion',stat:{int:1,wis:1,mp:90}},
+    warrior_axe_v43:{name:'戰士專用戰斧',type:'weapon',weapon:'axe',dmg:25,safe:6,rarity:'藍',price:9800,job:'warrior',stat:{str:2,dmg:2}},
+    warrior_mail_v43:{name:'戰士鬥魂盔甲',type:'armor',ac:-10,safe:4,rarity:'藍',price:9800,job:'warrior',stat:{str:1,hp:160,dr:2}},
+    fencer_rapier_v43:{name:'劍士專用細劍',type:'weapon',weapon:'sword',dmg:22,safe:6,rarity:'藍',price:9600,job:'fencer',stat:{str:1,dex:1,spd:4}},
+    fencer_coat_v43:{name:'劍士戰鬥外套',type:'armor',ac:-8,safe:4,rarity:'藍',price:9000,job:'fencer',stat:{dex:1,hit:2}},
+    lancer_spear_v43:{name:'黃金槍騎專用槍',type:'weapon',weapon:'spear',dmg:24,safe:6,rarity:'藍',price:9800,job:'lancer',stat:{str:1,hit:3}},
+    lancer_armor_v43:{name:'黃金槍騎戰甲',type:'armor',ac:-9,safe:4,rarity:'藍',price:9400,job:'lancer',stat:{str:1,hp:120,dr:2}}
+  };
+  Object.entries(jobItems).forEach(([id,o])=>addItem(id,o));
+
+  // Make shield an equippable class equipment slot while staying compatible with older saves.
+  const oldBaseState = Game.baseState;
+  Game.baseState = function(cls){
+    const s = oldBaseState.call(this, cls);
+    s.version='4.3';
+    if(!('shield' in s.equip)) s.equip.shield=null;
+    return s;
+  };
+  const oldMigrate = Game.migrateState;
+  Game.migrateState = function(){
+    oldMigrate.call(this);
+    this.state.version='4.3';
+    if(!this.state.equip) this.state.equip={};
+    if(!('shield' in this.state.equip)) this.state.equip.shield=null;
+    if(this.state.bossPity===undefined) this.state.bossPity=0;
+  };
+
+  const oldStartNew = Game.startNew;
+  Game.startNew = function(){
+    oldStartNew.call(this);
+    this.grantClassGearV43(true);
+  };
+  Game.grantClassGearV43 = function(autoEquip){
+    const pack=V43.classGear[this.state.classId];
+    if(!pack || this.state.v43ClassGearGranted) return;
+    const ids=[pack.weapon, pack.armor].filter(Boolean);
+    ids.forEach(id=>this.addItem(id,1,0));
+    this.state.v43ClassGearGranted=true;
+    if(autoEquip){
+      ids.forEach(id=>{
+        const key=Object.keys(this.state.inventory).find(k=>this.state.inventory[k].id===id && !Object.values(this.state.equip).includes(k));
+        if(key) this.equip(key);
+      });
+    }
+    this.log('V4.3 已補發職業專屬武器與裝備。','green');
+  };
+
+  const oldEnter = Game.enter;
+  Game.enter = function(){
+    oldEnter.call(this);
+    if(this.state && !this.state.v43ClassGearGranted) this.grantClassGearV43(true);
+    this.render();
+  };
+
+  const oldSlotNames=Game.slotNames;
+  Game.slotNames=function(){ return Object.assign({}, oldSlotNames.call(this), {shield:'盾牌'}); };
+  const oldEquipOrder=Game.equipOrder;
+  Game.equipOrder=function(){
+    const arr=oldEquipOrder.call(this).slice();
+    if(!arr.includes('shield')) arr.splice(1,0,'shield');
+    return arr;
+  };
+  const oldTypeName=Game.typeName;
+  Game.typeName=function(t){ return t==='shield'?'盾牌':oldTypeName.call(this,t); };
+
+  const oldEquip = Game.equip;
+  Game.equip=function(key){
+    const it=this.invItem(key); const d=it && DB.items[it.id];
+    if(d && d.job && d.job!==this.state.classId){ alert(this.cls().name+'不能裝備 '+d.name); return; }
+    if(d && d.type==='shield'){
+      key=this.splitOne(key); this.state.equip.shield=key;
+      if(this.state.inventory[key]) this.state.inventory[key].qty=1;
+      this.log('已裝備 '+d.name,'green'); this.render(); return;
+    }
+    return oldEquip.call(this,key);
+  };
+
+  const oldViewInventory=Game.viewInventory;
+  Game.viewInventory=function(){
+    let html=oldViewInventory.call(this);
+    html=html.replace("['weapon','helmet','tshirt','armor','cloak','gloves','boots','leggings','ring','earring','amulet','belt']", "['weapon','shield','helmet','tshirt','armor','cloak','gloves','boots','leggings','ring','earring','amulet','belt']");
+    return html;
+  };
+
+  const oldRenderTab=Game.renderTab;
+  Game.renderTab=function(){
+    oldRenderTab.call(this);
+    const el=document.getElementById('tabContent');
+    if(!el) return;
+    if(this.tab==='inventory'){
+      el.querySelectorAll('.item').forEach(row=>{
+        const btn=row.querySelector('[data-sell]');
+        if(!btn) return;
+        const k=btn.dataset.sell, it=this.invItem(k), d=it&&DB.items[it.id];
+        if(d && d.type==='shield' && !row.querySelector('[data-equip]')){
+          const span=row.querySelector('span:last-child');
+          if(span) span.insertAdjacentHTML('afterbegin',`<button class="btn" data-equip="${k}">裝備</button> `);
+        }
+      });
+      el.querySelectorAll('[data-equip]').forEach(b=>b.onclick=()=>this.equip(b.dataset.equip));
+    }
+  };
+
+  // Class gear drops added to thematic maps.
+  const mapExtra = {
+    talking:['royal_sword_v43','knight_sword_v43','elven_bow_v43','wizard_staff_v43'],
+    gludin:['royal_mail_v43','knight_plate_v43','elven_chain_v43','wizard_robe_v43'],
+    giran_prison:['darkelf_dualblade_v43','shadow_armor_v43','fencer_rapier_v43','fencer_coat_v43'],
+    dragon_valley:['dragon_chain_sword_v43','dragon_scale_mail_v43','lancer_spear_v43','lancer_armor_v43'],
+    lastabad:['warrior_axe_v43','warrior_mail_v43','illusion_kiringku_v43','illusion_robe_v43']
+  };
+  DB.maps.forEach(m=>{
+    (mapExtra[m.id]||[]).forEach((id,idx)=>{
+      if(!m.drops.some(d=>d.id===id)) m.drops.push({id,rate:Math.max(1.2,4.5-idx*.5)});
+    });
+  });
+
+  // Boss encounter tuning: boss maps have a clear chance plus pity guarantee.
+  Game.spawn=function(){
+    let m=this.map();
+    if(this.state.bossPity===undefined) this.state.bossPity=0;
+    const all=m.monsters.map(id=>DB.mons[id]).filter(Boolean);
+    const bosses=all.filter(x=>x.boss);
+    const normals=all.filter(x=>!x.boss);
+    let base=null;
+    if(this.state.settings.autoBoss && bosses.length){
+      const chance = m.id.startsWith('toi') ? 0.18 : (this.state.lv>=m.min ? 0.12 : 0.06);
+      if(this.state.bossPity>=12 || Math.random()<chance){
+        base=bosses[Math.floor(Math.random()*bosses.length)];
+        this.state.bossPity=0;
+      }
+    }
+    if(!base){
+      const pool=(this.state.settings.autoBoss ? all : normals).filter(Boolean);
+      base=pool[Math.floor(Math.random()*pool.length)] || DB.mons.goblin;
+      if(!base.boss && bosses.length && this.state.settings.autoBoss) this.state.bossPity++;
+    }
+    this.state.monster={id:base.id,hp:base.hp,maxHp:base.hp};
+    this.blog('遭遇 '+base.name+(base.boss?' <span class="c-orange">BOSS</span>':'')+(base.boss?'':' <span class="small">BOSS保底 '+Math.min(this.state.bossPity,12)+'/12</span>'));
+  };
+
+  // Transform stat optimization: every meaningful transform now gives STR/DEX/INT focus.
+  const transformStats = {
+    orc:{spd:6,str:1,dex:1,int:0,hp:30},
+    skeleton:{spd:9,str:0,dex:2,int:1},
+    werewolf:{spd:12,str:2,dex:1,int:0,dmg:2},
+    succubus:{spd:12,str:0,dex:1,int:3,wis:2,mp:90},
+    dark_elf:{spd:16,str:1,dex:3,int:1,dmg:3},
+    death_knight:{spd:20,str:4,dex:2,int:1,dmg:6,hit:4},
+    baphomet:{spd:18,str:2,dex:2,int:4,dmg:5,mr:15},
+    kenrauhel:{spd:22,str:5,dex:4,int:2,dmg:8,hit:5,dr:4},
+    dragon_knight:{spd:24,str:5,dex:3,int:3,dmg:10,dr:6,mr:20},
+    mythic_knight:{spd:28,str:7,dex:7,int:6,wis:5,dmg:15,hit:10,dr:10,mr:30}
+  };
+  Object.entries(transformStats).forEach(([id,stat])=>{ if(DB.transforms[id]) DB.transforms[id].stat=stat; });
+  if(DB.transforms.none) DB.transforms.none.desc='維持原本外型，沒有額外加成。';
+
+  const oldRenderClassList=Game.renderClassList;
+  Game.renderClassList=function(){
+    oldRenderClassList.call(this);
+    const box=document.getElementById('classList');
+    if(!box) return;
+    box.querySelectorAll('button[data-class]').forEach(b=>{
+      const c=DB.classes[b.dataset.class];
+      const types=(c.weapons||[]).map(w=>V43.weaponTypeName[w]||w).join('、');
+      b.insertAdjacentHTML('beforeend',`<br><span class="small">職業武器：${types}</span>`);
+    });
+  };
+
+  const oldViewTransform=Game.viewTransform;
+  Game.viewTransform=function(){
+    const html=oldViewTransform.call(this);
+    return String(html).replace('<h3 class="title">變身</h3>','<h3 class="title">變身</h3><div class="small">V4.3：變身能力已重新整理，重點補強力量、敏捷、智力，讓物理與魔法職業都能受益。</div>');
+  };
+
+  const oldViewEquipment=Game.viewEquipment;
+  Game.viewEquipment=function(){
+    const html=oldViewEquipment.call(this);
+    const pack=V43.classGear[this.state.classId];
+    const names=(pack&&pack.drops||[]).map(id=>DB.items[id]?.name).filter(Boolean).join('、');
+    return String(html).replace('<h3 class="title">目前裝備</h3>',`<h3 class="title">目前裝備</h3><div class="small">V4.3 職業裝備：${names||'無'}</div>`);
+  };
+
 })();
 
 window.addEventListener('DOMContentLoaded',()=>Game.init());
