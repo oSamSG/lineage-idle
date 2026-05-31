@@ -3246,178 +3246,151 @@ viewTransform(){let active=this.activeTransform();let rows=Object.values(DB.tran
 
 
 
-/* === lineage_Idle_V1.2.2 Hotfix: force EXP potion buttons in backpack === */
-(()=>{
-  if(!window.Game||!window.DB) return;
-  const TITLE='lineage_Idle_V1.2.2';
-  const setTitle=()=>{
-    document.title=TITLE;
-    const start=document.querySelector('#start h1'); if(start) start.textContent=TITLE;
-    const top=document.querySelector('.top .title'); if(top) top.textContent=TITLE;
-  };
-  const isExpPotion=(d,it)=>{
-    if(!d) return false;
-    const id=String(d.id||it?.id||'').toLowerCase();
-    const name=String(d.name||'');
-    return d.type==='exp_potion' || id.includes('exp_potion') || id.includes('exp') || name.includes('經驗藥水') || d.expBonus || d.exp || d.expRate || d.expGain;
-  };
-  const ensureExpPotionData=()=>{
-    for(const [id,d] of Object.entries(DB.items||{})){
-      if(isExpPotion(d,{id})){
-        d.id=id;
-        d.type='exp_potion';
-        d.rarity=d.rarity||'藍';
-        d.expBonus=d.expBonus || d.expRate || 1;
-        d.duration=d.duration || 10800;
-        d.desc=d.desc || `使用後狩獵經驗 +${Math.round((d.expBonus||1)*100)}%`;
-      }
-    }
-    if(!DB.items.exp_potion_30) DB.items.exp_potion_30={id:'exp_potion_30',name:'經驗藥水 30分鐘',type:'exp_potion',rarity:'綠',price:50000,expBonus:0.3,duration:1800,desc:'30分鐘內狩獵經驗 +30%'};
-    if(!DB.items.exp_potion_180) DB.items.exp_potion_180={id:'exp_potion_180',name:'英雄經驗藥水 180分鐘',type:'exp_potion',rarity:'紫',price:500000,expBonus:1,duration:10800,desc:'180分鐘內狩獵經驗 +100%'};
-  };
-  const oldMigrate=Game.migrateState.bind(Game);
-  const oldRenderTab=Game.renderTab.bind(Game);
-  const oldKill=Game.kill.bind(Game);
-  const oldUseItem=Game.useItem.bind(Game);
-  const oldTypeName=Game.typeName?Game.typeName.bind(Game):null;
-  const oldViewShop=Game.viewShop?Game.viewShop.bind(Game):null;
 
-  Object.assign(Game,{
-    migrateState(){
-      oldMigrate();
-      if(!this.state) return;
-      ensureExpPotionData();
-      setTitle();
-      this.state.version='1.2.2';
-      this.state.expBuff=this.state.expBuff||null;
-    },
-    typeName(t){
-      if(t==='exp_potion') return '經驗藥水';
-      return oldTypeName?oldTypeName(t):t;
-    },
-    expPotionBonus(){
-      const b=this.state?.expBuff;
-      if(!b||!b.until||Date.now()>b.until){ if(this.state) this.state.expBuff=null; return 0; }
-      return Number(b.bonus||0);
-    },
-    useItem(key){
-      const it=this.invItem(key), d=it&&DB.items[it.id];
-      if(isExpPotion(d,it)) return this.useExpPotion(key,1);
-      return oldUseItem(key);
-    },
-    useExpPotion(key,qty=1){
-      const it=this.invItem(key), d=it&&DB.items[it.id];
+
+
+
+
+
+window.addEventListener('DOMContentLoaded',()=>{
+  Game.init();
+
+  /* === lineage_Idle_V1.2.4 Final EXP Potion Fix: run after Game.init and after every render === */
+  (()=>{
+    const TITLE='lineage_Idle_V1.2.4';
+
+    function setTitle(){
+      document.title=TITLE;
+      const start=document.querySelector('#start h1'); if(start) start.textContent=TITLE;
+      const top=document.querySelector('.top .title'); if(top) top.textContent=TITLE;
+    }
+
+    function isExpPotion(d,it){
+      const id=String((d&&d.id)||(it&&it.id)||'').toLowerCase();
+      const name=String((d&&d.name)||'');
+      return (d&&d.type==='exp_potion') || id.includes('exp') || name.includes('經驗藥水') || !!(d&&d.expBonus) || !!(d&&d.expRate);
+    }
+
+    function normalize(){
+      if(!window.DB||!DB.items) return;
+      Object.entries(DB.items).forEach(([id,d])=>{
+        if(isExpPotion(d,{id})){
+          d.id=id;
+          d.type='exp_potion';
+          d.rarity=d.rarity||'紫';
+          d.expBonus=Number(d.expBonus||d.expRate||1);
+          d.duration=Number(d.duration||10800);
+          d.desc=d.desc||`使用後狩獵經驗 +${Math.round(d.expBonus*100)}%`;
+        }
+      });
+    }
+
+    function useExpPotion(key,qty){
+      if(!Game.state) return;
+      const it=Game.invItem(key);
+      const d=it&&DB.items[it.id];
       if(!it||!d||!isExpPotion(d,it)) return;
       qty=Math.max(1,Math.min(Number(qty)||1,it.qty||1));
       d.type='exp_potion';
       const bonus=Number(d.expBonus||d.expRate||1);
       const duration=Number(d.duration||10800);
       const now=Date.now();
-      const base=this.state.expBuff&&this.state.expBuff.bonus===bonus&&this.state.expBuff.until>now?this.state.expBuff.until:now;
-      this.state.expBuff={name:d.name||'經驗藥水',bonus,until:base+duration*1000*qty};
-      this.removeItem(key,qty);
-      this.log(`使用 ${d.name||'經驗藥水'} ×${qty}，狩獵經驗 +${Math.round(bonus*100)}%，時間 +${Math.floor(duration*qty/60)} 分鐘。`,'green');
-      this.save(false);
-      this.render();
-    },
-    useExpPotionAll(key){
-      const it=this.invItem(key); if(it) this.useExpPotion(key,it.qty||1);
-    },
-    buildInventoryHtmlForceExp(){
-      const ui=this.state.ui||{};
-      const tab=ui.invEquipTab||'all';
-      let rows=this.invList?this.invList():Object.entries(this.state.inventory||{});
-      rows=rows.filter(([k,it])=>{
-        const equipped=Object.values(this.state.equip||{}).includes(k);
-        if(tab==='equipped') return equipped;
-        if(tab==='unequipped') return !equipped;
-        return true;
-      });
-      const tabBtn=(id,label)=>`<button class="btn ${tab===id?'green':''}" data-inv-equip-tab="${id}">${label}</button>`;
-      const active=this.state.expBuff&&this.state.expBuff.until>Date.now()?this.state.expBuff:null;
-      const expInfo=active?`<div class="small c-green">經驗藥水作用中：${active.name}｜+${Math.round((active.bonus||0)*100)}%｜剩餘 ${Math.ceil((active.until-Date.now())/60000)} 分鐘</div>`:`<div class="small">經驗藥水未啟用。</div>`;
-      let html=`<h3 class="title">背包 V1.2.2</h3>
-      <div class="setting-card"><div class="row" style="flex-wrap:wrap;justify-content:flex-start">
-      ${tabBtn('all','全部')}${tabBtn('unequipped','未裝備')}${tabBtn('equipped','已裝備')}
-      <button class="btn blue" data-organize-inventory="1">自動整理背包</button>
-      </div><div class="small">經驗藥水已強制顯示使用按鈕；背包不顯示強化按鈕。</div>${expInfo}</div>`;
-      html+=rows.map(([k,it])=>{
-        const d=DB.items[it.id]||{};
-        const equipped=Object.values(this.state.equip||{}).includes(k);
-        const canEquip=this.canEquipKey?this.canEquipKey(k):['weapon','helmet','tshirt','armor','cloak','gloves','boots','leggings','ring','earring','amulet','belt'].includes(d.type);
-        const isExp=isExpPotion(d,it);
-        const tags=[
-          this.typeName(isExp?'exp_potion':d.type),
-          d.rarity?`稀有 ${d.rarity}`:'',
-          it.enchant?`+${it.enchant}`:'',
-          equipped?'裝備中':'',
-          isExp?`經驗 +${Math.round(Number(d.expBonus||d.expRate||1)*100)}%`:'',
-          isExp?`${Math.floor(Number(d.duration||10800)/60)}分鐘`:''
-        ].filter(Boolean).map(x=>`<span class="pill">${x}</span>`).join(' ');
-        const buttons=[];
-        if(canEquip&&!equipped) buttons.push(`<button class="btn green" data-equip="${k}">裝備</button>`);
-        if(d.type==='potion'||d.type==='book'||isExp) buttons.push(`<button class="btn green" data-use="${k}">使用</button>`);
-        if(isExp && (it.qty||1)>=10) buttons.push(`<button class="btn blue" data-use-exp10="${k}">使用10</button>`);
-        if(isExp && (it.qty||1)>1) buttons.push(`<button class="btn" data-use-expall="${k}">全部使用</button>`);
-        if(!equipped) buttons.push(`<button class="btn red" data-sell="${k}">賣出</button>`);
-        return `<div class="item row"><span><b class="rarity-${d.rarity}">${this.itemName(k)}</b><br><span class="small">${tags}<br>${d.desc||'無'}</span></span><span>${buttons.join(' ')}</span></div>`;
-      }).join('')||'<div class="small">沒有符合條件的物品</div>';
-      return html;
-    },
-    viewShop(){
-      ensureExpPotionData();
-      let html=oldViewShop?String(oldViewShop()):'<h3 class="title">商店</h3>';
-      if(!html.includes('經驗藥水 30分鐘')){
-        const block=`<h3 class="title" style="margin-top:18px">經驗藥水</h3>
-        <div class="small">買完後到背包使用。</div>
-        ${['exp_potion_30','exp_potion_180'].map(id=>{
-          const d=DB.items[id];
-          return `<div class="item row"><span class="rarity-${d.rarity}"><b>${d.name}</b><br><span class="small">${d.desc}</span></span><span><b class="c-gold">${Number(d.price||0).toLocaleString()}</b> <button class="btn green" data-buy="${id}">購買</button></span></div>`;
-        }).join('')}`;
-        html=html+block;
-      }
-      return html;
-    },
-    renderTab(){
-      oldRenderTab();
+      Game.state.expBuff=Game.state.expBuff||null;
+      const base=Game.state.expBuff&&Game.state.expBuff.bonus===bonus&&Game.state.expBuff.until>now?Game.state.expBuff.until:now;
+      Game.state.expBuff={name:d.name||'經驗藥水',bonus,until:base+duration*1000*qty};
+      Game.removeItem(key,qty);
+      Game.log(`使用 ${d.name||'經驗藥水'} ×${qty}，狩獵經驗 +${Math.round(bonus*100)}%，時間 +${Math.floor(duration*qty/60)} 分鐘。`,'green');
+      Game.save(false);
+      Game.render();
+    }
+
+    function inject(){
+      if(!Game.state) return;
+      normalize();
+      setTitle();
+      Game.state.version='1.2.4';
+
       const el=document.getElementById('tabContent');
-      if(!this.state||!el) return;
-      if(this.tab==='inventory'){
-        ensureExpPotionData();
-        el.innerHTML=this.buildInventoryHtmlForceExp();
-        el.querySelectorAll('[data-inv-equip-tab]').forEach(b=>b.onclick=()=>{this.state.ui=this.state.ui||{};this.state.ui.invEquipTab=b.dataset.invEquipTab;this.renderTab();this.save(false);});
-        el.querySelectorAll('[data-organize-inventory]').forEach(b=>b.onclick=()=>this.organizeInventory?this.organizeInventory():this.render());
-        el.querySelectorAll('[data-equip]').forEach(b=>b.onclick=()=>this.equip(b.dataset.equip));
-        el.querySelectorAll('[data-use]').forEach(b=>b.onclick=()=>this.useItem(b.dataset.use));
-        el.querySelectorAll('[data-use-exp10]').forEach(b=>b.onclick=()=>this.useExpPotion(b.dataset.useExp10,10));
-        el.querySelectorAll('[data-use-expall]').forEach(b=>b.onclick=()=>this.useExpPotionAll(b.dataset.useExpall));
-        el.querySelectorAll('[data-sell]').forEach(b=>b.onclick=()=>this.sellItem(b.dataset.sell));
-        document.querySelectorAll('.tab').forEach(b=>b.classList.toggle('active',b.dataset.tab==='inventory'));
-      }
-      if(this.tab==='shop'){
-        el.querySelectorAll('[data-buy]').forEach(b=>b.onclick=()=>this.buy(b.dataset.buy));
+      if(!el || Game.tab!=='inventory') return;
+
+      for(const [key,it] of Object.entries(Game.state.inventory||{})){
+        const d=DB.items[it.id];
+        if(!isExpPotion(d,it)) continue;
+
+        const name=d.name||'經驗藥水';
+        const rows=[...el.querySelectorAll('.item')].filter(row=>row.textContent.includes(name));
+        for(const row of rows){
+          if(row.querySelector(`[data-force-exp-key="${key}"]`)) continue;
+          const spans=row.querySelectorAll('span');
+          let target=spans.length?spans[spans.length-1]:row;
+
+          const btn=document.createElement('button');
+          btn.className='btn green';
+          btn.textContent='使用';
+          btn.setAttribute('data-force-exp-key',key);
+          btn.style.marginRight='6px';
+          btn.onclick=(e)=>{e.preventDefault();e.stopPropagation();useExpPotion(key,1);};
+          target.insertBefore(btn,target.firstChild);
+
+          if((it.qty||1)>=10){
+            const b10=document.createElement('button');
+            b10.className='btn blue';
+            b10.textContent='使用10';
+            b10.setAttribute('data-force-exp-key',key);
+            b10.style.marginRight='6px';
+            b10.onclick=(e)=>{e.preventDefault();e.stopPropagation();useExpPotion(key,10);};
+            target.insertBefore(b10,btn.nextSibling);
+          }
+
+          if((it.qty||1)>1){
+            const all=document.createElement('button');
+            all.className='btn';
+            all.textContent='全部使用';
+            all.setAttribute('data-force-exp-key',key);
+            all.style.marginRight='6px';
+            all.onclick=(e)=>{e.preventDefault();e.stopPropagation();useExpPotion(key,it.qty||1);};
+            target.insertBefore(all,btn.nextSibling);
+          }
+        }
       }
     }
-  });
 
-  Game.kill=function(mdef){
-    oldKill(mdef);
-    const bonus=this.expPotionBonus?this.expPotionBonus():0;
-    if(mdef&&bonus>0){
-      const add=Math.floor((mdef.exp||0)*bonus);
+    // Patch useItem as backup.
+    const originalUseItem=Game.useItem.bind(Game);
+    Game.useItem=function(key){
+      const it=this.invItem(key), d=it&&DB.items[it.id];
+      if(isExpPotion(d,it)) return useExpPotion(key,1);
+      return originalUseItem(key);
+    };
+
+    // Patch kill for actual bonus.
+    const originalKill=Game.kill.bind(Game);
+    Game.kill=function(mdef){
+      originalKill(mdef);
+      const b=this.state&&this.state.expBuff;
+      if(!b || !b.until || Date.now()>b.until){ if(this.state) this.state.expBuff=null; return; }
+      const add=Math.floor((mdef&&mdef.exp||0)*(b.bonus||0));
       if(add>0){
         this.state.exp+=add;
         this.levelUp();
         this.blog(`經驗藥水加成 EXP +${add}`);
         this.syncVitals&&this.syncVitals();
       }
-    }
-  };
-  setTitle(); ensureExpPotionData();
-})();
+    };
 
+    // Patch renderTab as backup, but interval is the main guarantee.
+    const originalRenderTab=Game.renderTab.bind(Game);
+    Game.renderTab=function(){
+      originalRenderTab();
+      setTimeout(inject,0);
+      setTimeout(inject,50);
+    };
 
-window.addEventListener('DOMContentLoaded',()=>Game.init());
+    inject();
+    setInterval(inject,500);
+  })();
+});
+
 </script>
 </body>
 </html>
