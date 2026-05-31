@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>lineage_Idle_V1.1</title>
+<title>lineage_Idle_V1.2</title>
 <style>
 :root{--bg:#05070a;--panel:#0d1117;--panel2:#111827;--line:#334155;--text:#dbeafe;--muted:#94a3b8;--gold:#facc15;--green:#22c55e;--red:#ef4444;--blue:#60a5fa;--purple:#c084fc;--orange:#fb923c}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:"Microsoft JhengHei",Consolas,monospace;font-size:15px;user-select:none}.hidden{display:none!important}.app{height:100vh;display:flex;flex-direction:column;padding:12px;gap:10px}.panel{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px}.top{display:flex;justify-content:space-between;align-items:center}.title{color:var(--gold);font-weight:700}.grid{display:grid;gap:10px}.main{flex:1;display:grid;grid-template-columns:300px 1fr 330px;gap:10px;min-height:0}.col{display:flex;flex-direction:column;gap:10px;min-height:0}.scroll{overflow:auto}.btn,select,input{background:#1f2937;color:var(--text);border:1px solid #475569;border-radius:8px;padding:8px 10px;font:inherit}.btn{cursor:pointer}.btn:hover{background:#334155}.btn:disabled{opacity:.45;cursor:not-allowed}.btn.green{color:#86efac}.btn.blue{color:#93c5fd}.btn.red{color:#fca5a5}.row{display:flex;align-items:center;justify-content:space-between;gap:8px}.tabs{display:flex;gap:6px;flex-wrap:wrap}.tab{padding:8px 12px}.tab.active{border-color:var(--gold);color:var(--gold)}.bar{height:18px;background:#020617;border:1px solid #475569;border-radius:99px;overflow:hidden;position:relative}.bar i{display:block;height:100%;width:0}.hp{background:#991b1b}.mp{background:#1d4ed8}.exp{background:#a16207}.bar span{position:absolute;inset:0;text-align:center;font-size:12px;line-height:16px;text-shadow:1px 1px #000}.stat{display:grid;grid-template-columns:1fr 1fr;gap:6px}.item{border-bottom:1px dashed #293548;padding:7px 0}.log{font-size:14px;line-height:1.55}.c-gold{color:var(--gold)}.c-green{color:var(--green)}.c-red{color:var(--red)}.c-blue{color:var(--blue)}.c-purple{color:var(--purple)}.c-orange{color:var(--orange)}.modal{position:fixed;inset:0;background:rgba(0,0,0,.86);display:flex;align-items:center;justify-content:center;z-index:50}.modal-card{width:min(760px,94vw);max-height:92vh;overflow:auto}.classes{grid-template-columns:repeat(auto-fit,minmax(150px,1fr))}.class-card{text-align:left;min-height:96px}.class-card.selected{border-color:var(--gold);background:#1e293b}.small{font-size:13px;color:var(--muted)}.pill{display:inline-block;border:1px solid #475569;border-radius:99px;padding:2px 7px;margin:2px;color:#cbd5e1}.rarity-白{color:#e5e7eb}.rarity-綠{color:#4ade80}.rarity-藍{color:#60a5fa}.rarity-紫{color:#c084fc}.rarity-橘{color:#fb923c}.rarity-紅{color:#f87171}.kbd{background:#020617;border:1px solid #334155;border-radius:5px;padding:1px 5px;color:#cbd5e1}.setting-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:10px}.setting-card{background:#0b1220;border:1px solid #26364f;border-radius:10px;padding:12px}@media(max-width:1100px){.main{grid-template-columns:1fr}.app{height:auto}.col{min-height:500px}}
 </style>
@@ -11,7 +11,7 @@
 <body>
 <div id="start" class="modal">
   <div class="panel modal-card">
-    <h1 class="title" style="font-size:42px;text-align:center;margin:20px 0 8px">lineage_Idle_V1.1</h1>
+    <h1 class="title" style="font-size:42px;text-align:center;margin:20px 0 8px">lineage_Idle_V1.2</h1>
     <p class="small" style="text-align:center;margin-bottom:24px">單機版</p>
     <div class="grid">
       <button id="newGame" class="btn green" style="font-size:22px;padding:14px">新冒險</button>
@@ -32,7 +32,7 @@
 
 <div class="app hidden" id="app">
   <div class="panel top">
-    <div><span class="title">lineage_Idle_V1.1</span> <span id="subTitle" class="small"></span></div>
+    <div><span class="title">lineage_Idle_V1.2</span> <span id="subTitle" class="small"></span></div>
     <div class="row"><button class="btn blue" id="saveBtn">儲存</button><button class="btn" id="exportBtn">匯出</button><button class="btn red" id="resetBtn">刪除</button></div>
   </div>
   <div class="main">
@@ -368,7 +368,7 @@ viewTransform(){let active=this.activeTransform();let rows=Object.values(DB.tran
   batchSell(mode){let sold=0,gain=0;for(let k of Object.keys(this.state.inventory||{})){if(Object.values(this.state.equip||{}).includes(k))continue;let it=this.state.inventory[k],d=DB.items[it.id]||{};let ok=mode==='white'?d.rarity==='白'&&EQUIP_TYPES.includes(d.type):mode==='trash'?['material'].includes(d.type):false;if(!ok)continue;let price=Math.max(1,Math.floor((d.price||100)*(0.35+(it.enchant||0)*0.2)))*(it.qty||1);gain+=price;sold+=it.qty||1;delete this.state.inventory[k];}this.state.adena+=gain;this.log(`批次整理完成：賣出 ${sold} 件，獲得 ${gain.toLocaleString()} 金幣。`,'green');this.render();},
   setInvUI(k,v){this.state.ui=this.state.ui||{};this.state.ui[k]=v;this.renderTab();this.save(false);},
   viewEquipmentV32(){let st=this.totalStats(),names=this.slotNames();let cards=this.equipOrder().map(slot=>{let k=this.state.equip[slot];let cands=this.equipCandidates(slot);let current=k?`<b class="c-gold">${this.itemName(k,false)}</b><br><span class="small">戰力 ${this.itemPowerByKey(k)}｜${this.statLineForKey(k)}</span>`:'<b class="small">未裝備</b>';let candHtml=cands.map(([ck])=>`<div class="item row"><span><span class="rarity-${DB.items[this.invItem(ck).id].rarity}">${this.itemName(ck)}</span><br><span class="small">戰力 ${this.itemPowerByKey(ck)}｜差異 ${this.itemPowerByKey(ck)-(k?this.itemPowerByKey(k):0)>=0?'+':''}${this.itemPowerByKey(ck)-(k?this.itemPowerByKey(k):0)}</span></span><button class="btn green" data-equip="${ck}">裝備</button></div>`).join('')||'<div class="small">沒有可替換裝備</div>';return `<div class="setting-card"><div class="row"><b>${names[slot]||slot}</b><span>${k?`<button class="btn" data-unequip="${slot}">卸下</button> <button class="btn" data-enchant="${k}">強化</button>`:''}</span></div><div class="item">${current}</div><details><summary class="small">可替換裝備 Top 5</summary>${candHtml}</details></div>`}).join('');return `<h3 class="title">裝備</h3><div class="setting-grid"><div class="setting-card"><b class="c-gold">角色總覽</b><div class="stat" style="margin-top:8px">${[`STR ${st.str}`,`DEX ${st.dex}`,`CON ${st.con}`,`INT ${st.int}`,`WIS ${st.wis}`,`AC ${st.ac}`,`DMG +${Math.floor(st.dmg+this.state.lv*1.8)}`,`MR ${st.mr||0}%`].map(x=>`<div>${x}</div>`).join('')}</div><div class="small" style="margin-top:8px">裝備欄現在會顯示戰力、屬性摘要與可替換裝備比較。</div></div>${cards}</div>`},
-  viewInventoryV32(){let ui=this.state.ui||{},rows=this.invList();let total=Object.values(this.state.inventory||{}).reduce((a,x)=>a+(x.qty||1),0),shown=rows.reduce((a,[,x])=>a+(x.qty||1),0);let controls=`<div class="setting-card"><div class="row" style="flex-wrap:wrap;justify-content:flex-start"><input data-inv-search value="${esc(ui.invSearch||'')}" placeholder="搜尋道具名稱 / 稀有度" style="min-width:220px"><select data-inv-filter>${Object.entries(TYPE_GROUPS).map(([k,v])=>`<option value="${k}" ${ui.invFilter===k?'selected':''}>${v}</option>`).join('')}</select><select data-inv-sort>${Object.entries(SORTS).map(([k,v])=>`<option value="${k}" ${ui.invSort===k?'selected':''}>排序：${v}</option>`).join('')}</select><button class="btn red" data-batch-sell="white">批次賣白裝</button><button class="btn" data-batch-sell="trash">清材料</button></div><div class="small">背包總數 ${total}｜目前顯示 ${shown}｜已裝備物品會標示「裝備中」且不會被批次賣出。</div></div>`;let html=rows.map(([k,it])=>{let d=DB.items[it.id]||{},equipped=Object.values(this.state.equip||{}).includes(k),canEquip=this.canEquipKey(k);let tags=[this.typeName(d.type),`戰力 ${this.itemPowerByKey(k)}`,it.enchant?`+${it.enchant}`:'',equipped?'裝備中':''].filter(Boolean).map(x=>`<span class="pill">${x}</span>`).join(' ');let buttons=[];if(canEquip&&!equipped)buttons.push(`<button class="btn green" data-equip="${k}">裝備</button>`);if(canEquip)buttons.push(`<button class="btn" data-enchant="${k}">強化</button>`);if(d.type==='potion'||d.type==='book')buttons.push(`<button class="btn green" data-use="${k}">使用</button>`);if(!equipped)buttons.push(`<button class="btn red" data-sell="${k}">賣出</button>`);return `<div class="item row"><span><b class="rarity-${d.rarity}">${this.itemName(k)}</b><br><span class="small">${tags}<br>${this.statLineForKey(k)}</span></span><span>${buttons.join(' ')}</span></div>`}).join('')||'<div class="small">沒有符合條件的物品</div>';return `<h3 class="title">背包</h3>${controls}${html}`},
+  viewInventoryV32(){let ui=this.state.ui||{},rows=this.invList();let total=Object.values(this.state.inventory||{}).reduce((a,x)=>a+(x.qty||1),0),shown=rows.reduce((a,[,x])=>a+(x.qty||1),0);let controls=`<div class="setting-card"><div class="row" style="flex-wrap:wrap;justify-content:flex-start"><input data-inv-search value="${esc(ui.invSearch||'')}" placeholder="搜尋道具名稱 / 稀有度" style="min-width:220px"><select data-inv-filter>${Object.entries(TYPE_GROUPS).map(([k,v])=>`<option value="${k}" ${ui.invFilter===k?'selected':''}>${v}</option>`).join('')}</select><select data-inv-sort>${Object.entries(SORTS).map(([k,v])=>`<option value="${k}" ${ui.invSort===k?'selected':''}>排序：${v}</option>`).join('')}</select><button class="btn red" data-batch-sell="white">批次賣白裝</button><button class="btn" data-batch-sell="trash">清材料</button></div><div class="small">背包總數 ${total}｜目前顯示 ${shown}｜已裝備物品會標示「裝備中」且不會被批次賣出。</div></div>`;let html=rows.map(([k,it])=>{let d=DB.items[it.id]||{},equipped=Object.values(this.state.equip||{}).includes(k),canEquip=this.canEquipKey(k);let tags=[this.typeName(d.type),`戰力 ${this.itemPowerByKey(k)}`,it.enchant?`+${it.enchant}`:'',equipped?'裝備中':''].filter(Boolean).map(x=>`<span class="pill">${x}</span>`).join(' ');let buttons=[];if(canEquip&&!equipped)buttons.push(`<button class="btn green" data-equip="${k}">裝備</button>`);if(d.type==='potion'||d.type==='book')buttons.push(`<button class="btn green" data-use="${k}">使用</button>`);if(!equipped)buttons.push(`<button class="btn red" data-sell="${k}">賣出</button>`);return `<div class="item row"><span><b class="rarity-${d.rarity}">${this.itemName(k)}</b><br><span class="small">${tags}<br>${this.statLineForKey(k)}</span></span><span>${buttons.join(' ')}</span></div>`}).join('')||'<div class="small">沒有符合條件的物品</div>';return `<h3 class="title">背包</h3>${controls}${html}`},
   renderTab(){oldRenderTab();let el=document.getElementById('tabContent');if(!this.state||!el)return;if(this.tab==='equipment')el.innerHTML=this.viewEquipmentV32();if(this.tab==='inventory')el.innerHTML=this.viewInventoryV32();if(this.tab==='equipment'||this.tab==='inventory'){el.querySelectorAll('[data-equip]').forEach(b=>b.onclick=()=>this.equip(b.dataset.equip));el.querySelectorAll('[data-enchant]').forEach(b=>b.onclick=()=>this.enchant(b.dataset.enchant));el.querySelectorAll('[data-use]').forEach(b=>b.onclick=()=>this.useItem(b.dataset.use));el.querySelectorAll('[data-sell]').forEach(b=>b.onclick=()=>this.sellItem(b.dataset.sell));el.querySelectorAll('[data-unequip]').forEach(b=>b.onclick=()=>this.unequip(b.dataset.unequip));el.querySelectorAll('[data-batch-sell]').forEach(b=>b.onclick=()=>this.batchSell(b.dataset.batchSell));let se=el.querySelector('[data-inv-search]');if(se)se.onchange=()=>this.setInvUI('invSearch',se.value);let fi=el.querySelector('[data-inv-filter]');if(fi)fi.onchange=()=>this.setInvUI('invFilter',fi.value);let so=el.querySelector('[data-inv-sort]');if(so)so.onchange=()=>this.setInvUI('invSort',so.value);}}
  });
 })();
@@ -439,9 +439,9 @@ viewTransform(){let active=this.activeTransform();let rows=Object.values(DB.tran
    ========================= */
 (()=>{
  const VERSION='5.3';
- document.title='lineage_Idle_V1.1';
+ document.title='lineage_Idle_V1.2';
  const titleEl=document.querySelector('.title');
- if(titleEl&&titleEl.textContent.includes('lineage_Idle'))titleEl.textContent='lineage_Idle_V1.1';
+ if(titleEl&&titleEl.textContent.includes('lineage_Idle'))titleEl.textContent='lineage_Idle_V1.2';
 
  // 1) 新增神聖劍士職業與技能書
  DB.classes.holyknight={
@@ -532,9 +532,9 @@ viewTransform(){let active=this.activeTransform();let rows=Object.values(DB.tran
    ========================= */
 (()=>{
  const VERSION='5.3';
- document.title='lineage_Idle_V1.1';
- document.querySelectorAll('.title').forEach(el=>{if(el.textContent.includes('lineage_Idle'))el.textContent='lineage_Idle_V1.1';});
- const startTitle=document.querySelector('#start h1'); if(startTitle)startTitle.textContent='lineage_Idle_V1.1';
+ document.title='lineage_Idle_V1.2';
+ document.querySelectorAll('.title').forEach(el=>{if(el.textContent.includes('lineage_Idle'))el.textContent='lineage_Idle_V1.2';});
+ const startTitle=document.querySelector('#start h1'); if(startTitle)startTitle.textContent='lineage_Idle_V1.2';
 
  const addItem=(id,o)=>{DB.items[id]=Object.assign({id,rarity:'白',price:100,type:'material'},DB.items[id]||{},o,{id});};
  const addWeapon=(id,name,weapon,dmg,rarity,price,reqLv,safe=6,stat={})=>addItem(id,{name,type:'weapon',weapon,dmg,safe,rarity,price,reqLv,stat});
@@ -661,10 +661,10 @@ viewTransform(){let active=this.activeTransform();let rows=Object.values(DB.tran
    ========================================================= */
 (()=>{
  const VERSION='5.3';
- document.title='lineage_Idle_V1.1';
- document.querySelectorAll('.title').forEach(el=>{if(el.textContent.includes('lineage_Idle'))el.textContent='lineage_Idle_V1.1';});
- const startTitle=document.querySelector('#start h1'); if(startTitle)startTitle.textContent='lineage_Idle_V1.1';
- const topTitle=document.querySelector('.top .title'); if(topTitle)topTitle.textContent='lineage_Idle_V1.1';
+ document.title='lineage_Idle_V1.2';
+ document.querySelectorAll('.title').forEach(el=>{if(el.textContent.includes('lineage_Idle'))el.textContent='lineage_Idle_V1.2';});
+ const startTitle=document.querySelector('#start h1'); if(startTitle)startTitle.textContent='lineage_Idle_V1.2';
+ const topTitle=document.querySelector('.top .title'); if(topTitle)topTitle.textContent='lineage_Idle_V1.2';
  const loadBtn=document.getElementById('loadGame'); if(loadBtn)loadBtn.textContent='讀取存檔';
 
  const EQUIP_TYPES=['weapon','helmet','tshirt','armor','cloak','gloves','boots','leggings','ring','earring','amulet','belt'];
@@ -1070,7 +1070,7 @@ viewTransform(){let active=this.activeTransform();let rows=Object.values(DB.tran
 })();
 
 
-/* lineage_Idle_V1.1 patch: job weapons/equipment, boss encounter tuning, transform stat optimization */
+/* lineage_Idle_V1.2 patch: job weapons/equipment, boss encounter tuning, transform stat optimization */
 (function(){
   'use strict';
   if(!window.DB || !window.Game) return;
@@ -1413,7 +1413,7 @@ viewTransform(){let active=this.activeTransform();let rows=Object.values(DB.tran
     }).join('');
     return `<h3 class="title">變身</h3><div class="small">變身能力完整中文化，並顯示力量、敏捷、智力等加成。</div>${active?`<div class="setting-card">目前變身：<b class="c-gold">${active.name}</b></div>`:''}${rows}`;
   };
-  document.title='lineage_Idle_V1.1';
+  document.title='lineage_Idle_V1.2';
 })();
 
 
@@ -1580,10 +1580,10 @@ viewTransform(){let active=this.activeTransform();let rows=Object.values(DB.tran
   const oldStatus=Game.renderStatus.bind(Game);
   Game.renderStatus=function(){oldStatus();let box=document.getElementById('statBox');if(box&&!box.querySelector('[data-v45-power]'))box.innerHTML+=`<div data-v45-power>戰力 ${this.v45Power().toLocaleString()}</div><div>DPS ${this.v45Dps().toLocaleString()}</div>`;};
   setInterval(()=>{if(Game.state){Game.renderStatus(); if(Game.tab==='v45combat')Game.renderTab();}},1000);
-  document.title='lineage_Idle_V1.1';
-  document.querySelectorAll('.title').forEach(el=>{if(el.textContent.includes('lineage_Idle'))el.textContent='lineage_Idle_V1.1';});
-  const startTitle=document.querySelector('#start h1'); if(startTitle)startTitle.textContent='lineage_Idle_V1.1';
-  const topTitle=document.querySelector('.top .title'); if(topTitle)topTitle.textContent='lineage_Idle_V1.1';
+  document.title='lineage_Idle_V1.2';
+  document.querySelectorAll('.title').forEach(el=>{if(el.textContent.includes('lineage_Idle'))el.textContent='lineage_Idle_V1.2';});
+  const startTitle=document.querySelector('#start h1'); if(startTitle)startTitle.textContent='lineage_Idle_V1.2';
+  const topTitle=document.querySelector('.top .title'); if(topTitle)topTitle.textContent='lineage_Idle_V1.2';
   Game.log('lineage_Idle 已套用 V5.3：紅裝、套裝、收藏加成、掉落重構、戰力/DPS、裝備比較、存檔轉換。','green');
 })();
 
@@ -1665,10 +1665,10 @@ viewTransform(){let active=this.activeTransform();let rows=Object.values(DB.tran
   Game.renderTab=function(){oldRender();let el=document.getElementById('tabContent');if(!this.state||!el)return;if(this.tab==='auction')el.innerHTML=this.viewAuction();el.querySelectorAll('[data-refresh-auction]').forEach(b=>b.onclick=()=>this.refreshAuction());el.querySelectorAll('[data-buy-auction]').forEach(b=>b.onclick=()=>this.buyAuction(b.dataset.buyAuction));el.querySelectorAll('[data-sell-auction]').forEach(b=>b.onclick=()=>this.sellAuction(b.dataset.sellAuction));};
   Game.exportSave=function(){this.save(false);let blob=new Blob([JSON.stringify(this.state,null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='lineage_idle_v46_save.json';a.click();URL.revokeObjectURL(a.href)};
   Game.importSave=function(e){let f=e.target.files[0];if(!f)return;let r=new FileReader();r.onload=()=>{try{this.state=JSON.parse(r.result);this.migrateState();this.save(false);this.enter();this.log('已自動轉換匯入存檔。','green');}catch(err){alert('存檔格式錯誤')}};r.readAsText(f)};
-  document.title='lineage_Idle_V1.1';
-  document.querySelectorAll('.title').forEach(el=>{if(el.textContent.includes('lineage_Idle'))el.textContent='lineage_Idle_V1.1';});
-  const startTitle=document.querySelector('#start h1');if(startTitle)startTitle.textContent='lineage_Idle_V1.1';
-  const topTitle=document.querySelector('.top .title');if(topTitle)topTitle.textContent='lineage_Idle_V1.1';
+  document.title='lineage_Idle_V1.2';
+  document.querySelectorAll('.title').forEach(el=>{if(el.textContent.includes('lineage_Idle'))el.textContent='lineage_Idle_V1.2';});
+  const startTitle=document.querySelector('#start h1');if(startTitle)startTitle.textContent='lineage_Idle_V1.2';
+  const topTitle=document.querySelector('.top .title');if(topTitle)topTitle.textContent='lineage_Idle_V1.2';
 })();
 
 
@@ -1754,14 +1754,14 @@ viewTransform(){let active=this.activeTransform();let rows=Object.values(DB.tran
     return `<h3 class="title">背包</h3>${controls}${rows||'<div class="small">空</div>'}`;
   };
   Game.renderTab=function(){oldRender();let el=document.getElementById('tabContent');if(!this.state||!el)return;if(this.tab==='inventory')el.innerHTML=this.viewInventory();el.querySelectorAll('[data-equip]').forEach(b=>b.onclick=()=>this.equip(b.dataset.equip));el.querySelectorAll('[data-use]').forEach(b=>b.onclick=()=>this.useItem(b.dataset.use));el.querySelectorAll('[data-sell]').forEach(b=>b.onclick=()=>this.sellItem(b.dataset.sell));el.querySelectorAll('[data-batch-ui]').forEach(x=>x.onchange=()=>this.setBatchSellUI(x.dataset.batchUi,x.value));el.querySelectorAll('[data-batch-check]').forEach(x=>x.onchange=()=>this.setBatchSellUI(x.dataset.batchCheck,x.checked));el.querySelectorAll('[data-batch-sell-rule]').forEach(b=>b.onclick=()=>this.batchSellByRule());el.querySelectorAll('[data-batch-quick]').forEach(b=>b.onclick=()=>this.batchSellQuick(b.dataset.batchQuick));};
-  document.title='lineage_Idle_V1.1';
-  document.querySelectorAll('.title').forEach(el=>{if(el.textContent.includes('lineage_Idle'))el.textContent='lineage_Idle_V1.1';});
-  const startTitle=document.querySelector('#start h1');if(startTitle)startTitle.textContent='lineage_Idle_V1.1';
-  const topTitle=document.querySelector('.top .title');if(topTitle)topTitle.textContent='lineage_Idle_V1.1';
+  document.title='lineage_Idle_V1.2';
+  document.querySelectorAll('.title').forEach(el=>{if(el.textContent.includes('lineage_Idle'))el.textContent='lineage_Idle_V1.2';});
+  const startTitle=document.querySelector('#start h1');if(startTitle)startTitle.textContent='lineage_Idle_V1.2';
+  const topTitle=document.querySelector('.top .title');if(topTitle)topTitle.textContent='lineage_Idle_V1.2';
 })();
 
 
-/* === lineage_Idle_V1.1 Patch: Auction refresh, auto buy, batch sell, combat score, save migration === */
+/* === lineage_Idle_V1.2 Patch: Auction refresh, auto buy, batch sell, combat score, save migration === */
 (()=>{
   const VERSION='5.3';
   const esc=s=>String(s??'').replace(/[&<>\"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]||m));
@@ -1809,14 +1809,14 @@ viewTransform(){let active=this.activeTransform();let rows=Object.values(DB.tran
   const oldInv=Game.viewInventory.bind(Game);
   Game.viewInventory=function(){let base=oldInv();let keep=v47Cfg(this).batch.keepEnchant;let modes=[['white','賣白裝'],['green','賣綠裝'],['blue','賣藍裝'],['dupeBooks','賣重複技能書'],['materials','賣全部材料'],['lowEnchant','賣低於/等於指定強化值']];let panel=`<div class="setting-card" style="margin-bottom:10px"><b class="c-gold">批次販售</b><div class="row" style="flex-wrap:wrap;justify-content:flex-start;margin-top:8px"><label>指定強化值 <input data-v47-batch-keep="1" type="number" min="0" max="15" value="${keep}" style="width:70px"></label>${modes.map(([m,t])=>{let p=previewMode(this,m);return `<button class="btn red" data-v47-batch="${m}">${t}<br><span class="small">${p.qty}格 / ${p.gain.toLocaleString()}</span></button>`;}).join('')}</div><div class="small">預估收益顯示在按鈕下方；已裝備物品不會被批次販售。</div></div>`;return String(base).replace('<h3 class="title">背包</h3>',`<h3 class="title">背包</h3>${panel}`);};
   Game.renderTab=function(){oldRender();let el=document.getElementById('tabContent');if(!this.state||!el)return;if(this.tab==='auction')el.innerHTML=this.viewAuction();if(this.tab==='v47combat')el.innerHTML=this.viewV47Combat();if(this.tab==='inventory')el.innerHTML=this.viewInventory();el.querySelectorAll('[data-v47-refresh-auction]').forEach(b=>b.onclick=()=>{refreshAuction(this,true);this.render();this.save(false);});el.querySelectorAll('[data-v47-buy-auction]').forEach(b=>b.onclick=()=>this.buyAuction(b.dataset.v47BuyAuction));el.querySelectorAll('[data-v47-auction-search]').forEach(x=>x.oninput=()=>{v47Cfg(this).auction.search=x.value;this.render();});el.querySelectorAll('[data-v47-autobuy]').forEach(x=>x.onchange=()=>{let c=v47Cfg(this).auction.autoBuy;let k=x.dataset.v47Autobuy;c[k]=x.type==='checkbox'?x.checked:(x.type==='number'?+x.value:x.value);this.save(false);this.render();});el.querySelectorAll('[data-v47-batch]').forEach(b=>b.onclick=()=>{let inp=el.querySelector('[data-v47-batch-keep]');if(inp)v47Cfg(this).batch.keepEnchant=+inp.value;batchSell(this,b.dataset.v47Batch);});el.querySelectorAll('[data-v47-batch-keep]').forEach(x=>x.onchange=()=>{v47Cfg(this).batch.keepEnchant=+x.value;this.save(false);this.render();});el.querySelectorAll('[data-equip]').forEach(b=>b.onclick=()=>this.equip(b.dataset.equip));el.querySelectorAll('[data-enchant]').forEach(b=>b.onclick=()=>this.enchant(b.dataset.enchant));el.querySelectorAll('[data-use]').forEach(b=>b.onclick=()=>this.useItem(b.dataset.use));el.querySelectorAll('[data-sell]').forEach(b=>b.onclick=()=>this.sellItem(b.dataset.sell));};
-  document.title='lineage_Idle_V1.1';
-  document.querySelectorAll('.title').forEach(el=>{if(el.textContent.includes('lineage_Idle'))el.textContent='lineage_Idle_V1.1';});
-  const st=document.querySelector('#start h1');if(st)st.textContent='lineage_Idle_V1.1';
-  const top=document.querySelector('.top .title');if(top)top.textContent='lineage_Idle_V1.1';
+  document.title='lineage_Idle_V1.2';
+  document.querySelectorAll('.title').forEach(el=>{if(el.textContent.includes('lineage_Idle'))el.textContent='lineage_Idle_V1.2';});
+  const st=document.querySelector('#start h1');if(st)st.textContent='lineage_Idle_V1.2';
+  const top=document.querySelector('.top .title');if(top)top.textContent='lineage_Idle_V1.2';
 })();
 
 
-/* === lineage_Idle_V1.1 Patch: inventory equipment display and remove backpack enchant === */
+/* === lineage_Idle_V1.2 Patch: inventory equipment display and remove backpack enchant === */
 (()=>{
   const VERSION='5.3';
   const esc=s=>String(s??'').replace(/[&<>\"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]||m));
@@ -1846,14 +1846,14 @@ viewTransform(){let active=this.activeTransform();let rows=Object.values(DB.tran
     return html;
   };
 
-  document.title='lineage_Idle_V1.1';
-  document.querySelectorAll('.title').forEach(el=>{if(el.textContent.includes('lineage_Idle'))el.textContent='lineage_Idle_V1.1';});
-  const st=document.querySelector('#start h1');if(st)st.textContent='lineage_Idle_V1.1';
-  const top=document.querySelector('.top .title');if(top)top.textContent='lineage_Idle_V1.1';
+  document.title='lineage_Idle_V1.2';
+  document.querySelectorAll('.title').forEach(el=>{if(el.textContent.includes('lineage_Idle'))el.textContent='lineage_Idle_V1.2';});
+  const st=document.querySelector('#start h1');if(st)st.textContent='lineage_Idle_V1.2';
+  const top=document.querySelector('.top .title');if(top)top.textContent='lineage_Idle_V1.2';
 })();
 
 
-/* === lineage_Idle_V1.1 Hotfix: remove transform level limit after 1st rebirth === */
+/* === lineage_Idle_V1.2 Hotfix: remove transform level limit after 1st rebirth === */
 (()=>{
   const esc=s=>String(s??'').replace(/[&<>\"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]||m));
   const oldTransformV48Rebirth=Game.transform.bind(Game);
@@ -1899,7 +1899,7 @@ viewTransform(){let active=this.activeTransform();let rows=Object.values(DB.tran
 
 
 
-/* === lineage_Idle_V1.1 Core Consolidation ===
+/* === lineage_Idle_V1.2 Core Consolidation ===
    目標：
    1. 版本統一 V1.0
    2. 背包、裝備、售出判定集中於單一核心
@@ -2128,9 +2128,9 @@ viewTransform(){let active=this.activeTransform();let rows=Object.values(DB.tran
 
   // 畫面版本字樣統一
   document.addEventListener('DOMContentLoaded',()=>{
-    document.title='lineage_Idle_V1.1';
+    document.title='lineage_Idle_V1.2';
     document.querySelectorAll('.title').forEach(el=>{
-      if(el.textContent && el.textContent.includes('lineage_Idle_')) el.textContent=el.textContent.replace(/lineage_Idle_V[\d.]+/g,'lineage_Idle_V1.1');
+      if(el.textContent && el.textContent.includes('lineage_Idle_')) el.textContent=el.textContent.replace(/lineage_Idle_V[\d.]+/g,'lineage_Idle_V1.2');
     });
   });
 })();
@@ -2138,7 +2138,7 @@ viewTransform(){let active=this.activeTransform();let rows=Object.values(DB.tran
 
 
 
-/* === lineage_Idle_V1.1 Fix: sell rules - books + low/equal enchant unequipped equipment only === */
+/* === lineage_Idle_V1.2 Fix: sell rules - books + low/equal enchant unequipped equipment only === */
 (()=>{
   'use strict';
   const VERSION='1.0';
@@ -2523,12 +2523,12 @@ viewTransform(){let active=this.activeTransform();let rows=Object.values(DB.tran
 (()=>{
   const VERSION='1.1';
   const setVersionText=()=>{
-    document.title='lineage_Idle_V1.1';
+    document.title='lineage_Idle_V1.2';
     document.querySelectorAll('.title').forEach(el=>{
-      if(String(el.textContent||'').includes('lineage_Idle')) el.textContent='lineage_Idle_V1.1';
+      if(String(el.textContent||'').includes('lineage_Idle')) el.textContent='lineage_Idle_V1.2';
     });
-    const h1=document.querySelector('#start h1'); if(h1) h1.textContent='lineage_Idle_V1.1';
-    const top=document.querySelector('.top .title'); if(top) top.textContent='lineage_Idle_V1.1';
+    const h1=document.querySelector('#start h1'); if(h1) h1.textContent='lineage_Idle_V1.2';
+    const top=document.querySelector('.top .title'); if(top) top.textContent='lineage_Idle_V1.2';
   };
   setVersionText();
 
@@ -2833,6 +2833,303 @@ viewTransform(){let active=this.activeTransform();let rows=Object.values(DB.tran
   });
 })();
 
+
+
+/* ==============================
+   Lineage Idle V1.2 Upgrade Patch
+   - 已裝備 / 未裝備背包分頁
+   - 自動整理背包
+   - 套裝專屬圖示
+   - 工會 20 級完整技能樹
+   - 奇遇事件池 50+ 事件
+   ============================== */
+(()=>{
+  const VERSION='1.2';
+  const TITLE='lineage_Idle_V1.2';
+  const EQUIP_TYPES=['weapon','helmet','tshirt','armor','cloak','gloves','boots','leggings','ring','earring','amulet','belt'];
+  const rarityRank={'白':1,'綠':2,'藍':3,'紫':4,'橘':5,'紅':6};
+  const esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+  const setTitle=()=>{
+    document.title=TITLE;
+    document.querySelectorAll('.title').forEach(el=>{ if(String(el.textContent||'').includes('lineage_Idle')) el.textContent=TITLE; });
+    const h1=document.querySelector('#start h1'); if(h1) h1.textContent=TITLE;
+    const top=document.querySelector('.top .title'); if(top) top.textContent=TITLE;
+  };
+  setTitle();
+
+  const V12={};
+  V12.add=(a,b)=>{let r={...a};for(const k in b)if(typeof b[k]==='number')r[k]=(r[k]||0)+b[k];return r;};
+  V12.statText=o=>Object.entries(o||{}).map(([k,v])=>`${String(k).toUpperCase()} ${v>0?'+':''}${v}`).join('、')||'無';
+  V12.itemName=id=>DB.items[id]?.name||id;
+  V12.guildNeed=lv=> lv>=20?Infinity:Math.floor(6000*Math.pow(lv,1.72)+lv*lv*3500);
+  V12.guildBonus=lv=>{
+    lv=Math.max(0,Math.min(20,lv||0));
+    return {
+      dmg:Math.floor(lv*2.2), hit:Math.floor(lv*1.1), dr:Math.floor(lv*.75),
+      hp:lv*70, mp:lv*34, mr:Math.floor(lv*2.4), spd:Math.floor(lv/4),
+      str:lv>=8?1:0, dex:lv>=10?1:0, int:lv>=12?1:0, wis:lv>=14?1:0, con:lv>=16?1:0
+    };
+  };
+  V12.guildSkills=[
+    {lv:1,id:'camp',name:'血盟營地',desc:'開啟血盟基礎加成。',bonus:{hp:70,mp:34}},
+    {lv:2,id:'training',name:'共同訓練',desc:'命中與傷害提升。',bonus:{dmg:2,hit:1}},
+    {lv:3,id:'supply',name:'補給網',desc:'任務金幣獎勵提高。',effect:'任務金幣 +5%'},
+    {lv:4,id:'guard',name:'守備隊',desc:'減傷與魔防提升。',bonus:{dr:3,mr:8}},
+    {lv:5,id:'hunt_order',name:'討伐令',desc:'每日任務收益提高。',effect:'任務金幣 +10%'},
+    {lv:6,id:'scout',name:'偵查隊',desc:'奇遇觸發率略增。',effect:'奇遇率 +2%'},
+    {lv:7,id:'merchant',name:'商團議價',desc:'整理背包時出售收益提高。',effect:'售價 +5%'},
+    {lv:8,id:'warrior_oath',name:'戰士誓約',desc:'力量 +1。',bonus:{str:1}},
+    {lv:9,id:'boss_mark',name:'首領標記',desc:'對 BOSS 傷害提高。',effect:'BOSS 傷害 +5%'},
+    {lv:10,id:'ranger_oath',name:'遊俠誓約',desc:'敏捷 +1。',bonus:{dex:1}},
+    {lv:11,id:'craft_support',name:'工匠支援',desc:'奇遇工匠事件更常提供卷軸。',effect:'工匠奇遇強化'},
+    {lv:12,id:'mage_oath',name:'賢者誓約',desc:'智力 +1。',bonus:{int:1}},
+    {lv:13,id:'healer',name:'救護班',desc:'奇遇治療與補給更強。',effect:'治療奇遇強化'},
+    {lv:14,id:'spirit_oath',name:'精神誓約',desc:'精神 +1。',bonus:{wis:1}},
+    {lv:15,id:'dragon_watch',name:'龍族觀測',desc:'龍族奇遇可給更高階獎勵。',effect:'龍族奇遇強化'},
+    {lv:16,id:'guardian_oath',name:'守護誓約',desc:'體質 +1。',bonus:{con:1}},
+    {lv:17,id:'tower_map',name:'傲慢塔圖資',desc:'高階地圖任務進度追加。',effect:'高階討伐 +1'},
+    {lv:18,id:'royal_banner',name:'王族軍旗',desc:'全能力戰鬥加成。',bonus:{dmg:8,hit:4,dr:4,mr:12}},
+    {lv:19,id:'adena_fund',name:'亞丁基金',desc:'離線收益與任務收益提高。',effect:'收益 +15%'},
+    {lv:20,id:'blood_pact',name:'血盟誓約完成',desc:'20 級終局技能，全面提升。',bonus:{str:1,dex:1,int:1,wis:1,con:1,dmg:15,hit:8,dr:8,hp:500,mp:250,mr:30,spd:5}}
+  ];
+  V12.setIcons={iron:'🛡',dragon:'🐉',mage:'🔮',assassin:'🗡',knight:'⚔',elf:'🏹',warrior:'🪓',holy:'✦',default:'◆'};
+  V12.extraSets={
+    knight:{icon:'⚔',name:'騎士武裝套裝',items:['katana','damascus','iron_armor','iron_helm','brave_necklace'],steps:[{need:2,desc:'武裝協調',bonus:{dmg:3,hit:2}},{need:4,desc:'騎士堅守',bonus:{dr:4,hp:160}},{need:5,desc:'騎士誓約',bonus:{dmg:7,hit:5,dr:6,hp:260}}]},
+    elf:{icon:'🏹',name:'妖精疾風套裝',items:['crossbow','ancient_bow','dex_gloves','wisdom_ring','wind_boots'],steps:[{need:2,desc:'疾風感知',bonus:{dex:1,hit:2}},{need:4,desc:'森林步伐',bonus:{dex:2,spd:5,hit:4}},{need:5,desc:'疾風守護',bonus:{dex:4,hit:8,dmg:8,spd:8}}]},
+    warrior:{icon:'🪓',name:'泰坦狂戰套裝',items:['titan_axe','power_gloves','ogre_belt','hero_armor','guardian_cloak'],steps:[{need:2,desc:'巨人之力',bonus:{str:1,dmg:4}},{need:4,desc:'泰坦護體',bonus:{str:2,dmg:8,dr:5,hp:260}},{need:5,desc:'狂戰血脈',bonus:{str:4,dmg:14,dr:8,hp:420}}]},
+    holy:{icon:'✦',name:'神聖遠征套裝',items:['holy_sword','crusader_blade','magic_cloak','brave_necklace','def_ring'],steps:[{need:2,desc:'聖光共鳴',bonus:{dmg:4,mr:10}},{need:4,desc:'遠征守護',bonus:{dmg:8,dr:4,mr:20,hp:180}},{need:5,desc:'神聖裁決',bonus:{dmg:14,hit:6,dr:6,mr:35,hp:300}}]}
+  };
+  V12.encounters=[
+    ['受傷的守衛','治療','你救下亞丁守衛，獲得治癒藥水。','item','potion_red',8],['迷路的妖精','治療','妖精留下強力治癒藥水作為謝禮。','item','potion_orange',4],['古井微光','治療','古井水恢復你的生命與魔力。','heal'],['營火休整','治療','短暫休息後精神恢復。','buff'],['藥師的背包','治療','藥師分給你補給品。','item','potion_clear',2],
+    ['流浪商人','交易','商人低價收購戰利品，你獲得金幣。','adena'],['奇岩票據','交易','你撿到可兌換的奇岩票據。','adena'],['稅務官的委託','交易','協助護送稅務官後得到報酬。','adena'],['商團護衛','交易','完成護衛工作，血盟聲望提升。','guild'],['黑市傳聞','交易','黑市商人透露拍賣場行情。','buff'],
+    ['古代石碑','劇情','石碑記錄四龍甦醒的時間。','exp'],['吟遊詩人','劇情','詩人唱出被遺忘的亞丁戰歌。','exp'],['亞丁騎士殘影','劇情','殘影指出下一處戰場。','exp'],['破損地圖','劇情','地圖標出傲慢之塔裂縫。','exp'],['王城密令','劇情','王城密令要求你追查龍族信徒。','quest'],
+    ['武器匠人','工匠','匠人替你保養武器，攻擊暫時提升。','buff'],['防具匠人','工匠','匠人補強護甲，減傷暫時提升。','buff'],['卷軸殘頁','工匠','你收集到強化卷軸殘頁。','item','scroll_armor',1],['失落鐵砧','工匠','鐵砧旁發現武器卷軸。','item','scroll_weapon',1],['飾品刻印師','工匠','刻印師留下飾品卷軸。','item','scroll_accessory',1],
+    ['血盟信使','血盟','信使帶來血盟委託。','guild'],['血盟補給車','血盟','補給車提供金幣與補給。','guild'],['訓練教官','血盟','教官協助進行戰鬥訓練。','buff'],['戰旗重整','血盟','你修復破損戰旗，士氣提升。','guild'],['同盟斥候','血盟','斥候回報首領行蹤。','quest'],
+    ['幼龍足跡','龍族','你追蹤幼龍足跡，獲得大量經驗。','exp'],['龍鱗碎片','龍族','你撿到龍鱗碎片並賣出。','adena'],['安塔瑞斯低鳴','龍族','地龍氣息強化你的防禦。','buff'],['法利昂潮聲','龍族','水龍魔力恢復你的 HP。','heal'],['巴拉卡斯火痕','龍族','火龍殘焰提升傷害。','buff'],['林德拜爾風鳴','龍族','風龍氣息提升速度。','buff'],
+    ['陷阱地板','風險','你觸發陷阱但找到藏金。','risk'],['盜賊伏擊','風險','擊退盜賊後獲得額外金幣。','risk'],['詛咒寶箱','風險','寶箱詛咒短暫削弱你，但給了戰利品。','risk'],['迷霧岔路','風險','迷路後仍獲得少量經驗。','exp'],['黑暗祭壇','風險','祭壇魔力帶來危險但也強化戰鬥。','buff'],
+    ['隱藏寶箱','寶藏','你打開隱藏寶箱。','treasure'],['發光礦脈','寶藏','礦脈中有可出售寶石。','adena'],['沉沒貨箱','寶藏','貨箱裡有藥水與卷軸。','treasure'],['古代錢袋','寶藏','錢袋裡裝滿亞丁金幣。','adena'],['密室鑰匙','寶藏','密室中藏著強化補給。','treasure'],
+    ['火焰精靈','增益','火焰精靈提升你的攻擊力。','buff'],['大地精靈','增益','大地精靈提升你的防禦力。','buff'],['水之精靈','增益','水之精靈恢復你的生命。','heal'],['風之精靈','增益','風之精靈提升你的速度。','buff'],['光之精靈','增益','光之精靈提升魔防。','buff'],
+    ['傲慢巡邏隊','支援','你協助巡邏隊清除魔物。','quest'],['古魯丁難民','支援','護送難民後得到謝禮。','adena'],['象牙塔學者','支援','學者給你魔法研究補助。','exp'],['龍谷獵人','支援','獵人分享狩獵技巧。','buff'],['拉斯塔巴德俘虜','支援','救出俘虜後獲得情報。','quest'],
+    ['月光祭司','特殊','月光祭司賜予祝福。','buff'],['星塵裂縫','特殊','星塵裂縫噴出稀有補給。','treasure'],['時間回音','特殊','你看見未來戰場片段。','exp'],['殷海薩低語','特殊','殷海薩的低語使你恢復。','heal'],['反王密探','特殊','密探留下高額賞金線索。','adena']
+  ].map((x,i)=>({id:'v12_evt_'+i,name:x[0],type:x[1],text:x[2],effect:x[3],item:x[4],qty:x[5]}));
+
+  const oldMigrate=Game.migrateState.bind(Game);
+  const oldInitMenus=Game.initMenus.bind(Game);
+  const oldRenderTab=Game.renderTab.bind(Game);
+  const oldTotalStats=Game.totalStats.bind(Game);
+  const oldStoryEncounter=Game.storyEncounter.bind(Game);
+  const oldGiveReward=Game.giveReward?Game.giveReward.bind(Game):null;
+  const oldDonateGuild=Game.donateGuild?Game.donateGuild.bind(Game):null;
+
+  Object.assign(Game,{
+    migrateState(){
+      oldMigrate(); if(!this.state) return; this.state.version=VERSION; setTitle();
+      this.state.ui=this.state.ui||{}; this.state.ui.invEquipTab=this.state.ui.invEquipTab||'unequipped';
+      this.state.v12=this.state.v12||{encounterSeen:{},organizeCount:0};
+      this.state.guild=this.state.guild||{name:null,level:0,exp:0,contribution:0};
+      if(this.state.guild.level>20)this.state.guild.level=20;
+      if(!this.state.daily?.quests || !this.state.daily.quests.encounter_5) this.resetDailyIfNeeded?.();
+    },
+    initMenus(){ oldInitMenus(); setTitle(); },
+    guildSkillBonus(){
+      let lv=this.state?.guild?.level||0, r={};
+      V12.guildSkills.forEach(s=>{ if(lv>=s.lv && s.bonus) r=V12.add(r,s.bonus); });
+      return r;
+    },
+    totalStats(){
+      let s=oldTotalStats();
+      const glv=this.state?.guild?.level||0;
+      if(glv){
+        if(typeof V11!=='undefined' && V11.guildBonus) {
+          const old=V11.guildBonus(glv); for(const k in old) if(typeof old[k]==='number') s[k]=(s[k]||0)-old[k];
+        }
+        s=V12.add(s,V12.guildBonus(glv));
+        s=V12.add(s,this.guildSkillBonus());
+      }
+      return s;
+    },
+    donateGuild(){
+      if(!this.state.guild?.name) return oldDonateGuild?oldDonateGuild():undefined;
+      let amt=Number(prompt('捐獻金幣數量','10000')||0); if(!amt||amt<=0) return;
+      if(this.state.adena<amt){alert('金幣不足');return;}
+      this.state.adena-=amt; this.state.guild.exp=(this.state.guild.exp||0)+amt; this.state.guild.contribution=(this.state.guild.contribution||0)+amt;
+      while(this.state.guild.level<20 && this.state.guild.exp>=V12.guildNeed(this.state.guild.level)) this.state.guild.level++;
+      this.log(`血盟捐獻 ${amt.toLocaleString()}，目前 Lv.${this.state.guild.level}/20`,'green'); this.save(false); this.render();
+    },
+    resetDailyIfNeeded(){
+      const today=(typeof V11!=='undefined'&&V11.today)?V11.today():new Date().toISOString().slice(0,10);
+      if(!this.state.daily||this.state.daily.date!==today){
+        this.state.daily={date:today,quests:{}};
+        this.questDefsV12().forEach(q=>this.state.daily.quests[q.id]={progress:0,claimed:false});
+      }else{
+        this.questDefsV12().forEach(q=>{ if(!this.state.daily.quests[q.id]) this.state.daily.quests[q.id]={progress:0,claimed:false}; });
+      }
+    },
+    questDefsV12(){
+      return [
+        {id:'kill_60',name:'亞丁討伐令',desc:'擊敗 60 隻怪物',need:60,type:'kill',reward:{adena:9000,item:'potion_orange',qty:8}},
+        {id:'boss_5',name:'首領追蹤',desc:'擊敗 5 隻 BOSS',need:5,type:'boss',reward:{adena:18000,item:'scroll_weapon',qty:2}},
+        {id:'loot_25',name:'戰利品回收',desc:'取得 25 件掉落道具',need:25,type:'loot',reward:{adena:14000,item:'scroll_armor',qty:2}},
+        {id:'skill_35',name:'技能演練',desc:'施放技能 35 次',need:35,type:'skill',reward:{adena:12000,item:'potion_clear',qty:5}},
+        {id:'encounter_5',name:'奇遇調查',desc:'觸發 5 次奇遇',need:5,type:'encounter',reward:{adena:16000,item:'scroll_accessory',qty:1}},
+        {id:'adena_30000',name:'軍資籌措',desc:'透過戰鬥、奇遇或任務取得 30,000 金幣',need:30000,type:'adena',reward:{adena:12000,item:'potion_orange',qty:10}},
+        {id:'map_40',name:'地區壓制',desc:'在目前地圖擊敗 40 隻怪物',need:40,type:'mapkill',reward:{adena:15000,item:'scroll_armor',qty:1}},
+        {id:'guild_1',name:'血盟貢獻',desc:'觸發血盟相關支援 1 次',need:1,type:'guild',reward:{adena:20000,item:'scroll_bless_armor',qty:1}}
+      ];
+    },
+    updateQuest(type,amount=1){
+      this.resetDailyIfNeeded();
+      for(const q of this.questDefsV12().filter(x=>x.type===type)){
+        let st=this.state.daily.quests[q.id]; if(st&&!st.claimed) st.progress=Math.min(q.need,(st.progress||0)+amount);
+      }
+    },
+    giveReward(r){
+      if(!r)return;
+      const guildLv=this.state.guild?.level||0;
+      let rr={...r}; if(rr.adena&&guildLv>=5) rr.adena=Math.floor(rr.adena*(guildLv>=19?1.25:1.10));
+      if(oldGiveReward) return oldGiveReward(rr);
+      if(rr.adena)this.state.adena+=rr.adena; if(rr.exp)this.state.exp+=rr.exp; if(rr.item)this.addItem(rr.item,rr.qty||1,0); this.levelUp();
+    },
+    claimQuest(id){
+      const def=this.questDefsV12().find(x=>x.id===id), st=this.state.daily?.quests?.[id];
+      if(!def||!st||st.claimed||st.progress<def.need)return;
+      st.claimed=true; this.giveReward(def.reward); this.log('領取 V1.2 任務獎勵：'+def.name,'green'); this.save(false); this.render();
+    },
+    inventoryKeysByEquipTab(){
+      const tab=this.state.ui?.invEquipTab||'unequipped';
+      return Object.entries(this.state.inventory||{}).filter(([k])=>{
+        const eq=Object.values(this.state.equip||{}).includes(k);
+        return tab==='all'||(tab==='equipped'?eq:!eq);
+      });
+    },
+    setInventoryEquipTab(tab){ this.state.ui=this.state.ui||{}; this.state.ui.invEquipTab=tab; this.save(false); this.renderTab(); },
+    organizeInventory(){
+      const order={weapon:1,helmet:2,tshirt:3,armor:4,cloak:5,gloves:6,boots:7,leggings:8,amulet:9,belt:10,earring:11,ring:12,potion:20,scroll:21,book:22,material:30};
+      const oldInv=this.state.inventory||{}, newInv={}, keyMap={};
+      const rows=Object.entries(oldInv).sort((a,b)=>{
+        const da=DB.items[a[1].id]||{}, db=DB.items[b[1].id]||{};
+        return (order[da.type]||99)-(order[db.type]||99) || (rarityRank[db.rarity]||0)-(rarityRank[da.rarity]||0) || (b[1].enchant||0)-(a[1].enchant||0) || (da.name||a[1].id).localeCompare(db.name||b[1].id);
+      });
+      rows.forEach(([oldKey,it],idx)=>{
+        const d=DB.items[it.id]||{}, stackable=['potion','scroll','book','material'].includes(d.type), base=`${it.id}|${it.enchant||0}`;
+        let newKey=stackable?base:`${String(idx+1).padStart(4,'0')}|${it.id}|${it.enchant||0}|${oldKey.split('|').slice(-1)[0]||idx}`;
+        if(newInv[newKey]&&stackable){newInv[newKey].qty=(newInv[newKey].qty||0)+(it.qty||1);keyMap[oldKey]=newKey;}
+        else{while(newInv[newKey])newKey+='x';newInv[newKey]={...it};keyMap[oldKey]=newKey;}
+      });
+      for(const slot of Object.keys(this.state.equip||{})){let k=this.state.equip[slot]; if(k&&keyMap[k]) this.state.equip[slot]=keyMap[k];}
+      this.state.inventory=newInv; this.state.v12=this.state.v12||{}; this.state.v12.organizeCount=(this.state.v12.organizeCount||0)+1;
+      this.log('背包已自動整理：依裝備狀態、類型、稀有度與強化值排序，並合併可堆疊物品。','green'); this.save(false); this.render();
+    },
+    itemPowerV12(key){return this.itemPowerByKey?this.itemPowerByKey(key):0;},
+    viewInventory(){
+      this.state.ui=this.state.ui||{};
+      const tab=this.state.ui.invEquipTab||'unequipped';
+      const tabs=[['all','全部'],['unequipped','未裝備'],['equipped','已裝備']].map(([id,t])=>`<button class="btn tab ${tab===id?'active':''}" data-inv-equip-tab="${id}">${t}</button>`).join('');
+      let rows=this.inventoryKeysByEquipTab().sort((a,b)=>{
+        const da=DB.items[a[1].id]||{}, db=DB.items[b[1].id]||{};
+        return (rarityRank[db.rarity]||0)-(rarityRank[da.rarity]||0) || this.itemPowerV12(b[0])-this.itemPowerV12(a[0]) || (da.type||'').localeCompare(db.type||'') || (da.name||'').localeCompare(db.name||'');
+      });
+      const total=Object.values(this.state.inventory||{}).reduce((n,x)=>n+(x.qty||1),0);
+      const equippedKeys=Object.values(this.state.equip||{}).filter(Boolean).length;
+      const body=rows.map(([k,it])=>{
+        const d=DB.items[it.id]||{}, equipped=Object.values(this.state.equip||{}).includes(k), canEquip=EQUIP_TYPES.includes(d.type)&&(d.type!=='weapon'||this.cls().weapons.includes(d.weapon));
+        const tags=[this.typeName?this.typeName(d.type):d.type,d.rarity?`稀有 ${d.rarity}`:'',`戰力 ${this.itemPowerV12(k)}`,it.enchant?`+${it.enchant}`:'',equipped?'裝備中':'未裝備'].filter(Boolean).map(x=>`<span class="pill">${x}</span>`).join(' ');
+        let buttons=[];
+        if(canEquip&&!equipped) buttons.push(`<button class="btn green" data-equip="${esc(k)}">裝備</button>`);
+        if(d.type==='potion'||d.type==='book') buttons.push(`<button class="btn green" data-use="${esc(k)}">使用</button>`);
+        if(!equipped) buttons.push(`<button class="btn red" data-sell="${esc(k)}">賣出</button>`);
+        return `<div class="item row"><span><b class="rarity-${d.rarity}">${this.itemName(k)}</b><br><span class="small">${tags}<br>${this.statLineForKey?this.statLineForKey(k):''}</span></span><span>${buttons.join(' ')||'<span class="small">已裝備</span>'}</span></div>`;
+      }).join('')||'<div class="small">此分頁沒有物品。</div>';
+      return `<h3 class="title">背包 V1.2</h3><div class="setting-card"><div class="tabs">${tabs}<button class="btn blue" data-organize-inventory="1">自動整理背包</button></div><div class="small">總數 ${total}｜已裝備 ${equippedKeys}｜目前分頁：${tab==='all'?'全部':tab==='equipped'?'已裝備':'未裝備'}。背包頁已移除強化按鈕；強化請至「強化」頁操作。</div></div>${body}`;
+    },
+    activeSetBonusesV12(){
+      const equipped=Object.values(this.state.equip||{}).map(k=>this.invItem(k)).filter(Boolean).map(x=>x.id);
+      const sets={...(typeof V11!=='undefined'?V11.sets:{}),...V12.extraSets};
+      let active=[];
+      for(const [id,set] of Object.entries(sets)){
+        const count=(set.items||[]).filter(x=>equipped.includes(x)).length;
+        const steps=(set.steps||[]).filter(s=>count>=s.need);
+        if(steps.length){
+          let bonus={}; steps.forEach(s=>bonus=V12.add(bonus,s.bonus||{}));
+          active.push({id,count,bonus,set,best:steps[steps.length-1]});
+        }
+      }
+      return active;
+    },
+    activeSetBonuses(){return this.activeSetBonusesV12();},
+    storyEncounter(mdef){
+      const glv=this.state.guild?.level||0;
+      const chance=0.16+(glv>=6?0.02:0)+(glv>=15?0.02:0);
+      if(Math.random()>chance) return;
+      const pool=V12.encounters.filter(e=>{
+        if(e.type==='龍族') return this.state.lv>=35;
+        if(e.type==='特殊') return this.state.lv>=50;
+        return true;
+      });
+      const e=pool[Math.floor(Math.random()*pool.length)]||V12.encounters[0];
+      let result='';
+      if(e.effect==='item'){this.addItem(e.item,e.qty||1,0);result=`獲得 ${V12.itemName(e.item)} ×${e.qty||1}`;}
+      else if(e.effect==='heal'){let hp=Math.floor(this.maxHp()*0.35),mp=Math.floor(this.maxMp()*0.25);this.state.hp=Math.min(this.maxHp(),this.state.hp+hp);this.state.mp=Math.min(this.maxMp(),this.state.mp+mp);result=`恢復 HP ${hp} / MP ${mp}`;}
+      else if(e.effect==='adena'){let gain=Math.floor((this.state.lv*120+800)*(1+(glv>=19?0.15:0)));this.state.adena+=gain;this.updateQuest('adena',gain);result=`金幣 +${gain.toLocaleString()}`;}
+      else if(e.effect==='exp'){let gain=Math.floor(this.needExp()*0.045);this.state.exp+=gain;this.levelUp();result=`EXP +${gain.toLocaleString()}`;}
+      else if(e.effect==='guild'){if(this.state.guild?.name){let gx=this.state.lv*180+1200;this.state.guild.exp=(this.state.guild.exp||0)+gx;while(this.state.guild.level<20&&this.state.guild.exp>=V12.guildNeed(this.state.guild.level))this.state.guild.level++;this.updateQuest('guild',1);result=`血盟經驗 +${gx.toLocaleString()}`;}else{let gain=this.state.lv*80;this.state.adena+=gain;result=`未加入血盟，改得金幣 +${gain.toLocaleString()}`;}}
+      else if(e.effect==='quest'){this.updateQuest('mapkill',3);this.updateQuest('encounter',1);result='任務進度追加';}
+      else if(e.effect==='treasure'){let item=['potion_orange','potion_clear','scroll_armor','scroll_weapon','scroll_accessory'][Math.floor(Math.random()*5)];let qty=item.includes('potion')?3:1;this.addItem(item,qty,0);result=`寶藏：${V12.itemName(item)} ×${qty}`;}
+      else if(e.effect==='risk'){let gain=this.state.lv*150+1000;this.state.adena+=gain;this.state.hp=Math.max(1,this.state.hp-Math.floor(this.maxHp()*0.08));this.updateQuest('adena',gain);result=`承受風險，金幣 +${gain.toLocaleString()}`;}
+      else {let buffs=[{dmg:5,hit:3},{dr:4,mr:10},{spd:6,hit:2},{dmg:3,dr:3,hp:80},{int:2,wis:1,mp:120}];let b=buffs[Math.floor(Math.random()*buffs.length)];this.state.buffs['v12_'+e.id]={name:e.name,...b,until:Date.now()+240000};result=`獲得暫時加成：${V12.statText(b)}`;}
+      this.state.v12=this.state.v12||{encounterSeen:{}}; this.state.v12.encounterSeen[e.id]=(this.state.v12.encounterSeen[e.id]||0)+1;
+      this.state.v11=this.state.v11||{}; this.state.v11.encounters=this.state.v11.encounters||[];
+      this.state.v11.encounters.unshift({time:Date.now(),name:e.name,type:e.type,map:this.map().name,result}); this.state.v11.encounters=this.state.v11.encounters.slice(0,50);
+      this.updateQuest('encounter',1);
+      this.log(`<span class="c-purple">奇遇：${e.name}</span> ${e.text}｜${result}`,'green');
+    },
+    viewGuild(){
+      const g=this.state.guild;
+      if(!g?.name) return `<h3 class="title">血盟 / 公會 V1.2</h3><div class="small">創建後可捐獻金幣提升血盟等級。V1.2 最高 20 等，新增完整技能樹與門檻效果。</div><button class="btn green" data-create-guild="1">創建血盟 / 公會（100,000 金幣）</button>`;
+      const lv=g.level||1, need=lv>=20?0:V12.guildNeed(lv), pct=lv>=20?100:Math.min(100,(g.exp||0)/need*100), bonus=V12.add(V12.guildBonus(lv),this.guildSkillBonus());
+      const tree=V12.guildSkills.map(s=>`<div class="item"><b class="${lv>=s.lv?'c-gold':'small'}">Lv.${s.lv} ${s.name}${lv>=s.lv?' ✓':''}</b><br><span class="small">${s.desc}${s.bonus?'｜'+V12.statText(s.bonus):''}${s.effect?'｜'+s.effect:''}</span></div>`).join('');
+      return `<h3 class="title">血盟 / 公會 V1.2</h3><div class="setting-card"><div class="row"><b class="c-gold">${esc(g.name)}</b><span>Lv.${lv}/20</span></div><div class="bar" style="margin:8px 0"><i class="exp" style="width:${pct}%"></i><span>${lv>=20?'MAX':`${(g.exp||0).toLocaleString()} / ${need.toLocaleString()}`}</span></div><div class="small">貢獻 ${Number(g.contribution||0).toLocaleString()}｜總加成：${V12.statText(bonus)}</div><button class="btn green" data-donate-guild="1" ${lv>=20?'disabled':''}>捐獻金幣</button></div><h3 class="title" style="margin-top:14px">20 級技能樹</h3>${tree}`;
+    },
+    viewQuest(){
+      this.resetDailyIfNeeded();
+      const rows=this.questDefsV12().map(q=>{let st=this.state.daily.quests[q.id]||{progress:0,claimed:false};let done=st.progress>=q.need;let rw=[q.reward.adena?`金幣 ${q.reward.adena.toLocaleString()}`:'',q.reward.item?`${V12.itemName(q.reward.item)} ×${q.reward.qty||1}`:''].filter(Boolean).join('、');return `<div class="item row"><span><b class="c-gold">${q.name}</b><br><span class="small">${q.desc}｜進度 ${st.progress}/${q.need}｜獎勵：${rw}</span></span><span>${st.claimed?'<span class="c-green">已領取</span>':`<button class="btn green" data-claim-quest="${q.id}" ${done?'':'disabled'}>領取</button>`}</span></div>`;}).join('');
+      return `<h3 class="title">任務 V1.2</h3><div class="small">每日任務擴充為討伐、BOSS、掉落、技能、奇遇、金幣、地區壓制與血盟貢獻。血盟等級會提高任務收益。</div>${rows}`;
+    },
+    viewSetBonus(){
+      const equipped=Object.values(this.state.equip||{}).map(k=>this.invItem(k)).filter(Boolean).map(x=>x.id);
+      const sets={...(typeof V11!=='undefined'?V11.sets:{}),...V12.extraSets};
+      const rows=Object.entries(sets).map(([id,set])=>{
+        const count=(set.items||[]).filter(x=>equipped.includes(x)).length, icon=set.icon||V12.setIcons[id]||V12.setIcons.default;
+        const itemNames=(set.items||[]).map(i=>`${equipped.includes(i)?'✓':'□'} ${V12.itemName(i)}`).join('、');
+        const best=(set.steps||[]).filter(s=>count>=s.need).at(-1);
+        return `<div class="setting-card"><div class="row"><b class="${best?'c-gold':''}" style="font-size:18px"><span style="font-size:24px">${icon}</span> ${set.name}</b><span class="pill">${count}/${set.items.length}</span></div><div class="small">部件：${itemNames}</div>${(set.steps||[]).map(s=>`<div class="item"><span class="${count>=s.need?'c-green':'small'}">${icon} ${s.desc}｜${V12.statText(s.bonus)}</span></div>`).join('')}</div>`;
+      }).join('');
+      return `<h3 class="title">套裝 V1.2</h3><div class="small">套裝加入專屬圖示與更多職業向套裝；仍採 2 / 3 / 完整套分段啟用。</div><div class="setting-grid">${rows}</div>`;
+    },
+    viewStory(){
+      const total=V12.encounters.length, seen=Object.keys(this.state.v12?.encounterSeen||{}).length;
+      const hist=(this.state.v11?.encounters||[]).slice(0,25).map(e=>`<div class="item"><b class="c-purple">${e.name}</b> <span class="pill">${e.type}</span><br><span class="small">${new Date(e.time).toLocaleString()}｜${e.map}｜${e.result}</span></div>`).join('')||'<div class="small">尚未觸發 V1.2 奇遇。狩獵時會自動觸發。</div>';
+      const types=[...new Set(V12.encounters.map(e=>e.type))].map(t=>`<span class="pill">${t}</span>`).join(' ');
+      return `<h3 class="title">劇情 / 奇遇 V1.2</h3><div class="setting-card"><b class="c-gold">奇遇事件池 ${total} 件</b><br><span class="small">已遇過 ${seen}/${total}｜分類：${types}</span></div><div class="item"><b class="c-gold">亞丁主線延伸</b><br><span class="small">血盟技能樹、套裝蒐集與高階地圖奇遇會逐步導向傲慢之塔、拉斯塔巴德與四龍前線。</span></div><h3 class="title" style="margin-top:14px">奇遇紀錄</h3>${hist}`;
+    },
+    renderTab(){
+      oldRenderTab(); const el=document.getElementById('tabContent'); if(!this.state||!el) return;
+      if(this.tab==='inventory') el.innerHTML=this.viewInventory();
+      if(this.tab==='guild') el.innerHTML=this.viewGuild();
+      if(this.tab==='quest') el.innerHTML=this.viewQuest();
+      if(this.tab==='setbonus') el.innerHTML=this.viewSetBonus();
+      if(this.tab==='story') el.innerHTML=this.viewStory();
+      el.querySelectorAll('[data-inv-equip-tab]').forEach(b=>b.onclick=()=>this.setInventoryEquipTab(b.dataset.invEquipTab));
+      el.querySelectorAll('[data-organize-inventory]').forEach(b=>b.onclick=()=>this.organizeInventory());
+      el.querySelectorAll('[data-equip]').forEach(b=>b.onclick=()=>this.equip(b.dataset.equip));
+      el.querySelectorAll('[data-use]').forEach(b=>b.onclick=()=>this.useItem(b.dataset.use));
+      el.querySelectorAll('[data-sell]').forEach(b=>b.onclick=()=>this.sellItem(b.dataset.sell));
+      el.querySelectorAll('[data-create-guild]').forEach(b=>b.onclick=()=>this.createGuild());
+      el.querySelectorAll('[data-donate-guild]').forEach(b=>b.onclick=()=>this.donateGuild());
+      el.querySelectorAll('[data-claim-quest]').forEach(b=>b.onclick=()=>this.claimQuest(b.dataset.claimQuest));
+    }
+  });
+})();
 
 window.addEventListener('DOMContentLoaded',()=>Game.init());
 </script>
