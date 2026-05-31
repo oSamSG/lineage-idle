@@ -32,7 +32,7 @@
 
 <div class="app hidden" id="app">
   <div class="panel top">
-    <div><span class="title">Lineage Idle V4.8Lineage Idle V4.2</span> <span id="subTitle" class="small"></span></div>
+    <div><span class="title">Lineage Idle V4.8</span> <span id="subTitle" class="small"></span></div>
     <div class="row"><button class="btn blue" id="saveBtn">儲存</button><button class="btn" id="exportBtn">匯出</button><button class="btn red" id="resetBtn">刪除</button></div>
   </div>
   <div class="main">
@@ -1673,7 +1673,7 @@ viewTransform(){let active=this.activeTransform();let rows=Object.values(DB.tran
 
 
 
-// === V4.8Lineage Idle V4.2 Patch: 批次賣裝備優化 ===
+// === V4.6.1 Patch: 批次賣裝備優化 ===
 (function(){
   if(!window.Game||!window.DB) return;
   const VERSION='4.6.1';
@@ -1748,16 +1748,16 @@ viewTransform(){let active=this.activeTransform();let rows=Object.values(DB.tran
     const options=rarityNames.map(r=>`<option value="${r}" ${c.maxRarity===r?'selected':''}>${r}以下</option>`).join('');
     const typeOpts=[['allEquip','全部裝備'],['weapon','只賣武器'],['armor','只賣防具'],['accessory','只賣飾品']].map(x=>`<option value="${x[0]}" ${c.type===x[0]?'selected':''}>${x[1]}</option>`).join('');
     const preview=p.list.slice(0,12).map(x=>`<span class="pill rarity-${x.d.rarity||'白'}">${esc((x.it.enchant?`+${x.it.enchant} `:'')+x.d.name)}｜${esc(x.d.rarity||'白')}｜${sellPrice(this,x.k).toLocaleString()}</span>`).join(' ') || '<span class="small">目前沒有符合批次賣出條件的裝備</span>';
-    const controls=`<div class="setting-card" style="margin-bottom:10px"><b class="c-gold">批次賣裝備 V4.8Lineage Idle V4.2</b><div class="small">安全規則：不會賣出已穿戴裝備；預設保留 +3 以上、高稀有度與高戰力裝備。</div><div class="row" style="flex-wrap:wrap;justify-content:flex-start;margin-top:8px"><label>稀有度 <select data-batch-ui="maxRarity">${options}</select></label><label>類型 <select data-batch-ui="type">${typeOpts}</select></label><label>保留強化 ≥ <input data-batch-ui="keepEnchant" type="number" min="0" max="20" value="${c.keepEnchant}" style="width:70px"></label><label>保留戰力 ≥ <input data-batch-ui="keepScore" type="number" min="0" value="${c.keepScore}" style="width:90px"></label></div><div class="row" style="flex-wrap:wrap;justify-content:flex-start;margin-top:8px"><label class="pill"><input data-batch-check="includeWeapons" type="checkbox" ${c.includeWeapons?'checked':''}> 包含武器</label><label class="pill"><input data-batch-check="includeArmor" type="checkbox" ${c.includeArmor?'checked':''}> 包含防具</label><label class="pill"><input data-batch-check="includeAccessories" type="checkbox" ${c.includeAccessories?'checked':''}> 包含飾品</label><label class="pill"><input data-batch-check="requireConfirm" type="checkbox" ${c.requireConfirm?'checked':''}> 賣出前確認</label></div><div class="item"><b>預覽：</b> ${p.qty} 件，預估 ${p.gain.toLocaleString()} 金幣<br>${preview}</div><div class="row" style="flex-wrap:wrap;justify-content:flex-start"><button class="btn red" data-batch-sell-rule="1">依目前條件批次賣出</button><button class="btn" data-batch-quick="white">快速賣白裝</button><button class="btn" data-batch-quick="greenMinus">快速賣白/綠 +2以下</button><button class="btn" data-batch-quick="lowAccessory">快速賣低階飾品</button></div></div>`;
+    const controls=`<div class="setting-card" style="margin-bottom:10px"><b class="c-gold">批次賣裝備 V4.6.1</b><div class="small">安全規則：不會賣出已穿戴裝備；預設保留 +3 以上、高稀有度與高戰力裝備。</div><div class="row" style="flex-wrap:wrap;justify-content:flex-start;margin-top:8px"><label>稀有度 <select data-batch-ui="maxRarity">${options}</select></label><label>類型 <select data-batch-ui="type">${typeOpts}</select></label><label>保留強化 ≥ <input data-batch-ui="keepEnchant" type="number" min="0" max="20" value="${c.keepEnchant}" style="width:70px"></label><label>保留戰力 ≥ <input data-batch-ui="keepScore" type="number" min="0" value="${c.keepScore}" style="width:90px"></label></div><div class="row" style="flex-wrap:wrap;justify-content:flex-start;margin-top:8px"><label class="pill"><input data-batch-check="includeWeapons" type="checkbox" ${c.includeWeapons?'checked':''}> 包含武器</label><label class="pill"><input data-batch-check="includeArmor" type="checkbox" ${c.includeArmor?'checked':''}> 包含防具</label><label class="pill"><input data-batch-check="includeAccessories" type="checkbox" ${c.includeAccessories?'checked':''}> 包含飾品</label><label class="pill"><input data-batch-check="requireConfirm" type="checkbox" ${c.requireConfirm?'checked':''}> 賣出前確認</label></div><div class="item"><b>預覽：</b> ${p.qty} 件，預估 ${p.gain.toLocaleString()} 金幣<br>${preview}</div><div class="row" style="flex-wrap:wrap;justify-content:flex-start"><button class="btn red" data-batch-sell-rule="1">依目前條件批次賣出</button><button class="btn" data-batch-quick="white">快速賣白裝</button><button class="btn" data-batch-quick="greenMinus">快速賣白/綠 +2以下</button><button class="btn" data-batch-quick="lowAccessory">快速賣低階飾品</button></div></div>`;
     const entries=Object.entries(this.state.inventory||{}).sort((a,b)=>(DB.items[a[1].id]?.type||'').localeCompare(DB.items[b[1].id]?.type||'')||(DB.items[a[1].id]?.name||'').localeCompare(DB.items[b[1].id]?.name||''));
     const rows=entries.map(([k,it])=>{let d=DB.items[it.id]||{};let canEquip=isEquip(d);let equipped=Object.values(this.state.equip||{}).includes(k);let name=`${it.enchant?`+${it.enchant} `:''}${d.name||it.id}${it.qty>1?' ×'+it.qty:''}`;let compare=canEquip&&this.v45CompareText?this.v45CompareText(k):'';let score=canEquip?`｜戰力 ${itemScore(this,k)}`:'';let mark=matchBatch(this,k)?'<span class="pill c-red">批次會賣</span>':'';let buttons=[];if(canEquip)buttons.push(`<button class="btn" data-equip="${esc(k)}">裝備</button>`);if(d.type==='potion'||d.type==='book'||d.type==='exp_potion')buttons.push(`<button class="btn green" data-use="${esc(k)}">使用</button>`);if(!equipped)buttons.push(`<button class="btn red" data-sell="${esc(k)}">賣出</button>`);return `<div class="item row"><span class="rarity-${d.rarity||'白'}"><b>${esc(name)}</b> ${mark}<br><span class="small">${esc(typeNames[d.type]||d.type||'物品')}｜${esc(d.rarity||'白')}${score}${d.stat?`｜${this.v45StatText?esc(this.v45StatText(d.stat)):''}`:''}${compare}</span></span><span>${buttons.join(' ')}</span></div>`;}).join('');
     return `<h3 class="title">背包</h3>${controls}${rows||'<div class="small">空</div>'}`;
   };
   Game.renderTab=function(){oldRender();let el=document.getElementById('tabContent');if(!this.state||!el)return;if(this.tab==='inventory')el.innerHTML=this.viewInventory();el.querySelectorAll('[data-equip]').forEach(b=>b.onclick=()=>this.equip(b.dataset.equip));el.querySelectorAll('[data-use]').forEach(b=>b.onclick=()=>this.useItem(b.dataset.use));el.querySelectorAll('[data-sell]').forEach(b=>b.onclick=()=>this.sellItem(b.dataset.sell));el.querySelectorAll('[data-batch-ui]').forEach(x=>x.onchange=()=>this.setBatchSellUI(x.dataset.batchUi,x.value));el.querySelectorAll('[data-batch-check]').forEach(x=>x.onchange=()=>this.setBatchSellUI(x.dataset.batchCheck,x.checked));el.querySelectorAll('[data-batch-sell-rule]').forEach(b=>b.onclick=()=>this.batchSellByRule());el.querySelectorAll('[data-batch-quick]').forEach(b=>b.onclick=()=>this.batchSellQuick(b.dataset.batchQuick));};
-  document.title='Lineage Idle V4.8Lineage Idle V4.2';
-  document.querySelectorAll('.title').forEach(el=>{if(el.textContent.includes('Lineage Idle'))el.textContent='Lineage Idle V4.8Lineage Idle V4.2';});
-  const startTitle=document.querySelector('#start h1');if(startTitle)startTitle.textContent='Lineage Idle V4.8Lineage Idle V4.2';
-  const topTitle=document.querySelector('.top .title');if(topTitle)topTitle.textContent='Lineage Idle V4.8Lineage Idle V4.2';
+  document.title='Lineage Idle V4.8';
+  document.querySelectorAll('.title').forEach(el=>{if(el.textContent.includes('Lineage Idle'))el.textContent='Lineage Idle V4.8';});
+  const startTitle=document.querySelector('#start h1');if(startTitle)startTitle.textContent='Lineage Idle V4.8';
+  const topTitle=document.querySelector('.top .title');if(topTitle)topTitle.textContent='Lineage Idle V4.8';
 })();
 
 
@@ -1899,6 +1899,69 @@ viewTransform(){let active=this.activeTransform();let rows=Object.values(DB.tran
 
 
 window.addEventListener('DOMContentLoaded',()=>Game.init());
+
+
+/* === Lineage Idle V4.8 Hotfix: EXP potion usable button and effect === */
+(()=>{
+  const esc=s=>String(s??'').replace(/[&<>\"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]||m));
+  const rx=s=>String(s).replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
+
+  const oldTypeNameExpFix=Game.typeName?.bind(Game);
+  Game.typeName=function(t){
+    if(t==='exp_potion')return '經驗藥水';
+    return oldTypeNameExpFix?oldTypeNameExpFix(t):t;
+  };
+
+  const oldUseItemExpFix=Game.useItem.bind(Game);
+  Game.useItem=function(key){
+    const it=this.invItem(key);
+    const d=it&&DB.items[it.id];
+    if(d&&d.type==='exp_potion'){
+      this.state.expBuff={
+        bonus:Number(d.expBonus||0),
+        until:Date.now()+Number(d.duration||1800)*1000,
+        name:d.name
+      };
+      this.removeItem(key,1);
+      this.log(`使用 ${d.name}，狩獵經驗 +${Math.round(Number(d.expBonus||0)*100)}%，剩餘 ${Math.ceil(Number(d.duration||1800)/60)} 分鐘。`,'green');
+      this.save(false);
+      this.render();
+      return;
+    }
+    return oldUseItemExpFix(key);
+  };
+
+  const oldViewInventoryExpFix=Game.viewInventory.bind(Game);
+  Game.viewInventory=function(){
+    let html=oldViewInventoryExpFix();
+    for(const [key,it] of Object.entries(this.state?.inventory||{})){
+      const d=DB.items[it.id];
+      if(!d||d.type!=='exp_potion')continue;
+      if(html.includes(`data-use="${key}"`))continue;
+      const safeKey=esc(key);
+      const button=`<button class="btn green" data-use="${safeKey}">使用</button>`;
+      const sell=`<button class="btn red" data-sell="${safeKey}">賣出</button>`;
+      if(html.includes(sell))html=html.replace(sell,button+' '+sell);
+      else{
+        const name=this.itemName(key);
+        const nameRe=new RegExp(rx(name)+`([\\s\\S]*?<span>)`);
+        html=html.replace(nameRe,(m,a)=>`${name}${a}${button} `);
+      }
+    }
+    html=html.replace('可直接使用藥水、技能書；裝備可裝備或賣出。已裝備物品會顯示「裝備中」。','可直接使用藥水、經驗藥水、技能書；裝備可裝備或賣出。已裝備物品會顯示「裝備中」。');
+    return html;
+  };
+
+  const oldRenderStatusExpFix=Game.renderStatus.bind(Game);
+  Game.renderStatus=function(){
+    oldRenderStatusExpFix();
+    const sub=document.getElementById('subTitle');
+    const b=this.state?.expBuff;
+    if(sub&&b&&Date.now()<b.until&&!sub.textContent.includes(b.name)){
+      sub.textContent+=`｜${b.name} ${Math.ceil((b.until-Date.now())/60000)}分`;
+    }
+  };
+})();
 </script>
 </body>
 </html>
