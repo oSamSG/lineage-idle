@@ -3391,6 +3391,134 @@ window.addEventListener('DOMContentLoaded',()=>{
   })();
 });
 
+
+/* === lineage_Idle_V1.2.5 Hotfix: robust sell button and protected equipped items === */
+(()=>{
+  if(!window.Game||!window.DB) return;
+  const TITLE='lineage_Idle_V1.2.5';
+
+  function setTitle(){
+    document.title=TITLE;
+    const start=document.querySelector('#start h1'); if(start) start.textContent=TITLE;
+    const top=document.querySelector('.top .title'); if(top) top.textContent=TITLE;
+  }
+
+  function equippedKeys(){
+    return new Set(Object.values(Game.state?.equip||{}).filter(Boolean));
+  }
+
+  function safeSellPrice(key){
+    const it=Game.invItem(key);
+    if(!it) return 0;
+    const d=DB.items[it.id]||{};
+    const qty=Math.max(1,it.qty||1);
+    const base=Number(d.price||100);
+    const enchant=Number(it.enchant||0);
+    return Math.max(1,Math.floor(base*(0.35+enchant*0.2)))*qty;
+  }
+
+  function robustSell(key){
+    if(!Game.state) return;
+    const it=Game.invItem(key);
+    if(!it){
+      Game.log('賣出失敗：找不到該物品，請重新整理背包。','red');
+      Game.render();
+      return;
+    }
+    if(equippedKeys().has(key)){
+      alert('已裝備中的物品不能賣出，請先卸下。');
+      return;
+    }
+    const d=DB.items[it.id]||{name:it.id,price:100};
+    const qty=it.qty||1;
+    const price=safeSellPrice(key);
+    Game.state.adena=(Game.state.adena||0)+price;
+    delete Game.state.inventory[key];
+    Game.log(`賣出 ${d.name} ×${qty}，獲得 ${price.toLocaleString()} 金幣。`,'green');
+    Game.save(false);
+    Game.render();
+  }
+
+  const oldMigrate=Game.migrateState.bind(Game);
+  const oldRenderTab=Game.renderTab.bind(Game);
+  const oldSellItem=Game.sellItem.bind(Game);
+
+  Object.assign(Game,{
+    migrateState(){
+      oldMigrate();
+      if(!this.state) return;
+      this.state.version='1.2.5';
+      setTitle();
+    },
+    sellItem(key){
+      return robustSell(key);
+    },
+    batchSell(mode){
+      if(!this.state) return;
+      const eq=equippedKeys();
+      let sold=0,gain=0;
+      for(const key of Object.keys(this.state.inventory||{})){
+        if(eq.has(key)) continue;
+        const it=this.state.inventory[key];
+        const d=DB.items[it.id]||{};
+        let ok=false;
+        if(mode==='white') ok=d.rarity==='白' && ['weapon','helmet','tshirt','armor','cloak','gloves','boots','leggings'].includes(d.type);
+        if(mode==='trash') ok=d.type==='material';
+        if(mode==='unequipped') ok=!eq.has(key) && ['weapon','helmet','tshirt','armor','cloak','gloves','boots','leggings','ring','earring','amulet','belt'].includes(d.type);
+        if(!ok) continue;
+        const price=safeSellPrice(key);
+        gain+=price;
+        sold+=(it.qty||1);
+        delete this.state.inventory[key];
+      }
+      this.state.adena=(this.state.adena||0)+gain;
+      this.log(`批次販售完成：賣出 ${sold} 件，獲得 ${gain.toLocaleString()} 金幣。`,'green');
+      this.save(false);
+      this.render();
+    },
+    renderTab(){
+      oldRenderTab();
+      setTitle();
+      const el=document.getElementById('tabContent');
+      if(!this.state||!el) return;
+
+      // Rebind all sell buttons after every render because later inventory patches may replace innerHTML.
+      el.querySelectorAll('[data-sell]').forEach(btn=>{
+        btn.onclick=(e)=>{
+          e.preventDefault();
+          e.stopPropagation();
+          robustSell(btn.dataset.sell);
+        };
+      });
+
+      el.querySelectorAll('[data-batch-sell]').forEach(btn=>{
+        btn.onclick=(e)=>{
+          e.preventDefault();
+          e.stopPropagation();
+          this.batchSell(btn.dataset.batchSell);
+        };
+      });
+
+      // Remove sell buttons from equipped rows as a final safety layer.
+      const eq=equippedKeys();
+      for(const key of eq){
+        el.querySelectorAll(`[data-sell="${CSS.escape(key)}"]`).forEach(btn=>btn.remove());
+      }
+    }
+  });
+
+  // Capture click globally in case a previous patch overwrote onclick.
+  document.addEventListener('click',e=>{
+    const btn=e.target.closest('[data-sell]');
+    if(!btn||!Game.state) return;
+    e.preventDefault();
+    e.stopPropagation();
+    robustSell(btn.dataset.sell);
+  },true);
+
+  setTitle();
+})();
+
 </script>
 </body>
 </html>
