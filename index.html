@@ -3131,6 +3131,117 @@ viewTransform(){let active=this.activeTransform();let rows=Object.values(DB.tran
   });
 })();
 
+
+/* === lineage_Idle_V1.2 Hotfix: restore Rebirth / Awakening tab === */
+(()=>{
+  const TITLE='lineage_Idle_V1.2';
+  const setTitle=()=>{
+    document.title=TITLE;
+    document.querySelectorAll('.title').forEach(el=>{ if(String(el.textContent||'').includes('lineage_Idle')) el.textContent=TITLE; });
+    const h1=document.querySelector('#start h1'); if(h1) h1.textContent=TITLE;
+    const top=document.querySelector('.top .title'); if(top) top.textContent=TITLE;
+  };
+  const add=(a,b)=>{let r={...a};for(const k in b)if(typeof b[k]==='number')r[k]=(r[k]||0)+b[k];return r;};
+  const oldMigrate=Game.migrateState.bind(Game);
+  const oldInitMenus=Game.initMenus.bind(Game);
+  const oldRenderTab=Game.renderTab.bind(Game);
+  const oldTotalStats=Game.totalStats.bind(Game);
+  Object.assign(Game,{
+    migrateState(){
+      oldMigrate(); if(!this.state) return; setTitle();
+      this.state.version='1.2';
+      this.state.rebirth=this.state.rebirth||{count:0,awake:null,points:0,history:[]};
+      if(this.state.rebirth.points===undefined) this.state.rebirth.points=(this.state.rebirth.count||0)*3;
+      if(!Array.isArray(this.state.rebirth.history)) this.state.rebirth.history=[];
+    },
+    initMenus(){
+      oldInitMenus(); setTitle();
+      const tabs=document.getElementById('tabs'); if(!tabs) return;
+      let btn=tabs.querySelector('[data-tab="rebirth"]');
+      if(!btn){
+        btn=document.createElement('button'); btn.className='btn tab'; btn.dataset.tab='rebirth'; btn.textContent='轉生/覺醒';
+        btn.onclick=()=>{this.tab='rebirth';this.renderTab();};
+        const before=tabs.querySelector('[data-tab="quest"]')||tabs.querySelector('[data-tab="transform"]')||null;
+        tabs.insertBefore(btn,before);
+      }else{
+        btn.textContent='轉生/覺醒'; btn.onclick=()=>{this.tab='rebirth';this.renderTab();};
+      }
+    },
+    totalStats(){
+      let s=oldTotalStats();
+      const rb=this.state?.rebirth||{}, c=rb.count||0;
+      if(c>0) s=add(s,{str:c,dex:c,int:c,wis:c,con:c,hp:c*140,mp:c*70,dmg:c*5,hit:c*2,dr:c*2,mr:c*5});
+      if(rb.awake==='war') s=add(s,{str:5,dmg:18,hit:6,dr:5,hp:300});
+      if(rb.awake==='wind') s=add(s,{dex:5,hit:12,spd:15,dmg:8});
+      if(rb.awake==='sage') s=add(s,{int:6,wis:5,mp:420,mr:35,dmg:8});
+      if(rb.awake==='guardian') s=add(s,{con:6,hp:520,dr:10,mr:20});
+      return s;
+    },
+    doRebirth(){
+      this.state.rebirth=this.state.rebirth||{count:0,awake:null,points:0,history:[]};
+      if(this.state.lv<99){alert('轉生需要 Lv.99');return;}
+      const c=this.state.rebirth.count||0;
+      this.state.rebirth.count=c+1;
+      this.state.rebirth.points=(this.state.rebirth.points||0)+3;
+      this.state.rebirth.history=this.state.rebirth.history||[];
+      this.state.rebirth.history.unshift({time:Date.now(),fromLv:99,count:c+1});
+      this.state.lv=1; this.state.exp=0; this.recalc(); this.state.hp=this.maxHp(); this.state.mp=this.maxMp();
+      this.state.adena+=250000+(c*150000);
+      this.log(`完成第 ${c+1} 次轉生，獲得永久能力與 3 點轉生點數。`,'green');
+      this.save(false); this.render();
+    },
+    setAwake(id){
+      this.state.rebirth=this.state.rebirth||{count:0,awake:null,points:0,history:[]};
+      if((this.state.rebirth.count||0)<1){alert('至少轉生 1 次才能覺醒。');return;}
+      if(this.state.lv<70){alert('覺醒需要 Lv.70。');return;}
+      this.state.rebirth.awake=id;
+      const name={war:'戰神',wind:'疾風',sage:'賢者',guardian:'守護者'}[id]||id;
+      this.log('覺醒路線已選擇：'+name,'green'); this.save(false); this.render();
+    },
+    spendRebirthPoint(stat){
+      this.state.rebirth=this.state.rebirth||{count:0,awake:null,points:0,history:[]};
+      if((this.state.rebirth.points||0)<=0){alert('沒有可用轉生點數');return;}
+      const map={str:'力量',dex:'敏捷',con:'體質',int:'智力',wis:'精神'};
+      if(!map[stat])return;
+      this.state.stats[stat]=(this.state.stats[stat]||0)+1;
+      this.state.rebirth.points--;
+      this.log(`使用轉生點數：${map[stat]} +1`,'green'); this.save(false); this.render();
+    },
+    viewRebirth(){
+      this.state.rebirth=this.state.rebirth||{count:0,awake:null,points:0,history:[]};
+      const rb=this.state.rebirth, c=rb.count||0, can=this.state.lv>=99;
+      const awName={war:'戰神',wind:'疾風',sage:'賢者',guardian:'守護者'}[rb.awake]||'未覺醒';
+      const baseBonus={str:c,dex:c,int:c,wis:c,con:c,hp:c*140,mp:c*70,dmg:c*5,hit:c*2,dr:c*2,mr:c*5};
+      const awakens=[
+        ['war','戰神','STR +5、DMG +18、HIT +6、DR +5、HP +300'],
+        ['wind','疾風','DEX +5、HIT +12、SPD +15、DMG +8'],
+        ['sage','賢者','INT +6、WIS +5、MP +420、MR +35、DMG +8'],
+        ['guardian','守護者','CON +6、HP +520、DR +10、MR +20']
+      ].map(x=>`<div class="item row"><span><b class="c-gold">${x[1]}</b><br><span class="small">${x[2]}</span></span><button class="btn green" data-awake="${x[0]}" ${c>=1&&this.state.lv>=70?'':'disabled'}>${rb.awake===x[0]?'已選擇':'覺醒'}</button></div>`).join('');
+      const points=['str','dex','con','int','wis'].map(k=>`<button class="btn" data-rb-point="${k}" ${(rb.points||0)>0?'':'disabled'}>${{str:'力量',dex:'敏捷',con:'體質',int:'智力',wis:'精神'}[k]} +1</button>`).join(' ');
+      const hist=(rb.history||[]).slice(0,8).map(h=>`<div class="item"><span class="small">${new Date(h.time).toLocaleString()}｜第 ${h.count} 次轉生</span></div>`).join('')||'<div class="small">尚未轉生。</div>';
+      return `<h3 class="title">轉生 / 覺醒 V1.2</h3>
+      <div class="setting-card"><div class="row"><b class="c-gold">目前轉生 ${c} 次</b><span>覺醒：${awName}</span></div>
+      <div class="small">條件：Lv.99 可轉生。轉生後等級回到 1，保留裝備、背包、寵物、工會與套裝進度，並取得永久能力與轉生點數。</div>
+      <div class="small">永久加成：${this.statText?this.statText(baseBonus):Object.entries(baseBonus).map(([k,v])=>`${k.toUpperCase()} +${v}`).join('、')}</div>
+      <button class="btn green" data-rebirth="1" ${can?'':'disabled'}>進行轉生</button></div>
+      <h3 class="title" style="margin-top:14px">轉生點數</h3><div class="setting-card"><div class="small">可用點數：${rb.points||0}</div>${points}</div>
+      <h3 class="title" style="margin-top:14px">覺醒路線</h3><div class="small">需要至少轉生 1 次且 Lv.70。</div>${awakens}
+      <h3 class="title" style="margin-top:14px">轉生紀錄</h3>${hist}`;
+    },
+    renderTab(){
+      oldRenderTab(); const el=document.getElementById('tabContent'); if(!this.state||!el) return;
+      if(this.tab==='rebirth'){
+        el.innerHTML=this.viewRebirth();
+        el.querySelectorAll('[data-rebirth]').forEach(b=>b.onclick=()=>this.doRebirth());
+        el.querySelectorAll('[data-awake]').forEach(b=>b.onclick=()=>this.setAwake(b.dataset.awake));
+        el.querySelectorAll('[data-rb-point]').forEach(b=>b.onclick=()=>this.spendRebirthPoint(b.dataset.rbPoint));
+        document.querySelectorAll('.tab').forEach(b=>b.classList.toggle('active',b.dataset.tab==='rebirth'));
+      }
+    }
+  });
+})();
+
 window.addEventListener('DOMContentLoaded',()=>Game.init());
 </script>
 </body>
