@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>Lineage Idle V5.3</title>
+    <title>Lineage Idle V5.4</title>
     <style>
       :root {
         --bg: #05070a;
@@ -276,7 +276,7 @@
           class="title"
           style="font-size: 42px; text-align: center; margin: 20px 0 8px"
         >
-          Lineage Idle V5.3
+          Lineage Idle V5.4
         </h1>
         <p class="small" style="text-align: center; margin-bottom: 24px">
           單機版
@@ -329,7 +329,7 @@
     <div class="app hidden" id="app">
       <div class="panel top">
         <div>
-          <span class="title">Lineage Idle V5.3</span>
+          <span class="title">Lineage Idle V5.4</span>
           <span id="subTitle" class="small"></span>
         </div>
         <div class="row">
@@ -1490,7 +1490,7 @@
         baseState(cls) {
           let c = DB.classes[cls];
           return {
-            version: "5.3",
+            version: "5.4",
             classId: cls,
             lv: 1,
             exp: 0,
@@ -10176,18 +10176,18 @@
               (b.onclick = () => this.batchSellQuick(b.dataset.batchQuick)),
           );
         };
-        document.title = "Lineage Idle V5.3";
+        document.title = "Lineage Idle V5.4";
         document.querySelectorAll(".title").forEach((el) => {
           if (el.textContent.includes("Lineage Idle"))
-            el.textContent = "Lineage Idle V5.3";
+            el.textContent = "Lineage Idle V5.4";
         });
         const startTitle = document.querySelector("#start h1");
-        if (startTitle) startTitle.textContent = "Lineage Idle V5.3";
+        if (startTitle) startTitle.textContent = "Lineage Idle V5.4";
         const topTitle = document.querySelector(".top .title");
-        if (topTitle) topTitle.textContent = "Lineage Idle V5.3";
+        if (topTitle) topTitle.textContent = "Lineage Idle V5.4";
       })();
 
-      /* === Lineage Idle V5.3 Patch: Auction refresh, auto buy, batch sell, combat score, save migration === */
+      /* === Lineage Idle V5.4 Patch: Auction refresh, auto buy, batch sell, combat score, save migration === */
       (() => {
         const VERSION = "4.8";
         const esc = (s) =>
@@ -10829,18 +10829,18 @@
             (b) => (b.onclick = () => this.sellItem(b.dataset.sell)),
           );
         };
-        document.title = "Lineage Idle V5.3";
+        document.title = "Lineage Idle V5.4";
         document.querySelectorAll(".title").forEach((el) => {
           if (el.textContent.includes("Lineage Idle"))
-            el.textContent = "Lineage Idle V5.3";
+            el.textContent = "Lineage Idle V5.4";
         });
         const st = document.querySelector("#start h1");
-        if (st) st.textContent = "Lineage Idle V5.3";
+        if (st) st.textContent = "Lineage Idle V5.4";
         const top = document.querySelector(".top .title");
-        if (top) top.textContent = "Lineage Idle V5.3";
+        if (top) top.textContent = "Lineage Idle V5.4";
       })();
 
-      /* === Lineage Idle V5.3 Patch: inventory equipment display and remove backpack enchant === */
+      /* === Lineage Idle V5.4 Patch: inventory equipment display and remove backpack enchant === */
       (() => {
         const VERSION = "4.8";
         const esc = (s) =>
@@ -10890,18 +10890,18 @@
           return html;
         };
 
-        document.title = "Lineage Idle V5.3";
+        document.title = "Lineage Idle V5.4";
         document.querySelectorAll(".title").forEach((el) => {
           if (el.textContent.includes("Lineage Idle"))
-            el.textContent = "Lineage Idle V5.3";
+            el.textContent = "Lineage Idle V5.4";
         });
         const st = document.querySelector("#start h1");
-        if (st) st.textContent = "Lineage Idle V5.3";
+        if (st) st.textContent = "Lineage Idle V5.4";
         const top = document.querySelector(".top .title");
-        if (top) top.textContent = "Lineage Idle V5.3";
+        if (top) top.textContent = "Lineage Idle V5.4";
       })();
 
-      /* === Lineage Idle V5.3 Hotfix: remove transform level limit after 1st rebirth === */
+      /* === Lineage Idle V5.4 Hotfix: remove transform level limit after 1st rebirth === */
       (() => {
         const esc = (s) =>
           String(s ?? "").replace(
@@ -10976,7 +10976,7 @@
 
       window.addEventListener("DOMContentLoaded", () => Game.init());
 
-      /* === Lineage Idle V5.3 Hotfix: EXP potion usable button and effect === */
+      /* === Lineage Idle V5.4 Hotfix: EXP potion usable button and effect === */
       (() => {
         const esc = (s) =>
           String(s ?? "").replace(
@@ -11056,7 +11056,7 @@
         };
       })();
 
-      /* === Lineage Idle V5.3 Upgrade Pack: dashboard, quests, filters, autosave, speed === */
+      /* === Lineage Idle V5.4 Upgrade Pack: dashboard, quests, filters, autosave, speed === */
       (() => {
         const VERSION = "4.9";
         const esc = (s) =>
@@ -11620,7 +11620,7 @@
         document.head.appendChild(css);
       })();
 
-      /* === Lineage Idle V5.3 Patch: 任務整併 + 劇情奇遇優化 === */
+      /* === Lineage Idle V5.4 Patch: 任務整併 + 劇情奇遇優化 === */
       (() => {
         const VERSION = "5.0";
         const esc = (s) =>
@@ -12146,7 +12146,7 @@
    ========================= */
       (() => {
         const VERSION = "5.1";
-        const TITLE = "Lineage Idle V5.3";
+        const TITLE = "Lineage Idle V5.4";
         const EQUIP_TYPES = [
           "weapon",
           "helmet",
@@ -12657,8 +12657,8 @@
 
       /* ===== V5.3 寵物系統優化 + 移除排行榜 ===== */
       (function () {
-        const VERSION = "5.3";
-        const TITLE = "Lineage Idle V5.3";
+        const VERSION = "5.4";
+        const TITLE = "Lineage Idle V5.4";
         const H = (s) =>
           String(s ?? "").replace(
             /[&<>"]/g,
@@ -13045,8 +13045,8 @@
       /* ===== V5.3 Hotfix: 版本同步 + 背包即時刷新 ===== */
       (function () {
         "use strict";
-        const VERSION = "5.3";
-        const TITLE = "Lineage Idle V5.3";
+        const VERSION = "5.4";
+        const TITLE = "Lineage Idle V5.4";
         if (!window.Game) return;
 
         function refreshInventoryUI(game) {
@@ -13155,6 +13155,356 @@
               el.textContent = TITLE;
           });
         });
+      })();
+    </script>
+
+    <script>
+      /* ===== V5.4 Hotfix: 智能背包販售 + 寵物頁修復 + 版本統一 ===== */
+      (() => {
+        "use strict";
+        const VERSION = "5.4";
+        const TITLE = "Lineage Idle V5.4";
+        if (typeof Game === "undefined" || typeof DB === "undefined") return;
+
+        const H = (v) => String(v ?? "").replace(/[&<>\"']/g, (m) => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"})[m]);
+        const fmt = (n) => Math.floor(Number(n || 0)).toLocaleString();
+        const EQUIP_TYPES_V54 = ["weapon","helmet","tshirt","armor","cloak","gloves","boots","leggings","ring","earring","amulet","belt"];
+        const RARITY_RANK_V54 = { 白: 1, 綠: 2, 藍: 3, 紫: 4, 橘: 5, 紅: 6 };
+        const petDefsV54 = () => {
+          try {
+            if (typeof V31 !== "undefined" && typeof V31.petDefs === "function") return V31.petDefs();
+          } catch {}
+          return [
+            { id:"wolf_pet", name:"狼", lv:1, cost:5000, stat:{dmg:2, hit:1}, desc:"初階攻擊型寵物，協助普攻。" },
+            { id:"bear_pet", name:"熊", lv:15, cost:30000, stat:{hp:80, dr:2}, desc:"防禦型寵物，提升生命與減傷。" },
+            { id:"hawk_pet", name:"獵鷹", lv:25, cost:80000, stat:{dex:1, hit:3, spd:3}, desc:"命中與速度型寵物。" },
+            { id:"succubus_pet", name:"魅魔", lv:40, cost:250000, stat:{int:2, wis:1, mp:120}, desc:"魔法型寵物，提升魔力能力。" },
+            { id:"dragon_pet", name:"幼龍", lv:60, cost:1000000, stat:{dmg:8, dr:4, mr:15}, desc:"高階戰鬥寵物。" },
+            { id:"phoenix_pet", name:"鳳凰", lv:80, cost:3500000, stat:{str:2, dex:2, int:2, dmg:12, spd:8}, desc:"終局級寵物，提供全面加成。" },
+          ];
+        };
+        const petDefV54 = (id) => petDefsV54().find((x) => x.id === id);
+        const petNeedV54 = (lv) => Math.floor(500 + Math.pow(lv, 2.05) * 95);
+        const stageByLvV54 = (lv) => lv >= 50 ? 3 : lv >= 25 ? 2 : 1;
+        const stageNameV54 = (stage) => stage >= 3 ? "覺醒" : stage >= 2 ? "成長" : "幼年";
+        const statTextV54 = (o) => Object.entries(o || {}).map(([k,v]) => `${k.toUpperCase()} ${v > 0 ? "+" : ""}${v}`).join("、") || "無";
+
+        function forceTitleV54(game) {
+          document.title = TITLE;
+          document.querySelectorAll(".title").forEach((el) => {
+            if ((el.textContent || "").includes("Lineage Idle")) el.textContent = TITLE;
+          });
+          const start = document.querySelector("#start h1");
+          if (start) start.textContent = TITLE;
+          const top = document.querySelector(".top .title");
+          if (top) top.textContent = TITLE;
+          if (game && game.state) game.state.version = VERSION;
+        }
+
+        function ensurePetSysV54(game) {
+          const s = game.state;
+          if (!s) return;
+          s.version = VERSION;
+          s.pets = s.pets || {};
+          if (!Array.isArray(s.activePets)) s.activePets = s.activePet ? [s.activePet] : [];
+          s.petSlots = Math.max(1, Math.min(3, Number(s.petSlots || 1)));
+          s.activePets = s.activePets.filter((id, idx, arr) => id && s.pets[id] && arr.indexOf(id) === idx).slice(0, s.petSlots);
+          s.activePet = s.activePets[0] || null;
+        }
+
+        const oldBaseStateV54 = Game.baseState?.bind(Game);
+        if (oldBaseStateV54) {
+          Game.baseState = function(cls) {
+            const s = oldBaseStateV54(cls);
+            if (s) {
+              s.version = VERSION;
+              s.settings = s.settings || {};
+              s.settings.autoSmartSell = true;
+              s.pets = s.pets || {};
+              s.activePets = s.activePets || [];
+              s.petSlots = s.petSlots || 1;
+            }
+            return s;
+          };
+        }
+
+        const oldMigrateV54 = Game.migrateState?.bind(Game);
+        if (oldMigrateV54) {
+          Game.migrateState = function() {
+            const r = oldMigrateV54();
+            if (this.state) {
+              this.state.version = VERSION;
+              this.state.settings = this.state.settings || {};
+              if (this.state.settings.autoSmartSell === undefined) this.state.settings.autoSmartSell = false;
+              ensurePetSysV54(this);
+            }
+            return r;
+          };
+        }
+
+        Game.smartSellKeepKeys = function() {
+          const keep = new Set(Object.values(this.state.equip || {}).filter(Boolean));
+          const groups = {};
+          for (const [k, it] of Object.entries(this.state.inventory || {})) {
+            const d = DB.items[it.id] || {};
+            if (!EQUIP_TYPES_V54.includes(d.type)) continue;
+            if (keep.has(k)) continue;
+            let slot = d.type;
+            if (slot === "ring") slot = "ring";
+            if (slot === "earring") slot = "earring";
+            if (d.type === "weapon" && !(this.cls()?.weapons || []).includes(d.weapon)) continue;
+            (groups[slot] ||= []).push(k);
+          }
+          for (const [slot, keys] of Object.entries(groups)) {
+            const limit = slot === "ring" || slot === "earring" ? 2 : 1;
+            keys.sort((a,b) => (this.itemPowerByKey ? this.itemPowerByKey(b) : 0) - (this.itemPowerByKey ? this.itemPowerByKey(a) : 0));
+            keys.slice(0, limit).forEach((k) => keep.add(k));
+          }
+          return keep;
+        };
+
+        Game.shouldSmartSellKey = function(k) {
+          const it = this.invItem(k);
+          const d = it && DB.items[it.id];
+          if (!it || !d) return false;
+          if (Object.values(this.state.equip || {}).includes(k)) return false;
+          const keep = this.smartSellKeepKeys();
+          const rarity = RARITY_RANK_V54[d.rarity] || 1;
+          if (d.type === "book") return !!(d.skill && this.state.skills?.[d.skill]);
+          if (["potion", "scroll", "exp_potion"].includes(d.type)) return false;
+          if (d.type === "material") return true;
+          if (d.type === "weapon" && !(this.cls()?.weapons || []).includes(d.weapon)) return rarity <= 4;
+          if (EQUIP_TYPES_V54.includes(d.type)) {
+            if (keep.has(k)) return false;
+            return rarity <= 5;
+          }
+          return false;
+        };
+
+        Game.smartSellInventory = function(showLog = true) {
+          let sold = 0, gain = 0;
+          for (const k of Object.keys(this.state.inventory || {})) {
+            if (!this.shouldSmartSellKey(k)) continue;
+            const it = this.state.inventory[k];
+            const d = DB.items[it.id] || {};
+            const qty = it.qty || 1;
+            const price = Math.max(1, Math.floor((d.price || 100) * (0.35 + (it.enchant || 0) * 0.18))) * qty;
+            gain += price;
+            sold += qty;
+            delete this.state.inventory[k];
+          }
+          if (gain) this.state.adena += gain;
+          if (showLog) this.log(`智能清理完成：賣出 ${sold} 件，獲得 ${fmt(gain)} 金幣。已保留已裝備、可用消耗品、未學技能書與各欄位高戰力裝備。`, gain ? "green" : "blue");
+          this.save(false);
+          this.render();
+          return { sold, gain };
+        };
+
+        const oldKillV54 = Game.kill?.bind(Game);
+        if (oldKillV54) {
+          Game.kill = function(mdef) {
+            const r = oldKillV54(mdef);
+            if (this.state?.settings?.autoSmartSell) this.smartSellInventory(false);
+            return r;
+          };
+        }
+
+        const oldSellWhiteV54 = Game.sellWhite?.bind(Game);
+        Game.sellWhite = function() {
+          if (this.state?.settings?.autoSmartSell) return this.smartSellInventory(true);
+          return oldSellWhiteV54 ? oldSellWhiteV54() : this.smartSellInventory(true);
+        };
+
+        Game.buyPetSlotV54 = function() {
+          ensurePetSysV54(this);
+          const slots = this.state.petSlots || 1;
+          const cost = slots === 1 ? 1000000 : slots === 2 ? 3500000 : 0;
+          if (slots >= 3) return;
+          if (this.state.adena < cost) return alert("金幣不足");
+          this.state.adena -= cost;
+          this.state.petSlots = slots + 1;
+          this.log(`開啟第 ${this.state.petSlots} 個寵物出戰欄位。`, "green");
+          this.save(false);
+          this.render();
+        };
+
+        Game.summonPetToSlotV54 = function(id, slot = 0) {
+          ensurePetSysV54(this);
+          const p = petDefV54(id);
+          if (!p) return;
+          if (this.state.lv < p.lv) return alert("等級不足");
+          if (!this.state.pets[id]) {
+            if (this.state.adena < p.cost) return alert("金幣不足");
+            this.state.adena -= p.cost;
+            this.state.pets[id] = { lv: 1, exp: 0, bond: 20, mood: 80, stage: 1, kills: 0 };
+            this.log("取得寵物：" + p.name, "green");
+          }
+          const max = this.state.petSlots || 1;
+          slot = Math.max(0, Math.min(max - 1, Number(slot || 0)));
+          this.state.activePets = (this.state.activePets || []).filter((x) => x !== id);
+          this.state.activePets[slot] = id;
+          this.state.activePets = this.state.activePets.filter(Boolean).slice(0, max);
+          this.state.activePet = this.state.activePets[0] || null;
+          this.log("寵物出戰：" + p.name, "green");
+          this.save(false);
+          this.render();
+        };
+
+        Game.feedPetV54 = function(id) {
+          ensurePetSysV54(this);
+          const p = this.state.pets[id];
+          if (!p) return;
+          const cost = 3000 + (p.lv || 1) * 350;
+          if (this.state.adena < cost) return alert("金幣不足");
+          this.state.adena -= cost;
+          p.mood = Math.min(100, (p.mood || 50) + 20);
+          p.bond = Math.min(100, (p.bond || 0) + 2);
+          this.log(`餵食寵物，花費 ${fmt(cost)} 金幣。`, "green");
+          this.save(false); this.render();
+        };
+
+        Game.trainPetV54 = function(id) {
+          ensurePetSysV54(this);
+          const p = this.state.pets[id];
+          if (!p) return;
+          const cost = 8000 + (p.lv || 1) * 1000;
+          if (this.state.adena < cost) return alert("金幣不足");
+          this.state.adena -= cost;
+          p.exp = (p.exp || 0) + Math.floor(petNeedV54(p.lv || 1) * 0.35);
+          while ((p.exp || 0) >= petNeedV54(p.lv || 1) && (p.lv || 1) < 99) {
+            p.exp -= petNeedV54(p.lv || 1);
+            p.lv = (p.lv || 1) + 1;
+          }
+          this.log(`訓練寵物，花費 ${fmt(cost)} 金幣。`, "green");
+          this.save(false); this.render();
+        };
+
+        Game.evolvePetV54 = function(id) {
+          ensurePetSysV54(this);
+          const p = this.state.pets[id];
+          if (!p) return;
+          const next = stageByLvV54(p.lv || 1);
+          if ((p.stage || 1) >= next) return;
+          const cost = next === 2 ? 250000 : 1200000;
+          if (this.state.adena < cost) return alert("金幣不足");
+          this.state.adena -= cost;
+          p.stage = next;
+          p.bond = Math.min(100, (p.bond || 0) + 10);
+          this.log(`寵物進化為 ${stageNameV54(next)} 階段。`, "green");
+          this.save(false); this.render();
+        };
+
+        Game.releasePetV54 = function(id) {
+          ensurePetSysV54(this);
+          this.state.activePets = (this.state.activePets || []).filter((x) => x !== id);
+          this.state.activePet = this.state.activePets[0] || null;
+          this.save(false); this.render();
+        };
+
+        Game.viewPet = function() {
+          ensurePetSysV54(this);
+          const slots = this.state.petSlots || 1;
+          const active = this.state.activePets || [];
+          const slotHtml = Array.from({length: slots}, (_, i) => `<span class="pill">第 ${i + 1} 格：${active[i] ? H(petDefV54(active[i])?.name || active[i]) : "空"}</span>`).join(" ");
+          const nextCost = slots === 1 ? 1000000 : slots === 2 ? 3500000 : 0;
+          const rows = petDefsV54().map((p) => {
+            const own = this.state.pets?.[p.id];
+            const lock = this.state.lv < p.lv;
+            const lv = own?.lv || 1;
+            const need = petNeedV54(lv);
+            const pct = own ? Math.min(100, ((own.exp || 0) / need) * 100) : 0;
+            const stage = own?.stage || 1;
+            const canEvo = own && stage < stageByLvV54(lv);
+            const summonBtns = Array.from({length: slots}, (_, i) => `<button class="btn green" data-v54-pet-summon="${H(p.id)}" data-slot="${i}" ${lock ? "disabled" : ""}>${active[i] === p.id ? "出戰中" : `出戰${i + 1}`}</button>`).join(" ");
+            const info = own ? `<span class="pill">Lv.${lv}</span><span class="pill">${stageNameV54(stage)}</span><span class="pill">親密 ${Math.floor(own.bond || 0)}</span><span class="pill">心情 ${Math.floor(own.mood || 0)}</span>` : `<span class="pill">取得 ${fmt(p.cost)}</span>`;
+            const bar = own ? `<div class="bar" style="margin-top:5px"><i style="width:${pct}%;background:#7c3aed"></i><span>${fmt(own.exp || 0)}/${fmt(need)}</span></div>` : "";
+            const btns = own ? `${summonBtns} <button class="btn" data-v54-pet-feed="${H(p.id)}">餵食</button> <button class="btn" data-v54-pet-train="${H(p.id)}">訓練</button> <button class="btn blue" data-v54-pet-evolve="${H(p.id)}" ${canEvo ? "" : "disabled"}>進化</button> <button class="btn red" data-v54-pet-release="${H(p.id)}">休息</button>` : `<button class="btn green" data-v54-pet-summon="${H(p.id)}" data-slot="0" ${lock ? "disabled" : ""}>取得/出戰</button>`;
+            return `<div class="item row"><span><b class="${own ? "c-gold" : ""}">${H(p.name)}</b> ${info}<br><span class="small">需求 Lv.${p.lv}｜${H(p.desc)}｜能力 ${H(statTextV54(p.stat))}｜擊殺 ${fmt(own?.kills || 0)}</span>${bar}</span><span>${btns}</span></div>`;
+          }).join("");
+          return `<h3 class="title">寵物 / 召喚獸 V5.4</h3><div class="setting-card"><div class="row"><span><b class="c-gold">出戰欄位</b><br><span class="small">${slotHtml}</span></span><span>${slots >= 3 ? '<span class="c-green">欄位已達上限 3 格</span>' : `<button class="btn green" data-v54-pet-slot>開啟第 ${slots + 1} 格｜${fmt(nextCost)}</button>`}</span></div><div class="small">寵物內容已重建：支援取得、出戰、餵食、訓練、進化與多欄位出戰。</div></div>${rows}`;
+        };
+
+        const oldInitMenusV54 = Game.initMenus?.bind(Game);
+        if (oldInitMenusV54) {
+          Game.initMenus = function() {
+            oldInitMenusV54();
+            const tabs = document.getElementById("tabs");
+            if (tabs && !tabs.querySelector('[data-tab="pet"]')) {
+              const btn = document.createElement("button");
+              btn.className = "btn tab";
+              btn.dataset.tab = "pet";
+              btn.textContent = "寵物/召喚";
+              btn.onclick = () => { this.tab = "pet"; this.renderTab(); };
+              tabs.appendChild(btn);
+            }
+            forceTitleV54(this);
+          };
+        }
+
+        const oldViewSettingsV54 = Game.viewSettings?.bind(Game);
+        if (oldViewSettingsV54) {
+          Game.viewSettings = function() {
+            let html = oldViewSettingsV54();
+            const s = this.state.settings || {};
+            if (!html.includes('data-setting="autoSmartSell"')) {
+              html = html.replace(
+                /<label class="row item"><span>自動賣白裝<\/span><input data-setting="autoSell"[^>]*><\/label>/,
+                `<label class="row item"><span>自動賣白裝</span><input data-setting="autoSell" type="checkbox" ${s.autoSell ? "checked" : ""}></label><label class="row item"><span>智能賣東西</span><input data-setting="autoSmartSell" type="checkbox" ${s.autoSmartSell ? "checked" : ""}></label>`
+              );
+            }
+            return html;
+          };
+        }
+
+        const oldViewInventoryV54 = Game.viewInventoryV32?.bind(Game) || Game.viewInventory?.bind(Game);
+        Game.viewInventoryV54 = function() {
+          let html = oldViewInventoryV54 ? oldViewInventoryV54() : "<h3 class='title'>背包</h3>";
+          html = html.replace(/<h3 class="title">背包<\/h3>/, '<h3 class="title">背包 V5.4</h3>');
+          if (!html.includes('data-v54-smart-sell')) {
+            html = html.replace(/<button class="btn red" data-batch-sell="white">批次賣白裝<\/button>/, '<button class="btn red" data-batch-sell="white">批次賣白裝</button><button class="btn green" data-v54-smart-sell>智能賣東西</button>');
+            html = html.replace(/<div class="small">背包總數/, '<div class="small">智能賣東西：保留已裝備、未學技能書、消耗品與各欄位高戰力裝備；出售重複低戰力、已學技能書、材料與不適用裝備。<br>背包總數');
+          }
+          return html;
+        };
+
+        const oldRenderTabV54 = Game.renderTab?.bind(Game);
+        Game.renderTab = function() {
+          oldRenderTabV54();
+          const el = document.getElementById("tabContent");
+          if (!this.state || !el) return;
+          if (this.tab === "inventory") {
+            el.innerHTML = this.viewInventoryV54();
+          }
+          if (this.tab === "pet") {
+            el.innerHTML = this.viewPet();
+          }
+          el.querySelectorAll("[data-v54-smart-sell]").forEach((b) => b.onclick = () => this.smartSellInventory(true));
+          el.querySelectorAll("[data-v54-pet-summon]").forEach((b) => b.onclick = () => this.summonPetToSlotV54(b.dataset.v54PetSummon, +b.dataset.slot));
+          el.querySelectorAll("[data-v54-pet-slot]").forEach((b) => b.onclick = () => this.buyPetSlotV54());
+          el.querySelectorAll("[data-v54-pet-feed]").forEach((b) => b.onclick = () => this.feedPetV54(b.dataset.v54PetFeed));
+          el.querySelectorAll("[data-v54-pet-train]").forEach((b) => b.onclick = () => this.trainPetV54(b.dataset.v54PetTrain));
+          el.querySelectorAll("[data-v54-pet-evolve]").forEach((b) => b.onclick = () => this.evolvePetV54(b.dataset.v54PetEvolve));
+          el.querySelectorAll("[data-v54-pet-release]").forEach((b) => b.onclick = () => this.releasePetV54(b.dataset.v54PetRelease));
+          forceTitleV54(this);
+        };
+
+        const oldRenderStatusV54 = Game.renderStatus?.bind(Game);
+        if (oldRenderStatusV54) {
+          Game.renderStatus = function() {
+            const r = oldRenderStatusV54();
+            forceTitleV54(this);
+            return r;
+          };
+        }
+        const oldSaveV54 = Game.save?.bind(Game);
+        if (oldSaveV54) {
+          Game.save = function(show) {
+            if (this.state) this.state.version = VERSION;
+            return oldSaveV54(show);
+          };
+        }
+
+        window.addEventListener("DOMContentLoaded", () => setTimeout(() => forceTitleV54(Game), 50));
       })();
     </script>
   </body>
