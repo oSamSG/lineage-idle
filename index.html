@@ -2328,6 +2328,190 @@ viewTransform(){let active=this.activeTransform();let rows=Object.values(DB.tran
   };
 })();
 
+
+/* ===== V1.0 Manual Sell Only Final Patch =====
+   規則：移除所有自動出售與批次出售；只有玩家在背包單件按「賣出」才會出售。
+   已裝備物品永遠不可出售。
+*/
+(function(){
+  if(!window.Game||!window.DB) return;
+  const VERSION='1.0-manual-sell';
+  const EQUIP_TYPES=['weapon','helmet','tshirt','armor','cloak','gloves','boots','leggings','ring','earring','amulet','belt'];
+  const h=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const money=n=>(Number(n)||0).toLocaleString();
+  const equippedSet=game=>new Set(Object.values(game.state?.equip||{}).filter(Boolean));
+  const isEquipType=d=>!!d&&EQUIP_TYPES.includes(d.type);
+
+  function disableAutoSell(game){
+    if(!game||!game.state) return;
+    game.state.version=VERSION;
+    game.state.settings=game.state.settings||{};
+    game.state.settings.autoSell=false;
+    delete game.state.settings.sellEnchantLimit;
+    delete game.state.settings.sellRarity;
+    delete game.state.settings.sellType;
+    delete game.state.settings.sellFilter;
+    delete game.state.settings.inventoryFilter;
+  }
+
+  const oldBaseState=Game.baseState?.bind(Game);
+  if(oldBaseState){
+    Game.baseState=function(cls){
+      const s=oldBaseState(cls);
+      s.version=VERSION;
+      s.settings=s.settings||{};
+      s.settings.autoSell=false;
+      delete s.settings.sellEnchantLimit;
+      delete s.settings.sellRarity;
+      delete s.settings.sellType;
+      delete s.settings.sellFilter;
+      delete s.settings.inventoryFilter;
+      return s;
+    };
+  }
+
+  const oldMigrate=Game.migrateState?.bind(Game);
+  Game.migrateState=function(){
+    if(oldMigrate) oldMigrate();
+    disableAutoSell(this);
+  };
+
+  // 舊自動流程若仍呼叫 sellWhite / smartSell / autoClean，全部改為不動作。
+  Game.sellWhite=function(){
+    if(this.log) this.log('自動出售已移除；請到背包手動按「賣出」。');
+    return {count:0,total:0};
+  };
+  Game.smartSell=Game.sellWhite;
+  Game.autoClean=Game.sellWhite;
+  Game.sellByCurrentRule=Game.sellWhite;
+
+  Game.getSellPriceByKey=function(key){
+    const it=this.state?.inventory?.[key];
+    if(!it) return 0;
+    const d=DB.items[it.id]||{};
+    const qty=Math.max(1,Number(it.qty)||1);
+    const enchant=Math.max(0,Number(it.enchant)||0);
+    return Math.max(1,Math.floor((d.price||100)*(0.35+enchant*0.2)))*qty;
+  };
+
+  Game.sellItem=function(key){
+    disableAutoSell(this);
+    const inv=this.state?.inventory||{};
+    const it=inv[key];
+    if(!it) return;
+    if(equippedSet(this).has(key)){
+      alert('已裝備物品不可出售');
+      return;
+    }
+    const d=DB.items[it.id]||{};
+    const qty=Math.max(1,Number(it.qty)||1);
+    const price=this.getSellPriceByKey(key);
+    this.state.adena=(Number(this.state.adena)||0)+price;
+    if(this.removeItem) this.removeItem(key,qty); else delete inv[key];
+    if(this.log) this.log(`賣出 ${d.name||it.id}${qty>1?' ×'+qty:''}，獲得 ${money(price)} 金幣。`,'green');
+    if(this.save) this.save(false);
+    if(this.render) this.render();
+  };
+
+  Game.viewInventory=function(){
+    disableAutoSell(this);
+    const rows=Object.entries(this.state.inventory||{}).sort((a,b)=>{
+      const da=DB.items[a[1].id]||{}, db=DB.items[b[1].id]||{};
+      return String(da.type||'').localeCompare(String(db.type||'')) || String(da.name||'').localeCompare(String(db.name||''));
+    }).map(([k,it])=>{
+      const d=DB.items[it.id]||{};
+      const equipped=equippedSet(this).has(k);
+      const canEquip=isEquipType(d);
+      const buttons=[];
+      if(canEquip){
+        buttons.push(`<button class="btn" data-equip="${h(k)}">裝備</button>`);
+        buttons.push(`<button class="btn" data-enchant="${h(k)}">強化</button>`);
+      }
+      if(d.type==='potion'||d.type==='book'||d.type==='exp_potion') buttons.push(`<button class="btn green" data-use="${h(k)}">使用</button>`);
+      if(!equipped) buttons.push(`<button class="btn red" data-sell="${h(k)}">賣出</button>`);
+      else buttons.push(`<span class="pill">裝備中</span>`);
+      const name=this.itemName?this.itemName(k):`${Number(it.enchant)||0?`+${Number(it.enchant)||0} `:''}${d.name||it.id}${qty>1?' ×'+qty:''}`;
+      const enchant=Number(it.enchant)||0;
+      const typeText=this.typeName?this.typeName(d.type):(d.type||'物品');
+      return `<div class="item row"><span><b class="rarity-${h(d.rarity||'白')}">${h(name)}</b><br><span class="small">${h(typeText)}｜強化 +${enchant}｜${h(d.rarity||'白')}</span></span><span>${buttons.join(' ')}</span></div>`;
+    }).join('')||'<div class="small">背包是空的</div>';
+    return `<h3 class="title">背包</h3><div class="small">已移除自動出售與批次出售。只有在這裡手動按「賣出」才會出售；已裝備物品永遠不可出售。</div>${rows}`;
+  };
+
+  Game.viewSettings=function(){
+    disableAutoSell(this);
+    const s=this.state.settings;
+    if(!Array.isArray(s.autoSkills)) s.autoSkills=s.autoSkill&&s.autoSkill!=='none'?[s.autoSkill]:[];
+    const skills=Object.keys(this.state.skills||{}).map(id=>[id,DB.skills[id]?.name||id,DB.skills[id]?.type||'',DB.skills[id]?.mp||0]);
+    const transforms=Object.values(DB.transforms||{}).filter(t=>t.id==='none'||this.state.lv>=t.lv);
+    const potionIds=['potion_red','potion_orange','potion_clear'];
+    return `<h3 class="title">自動設定</h3>
+      <div class="small">出售功能已改為純手動：不自動賣、不批次賣，只能到背包單件按「賣出」。</div>
+      <div class="setting-grid">
+        <div class="setting-card"><b class="c-gold">戰鬥</b>
+          <label class="row item"><span>自動喝水 HP%</span><input data-setting="hpLimit" type="number" min="1" max="99" value="${h(s.hpLimit)}" style="width:90px"></label>
+          <label class="row item"><span>自動挑戰 BOSS</span><input data-setting="autoBoss" type="checkbox" ${s.autoBoss?'checked':''}></label>
+          <div class="item"><b>自動施放技能（可多選）</b><br>${skills.length?skills.map(x=>`<label class="pill"><input type="checkbox" data-skill-toggle="${h(x[0])}" ${s.autoSkills.includes(x[0])?'checked':''}> ${h(x[1])} <span class="small">MP${h(x[3])} / ${h(x[2])}</span></label>`).join(' '):'<span class="small">尚未學會可用技能</span>'}</div>
+        </div>
+        <div class="setting-card"><b class="c-gold">自動補給</b>
+          <label class="row item"><span>藥水不足自動購買</span><input data-setting="autoBuyPotion" type="checkbox" ${s.autoBuyPotion?'checked':''}></label>
+          <label class="row item"><span>購買藥水</span><select data-setting="autoBuyPotionId">${potionIds.map(id=>`<option value="${id}" ${s.autoBuyPotionId===id?'selected':''}>${h(DB.items[id]?.name||id)}</option>`).join('')}</select></label>
+          <label class="row item"><span>補到數量</span><input data-setting="autoBuyPotionQty" type="number" min="1" max="999" value="${h(s.autoBuyPotionQty||50)}" style="width:90px"></label>
+          <div class="small">藥水自動補給保留；出售不會自動執行。</div>
+        </div>
+        <div class="setting-card"><b class="c-gold">變身</b>
+          <label class="row item"><span>預設變身</span><select data-setting="autoTransform">${transforms.map(t=>`<option value="${h(t.id)}" ${s.autoTransform===t.id?'selected':''}>${h(t.name)}</option>`).join('')}</select></label>
+          <div class="small">選擇後會立即變身；之後變身結束會自動補上。</div>
+        </div>
+      </div>`;
+  };
+
+  const oldRenderStatus=Game.renderStatus?.bind(Game);
+  Game.renderStatus=function(){
+    disableAutoSell(this);
+    if(oldRenderStatus) oldRenderStatus();
+    const autoSellEl=document.getElementById('autoSell');
+    if(autoSellEl) autoSellEl.checked=false;
+  };
+
+  const oldRenderTab=Game.renderTab?.bind(Game);
+  Game.renderTab=function(){
+    if(oldRenderTab) oldRenderTab();
+    disableAutoSell(this);
+    const el=document.getElementById('tabContent');
+    if(!this.state||!el) return;
+    if(this.tab==='inventory') el.innerHTML=this.viewInventory();
+    if(this.tab==='settings') el.innerHTML=this.viewSettings();
+    el.querySelectorAll('[data-sell]').forEach(b=>b.onclick=()=>this.sellItem(b.dataset.sell));
+    el.querySelectorAll('[data-equip]').forEach(b=>b.onclick=()=>this.equip(b.dataset.equip));
+    el.querySelectorAll('[data-enchant]').forEach(b=>b.onclick=()=>this.enchant(b.dataset.enchant));
+    el.querySelectorAll('[data-use]').forEach(b=>b.onclick=()=>this.useItem(b.dataset.use));
+    el.querySelectorAll('[data-buy]').forEach(b=>b.onclick=()=>this.buy(b.dataset.buy));
+    el.querySelectorAll('[data-transform]').forEach(b=>b.onclick=()=>this.transform(b.dataset.transform));
+    el.querySelectorAll('[data-setting]').forEach(x=>x.onchange=()=>{
+      const k=x.dataset.setting;
+      if(k==='autoSell') return;
+      const v=x.type==='checkbox'?x.checked:(x.type==='number'?+x.value:x.value);
+      this.state.settings[k]=v;
+      if(k==='autoTransform'&&v&&v!=='none') this.transform(v);
+      disableAutoSell(this);
+      this.save(false);
+      this.render();
+    });
+    el.querySelectorAll('[data-skill-toggle]').forEach(x=>x.onchange=()=>{
+      let id=x.dataset.skillToggle;
+      let arr=this.state.settings.autoSkills||[];
+      if(x.checked&&!arr.includes(id)) arr.push(id);
+      if(!x.checked) arr=arr.filter(v=>v!==id);
+      this.state.settings.autoSkills=arr;
+      this.state.settings.autoSkill=arr[0]||'none';
+      disableAutoSell(this);
+      this.save(false);
+      this.render();
+    });
+  };
+})();
+
 window.addEventListener('DOMContentLoaded',()=>Game.init());
 </script>
 </body>
