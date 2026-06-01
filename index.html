@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>lineage_Idle_V1.5</title>
+<title>lineage_Idle_V1.4.1</title>
 <style>
 :root{--bg:#05070a;--panel:#0d1117;--panel2:#111827;--line:#334155;--text:#dbeafe;--muted:#94a3b8;--gold:#facc15;--green:#22c55e;--red:#ef4444;--blue:#60a5fa;--purple:#c084fc;--orange:#fb923c}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:"Microsoft JhengHei",Consolas,monospace;font-size:15px;user-select:none}.hidden{display:none!important}.app{height:100vh;display:flex;flex-direction:column;padding:12px;gap:10px}.panel{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px}.top{display:flex;justify-content:space-between;align-items:center}.title{color:var(--gold);font-weight:700}.grid{display:grid;gap:10px}.main{flex:1;display:grid;grid-template-columns:300px 1fr 330px;gap:10px;min-height:0}.col{display:flex;flex-direction:column;gap:10px;min-height:0}.scroll{overflow:auto}.btn,select,input{background:#1f2937;color:var(--text);border:1px solid #475569;border-radius:8px;padding:8px 10px;font:inherit}.btn{cursor:pointer}.btn:hover{background:#334155}.btn:disabled{opacity:.45;cursor:not-allowed}.btn.green{color:#86efac}.btn.blue{color:#93c5fd}.btn.red{color:#fca5a5}.row{display:flex;align-items:center;justify-content:space-between;gap:8px}.tabs{display:flex;gap:6px;flex-wrap:wrap}.tab{padding:8px 12px}.tab.active{border-color:var(--gold);color:var(--gold)}.bar{height:18px;background:#020617;border:1px solid #475569;border-radius:99px;overflow:hidden;position:relative}.bar i{display:block;height:100%;width:0}.hp{background:#991b1b}.mp{background:#1d4ed8}.exp{background:#a16207}.bar span{position:absolute;inset:0;text-align:center;font-size:12px;line-height:16px;text-shadow:1px 1px #000}.stat{display:grid;grid-template-columns:1fr 1fr;gap:6px}.item{border-bottom:1px dashed #293548;padding:7px 0}.log{font-size:14px;line-height:1.55}.c-gold{color:var(--gold)}.c-green{color:var(--green)}.c-red{color:var(--red)}.c-blue{color:var(--blue)}.c-purple{color:var(--purple)}.c-orange{color:var(--orange)}.modal{position:fixed;inset:0;background:rgba(0,0,0,.86);display:flex;align-items:center;justify-content:center;z-index:50}.modal-card{width:min(760px,94vw);max-height:92vh;overflow:auto}.classes{grid-template-columns:repeat(auto-fit,minmax(150px,1fr))}.class-card{text-align:left;min-height:96px}.class-card.selected{border-color:var(--gold);background:#1e293b}.small{font-size:13px;color:var(--muted)}.pill{display:inline-block;border:1px solid #475569;border-radius:99px;padding:2px 7px;margin:2px;color:#cbd5e1}.rarity-白{color:#e5e7eb}.rarity-綠{color:#4ade80}.rarity-藍{color:#60a5fa}.rarity-紫{color:#c084fc}.rarity-橘{color:#fb923c}.rarity-紅{color:#f87171}.kbd{background:#020617;border:1px solid #334155;border-radius:5px;padding:1px 5px;color:#cbd5e1}.setting-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:10px}.setting-card{background:#0b1220;border:1px solid #26364f;border-radius:10px;padding:12px}@media(max-width:1100px){.main{grid-template-columns:1fr}.app{height:auto}.col{min-height:500px}}
 </style>
@@ -11,7 +11,7 @@
 <body>
 <div id="start" class="modal">
   <div class="panel modal-card">
-    <h1 class="title" style="font-size:42px;text-align:center;margin:20px 0 8px">lineage_Idle_V1.5</h1>
+    <h1 class="title" style="font-size:42px;text-align:center;margin:20px 0 8px">lineage_Idle_V1.4.1</h1>
     <p class="small" style="text-align:center;margin-bottom:24px">單機版</p>
     <div class="grid">
       <button id="newGame" class="btn green" style="font-size:22px;padding:14px">新冒險</button>
@@ -32,7 +32,7 @@
 
 <div class="app hidden" id="app">
   <div class="panel top">
-    <div><span class="title">lineage_Idle_V1.5</span> <span id="subTitle" class="small"></span></div>
+    <div><span class="title">lineage_Idle_V1.4.1</span> <span id="subTitle" class="small"></span></div>
     <div class="row"><button class="btn blue" id="saveBtn">儲存</button><button class="btn" id="exportBtn">匯出</button><button class="btn red" id="resetBtn">刪除</button></div>
   </div>
   <div class="main">
@@ -129,7 +129,7 @@ const DB=(()=>{
 const Store={key:'lineage_idle_v30',save(s){localStorage.setItem(this.key,JSON.stringify(s));},load(){try{return JSON.parse(localStorage.getItem(this.key)||'null')}catch{return null}},clear(){localStorage.removeItem(this.key)}};
 const Game={
  state:null,timer:null,tab:'inventory',selectedClass:null,
- baseState(cls){let c=DB.classes[cls];return {version:'1.5',classId:cls,lv:1,exp:0,adena:300,stats:{...c.stats},hp:0,mp:0,inventory:{potion_red:{id:'potion_red',qty:50,enchant:0}},equip:{weapon:null,helmet:null,tshirt:null,armor:null,cloak:null,gloves:null,boots:null,leggings:null,amulet:null,belt:null,earring1:null,earring2:null,ring1:null,ring2:null},skills:{},buffs:{},map:'talking',monster:null,settings:{hpLimit:45,autoSell:false,autoSellEnabled:false,autoSellBooks:true,autoSellEquipments:true,autoSellEnchantLimit:6,autoBoss:true,autoSkill:'none',autoSkills:[],autoBuyPotion:false,autoBuyPotionId:'potion_red',autoBuyPotionQty:50,autoTransform:'none'},collection:{},transform:null,lastSave:Date.now()};},
+ baseState(cls){let c=DB.classes[cls];return {version:'1.0',classId:cls,lv:1,exp:0,adena:300,stats:{...c.stats},hp:0,mp:0,inventory:{potion_red:{id:'potion_red',qty:50,enchant:0}},equip:{weapon:null,helmet:null,tshirt:null,armor:null,cloak:null,gloves:null,boots:null,leggings:null,amulet:null,belt:null,earring1:null,earring2:null,ring1:null,ring2:null},skills:{},buffs:{},map:'talking',monster:null,settings:{hpLimit:45,autoSell:false,autoSellEnabled:false,autoSellBooks:true,autoSellEquipments:true,autoSellEnchantLimit:6,autoBoss:true,autoSkill:'none',autoSkills:[],autoBuyPotion:false,autoBuyPotionId:'potion_red',autoBuyPotionQty:50,autoTransform:'none'},collection:{},transform:null,lastSave:Date.now()};},
  init(){this.bind();this.renderClassList();document.getElementById('loadGame').disabled=!Store.load();},
  bind(){const $=id=>document.getElementById(id);$('newGame').onclick=()=>this.showClass();$('loadGame').onclick=()=>this.load();$('backStart').onclick=()=>this.showStart();$('confirmClass').onclick=()=>this.startNew();$('saveBtn').onclick=()=>this.save(true);$('exportBtn').onclick=()=>this.exportSave();$('resetBtn').onclick=()=>{if(confirm('確定刪除存檔？')){Store.clear();location.reload();}};$('importBtn').onclick=()=>$('importFile').click();$('importFile').onchange=e=>this.importSave(e);$('mapSelect').onchange=e=>{this.state.map=e.target.value;this.state.monster=null;this.log('切換地圖：'+this.map().name);this.render();};$('hpLimit').onchange=e=>{this.state.settings.hpLimit=+e.target.value;this.save(false)};$('autoSell').onchange=e=>{this.state.settings.autoSell=e.target.checked;this.state.settings.autoSellEnabled=e.target.checked;this.save(false)};$('autoBoss').onchange=e=>{this.state.settings.autoBoss=e.target.checked;this.save(false)};$('autoSkill').onchange=e=>{this.state.settings.autoSkill=e.target.value;this.save(false)};},
  renderClassList(){let box=document.getElementById('classList');box.innerHTML=Object.entries(DB.classes).map(([id,c])=>`<button class="btn class-card" data-class="${id}"><b class="c-gold">${c.name}</b><br><span class="small">${c.desc}</span><br><span class="small">力量 ${c.stats.str} / 敏捷 ${c.stats.dex} / 智力 ${c.stats.int}</span></button>`).join('');box.querySelectorAll('button').forEach(b=>b.onclick=()=>{this.selectedClass=b.dataset.class;box.querySelectorAll('button').forEach(x=>x.classList.remove('selected'));b.classList.add('selected');document.getElementById('confirmClass').disabled=false;});},
@@ -245,7 +245,7 @@ viewTransform(){let active=this.activeTransform();let rows=Object.values(DB.tran
  ];
  const oldMigrate=Game.migrateState.bind(Game), oldInitMenus=Game.initMenus.bind(Game), oldRenderTab=Game.renderTab.bind(Game), oldKill=Game.kill.bind(Game), oldAddItem=Game.addItem.bind(Game), oldUseAutoSkill=Game.useAutoSkill.bind(Game), oldTransform=Game.transform.bind(Game);
  Object.assign(Game,{
-  migrateState(){oldMigrate();let s=this.state;if(!s)return;s.version='1.5';s.v3Stats=s.v3Stats||{kills:0,bossKills:0,loot:0,skills:0,crafts:0,adenaEarned:0,startAt:Date.now()};s.warehouse=s.warehouse||{};s.achievements=s.achievements||{};this.resetDailyIfNeeded();},
+  migrateState(){oldMigrate();let s=this.state;if(!s)return;s.version='3.0';s.v3Stats=s.v3Stats||{kills:0,bossKills:0,loot:0,skills:0,crafts:0,adenaEarned:0,startAt:Date.now()};s.warehouse=s.warehouse||{};s.achievements=s.achievements||{};this.resetDailyIfNeeded();},
   initMenus(){oldInitMenus();document.getElementById('tabs').innerHTML=[['equipment','裝備'],['inventory','背包'],['settings','自動設定'],['quest','任務'],['achievement','成就'],['craft','製作'],['warehouse','倉庫'],['stats','統計'],['transform','變身'],['skills','職業技能'],['story','劇情/奇遇'],['maps','地圖掉落'],['collection','收藏'],['shop','商店']].map(t=>`<button class="btn tab" data-tab="${t[0]}">${t[1]}</button>`).join('');document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>{this.tab=b.dataset.tab;this.renderTab();});},
   resetDailyIfNeeded(){let d=V3.today();if(!this.state.daily||this.state.daily.date!==d){let q={};V3.questDefs().forEach(x=>q[x.id]={progress:0,claimed:false});this.state.daily={date:d,quests:q};}},
   findItemKeys(id){return Object.keys(this.state.inventory||{}).filter(k=>this.state.inventory[k].id===id)},
@@ -312,7 +312,7 @@ viewTransform(){let active=this.activeTransform();let rows=Object.values(DB.tran
  V31.ensureEventItem=()=>{if(!DB.items.moon_fragment)DB.items.moon_fragment={id:'moon_fragment',name:'月光碎片',type:'material',rarity:'綠',price:6000};};
  const oldMigrate=Game.migrateState.bind(Game), oldInitMenus=Game.initMenus.bind(Game), oldRenderTab=Game.renderTab.bind(Game), oldTotalStats=Game.totalStats.bind(Game), oldFight=Game.fight.bind(Game), oldViewInventory=Game.viewInventory.bind(Game), oldEnchant=Game.enchant.bind(Game), oldSave=Game.save.bind(Game);
  Object.assign(Game,{
-  migrateState(){oldMigrate();V31.ensureEventItem();let s=this.state;if(!s)return;s.version='1.5';s.pets=s.pets||{};s.activePet=s.activePet||null;s.guild=s.guild||{name:null,level:0,exp:0,contribution:0};s.dungeon=s.dungeon||{date:V31.today(),runs:{}};s.auction=s.auction||{listings:V31.auctionItems(),sold:0};s.rebirth=s.rebirth||{count:0,awake:null};s.v31Stats=s.v31Stats||{dungeonRuns:0,auctionBuys:0,refines:0,enchants:0,petUpgrades:0};this.resetDungeonIfNeeded();},
+  migrateState(){oldMigrate();V31.ensureEventItem();let s=this.state;if(!s)return;s.version='3.1';s.pets=s.pets||{};s.activePet=s.activePet||null;s.guild=s.guild||{name:null,level:0,exp:0,contribution:0};s.dungeon=s.dungeon||{date:V31.today(),runs:{}};s.auction=s.auction||{listings:V31.auctionItems(),sold:0};s.rebirth=s.rebirth||{count:0,awake:null};s.v31Stats=s.v31Stats||{dungeonRuns:0,auctionBuys:0,refines:0,enchants:0,petUpgrades:0};this.resetDungeonIfNeeded();},
   initMenus(){oldInitMenus();let tabs=[['equipment','裝備'],['inventory','背包'],['settings','自動設定'],['pet','寵物/召喚'],['guild','血盟/公會'],['dungeon','副本/活動'],['setbonus','套裝'],['refine','洗鍊/附魔'],['auction','拍賣場'],['rebirth','轉生/覺醒'],['quest','任務'],['achievement','成就'],['craft','製作'],['warehouse','倉庫'],['stats','統計'],['transform','變身'],['skills','職業技能'],['story','劇情/奇遇'],['maps','地圖掉落'],['collection','收藏'],['shop','商店']];document.getElementById('tabs').innerHTML=tabs.map(t=>`<button class="btn tab" data-tab="${t[0]}">${t[1]}</button>`).join('');document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>{this.tab=b.dataset.tab;this.renderTab();});},
   addStatsMerge(a,b){let r={...a};for(let k in b)if(typeof b[k]==='number')r[k]=(r[k]||0)+b[k];return r;},
   activeSetBonuses(){let equipped=Object.values(this.state.equip||{}).map(k=>this.invItem(k)).filter(Boolean).map(x=>x.id);let active=[];for(let [id,set] of Object.entries(V31.sets)){let count=set.items.filter(x=>equipped.includes(x)).length;if(count>=set.items.length)active.push({id,count,...set});}return active;},
@@ -361,7 +361,7 @@ viewTransform(){let active=this.activeTransform();let rows=Object.values(DB.tran
  const rarityRank={'白':1,'綠':2,'藍':3,'紫':4,'橘':5,'紅':6};
  const esc=v=>String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
  Object.assign(Game,{
-  migrateState(){oldMigrate();let s=this.state;if(!s)return;s.version='1.5';s.ui=s.ui||{};s.ui.invFilter=s.ui.invFilter||'all';s.ui.invSort=s.ui.invSort||'type';s.ui.invSearch=s.ui.invSearch||'';},
+  migrateState(){oldMigrate();let s=this.state;if(!s)return;s.version='3.2';s.ui=s.ui||{};s.ui.invFilter=s.ui.invFilter||'all';s.ui.invSort=s.ui.invSort||'type';s.ui.invSearch=s.ui.invSearch||'';},
   groupOfType(t){if(EQUIP_TYPES.includes(t))return t==='weapon'?'weapon':(['ring','earring','amulet','belt'].includes(t)?'accessory':'armor');return ['potion','scroll','book'].includes(t)?t:'other';},
   itemPowerByKey(k){let it=this.invItem(k);if(!it)return 0;let d=DB.items[it.id]||{};let n=0;n+=(d.dmg||0)*12;n+=Math.max(0,10-(d.ac??10))*9;n+=(it.enchant||0)*(d.type==='weapon'?18:10);for(let src of [d.stat||{},it.refine?.stat||{},it.enchantAttr?.stat||{}])for(let [a,v] of Object.entries(src)){n+=({str:15,dex:14,con:13,int:15,wis:13,dmg:22,hit:12,dr:20,mr:1,spd:8,hp:.08,mp:.06,ac:-12}[a]||5)*v;}n+=rarityRank[d.rarity]||0;return Math.round(n);},
   slotForKey(k){let it=this.invItem(k);if(!it)return '';let d=DB.items[it.id]||{};if(d.type==='ring')return this.state.equip.ring1===k?'ring1':(this.state.equip.ring2===k?'ring2':'ring1');if(d.type==='earring')return this.state.equip.earring1===k?'earring1':(this.state.equip.earring2===k?'earring2':'earring1');return d.type;},
@@ -442,10 +442,10 @@ viewTransform(){let active=this.activeTransform();let rows=Object.values(DB.tran
    修正：神聖劍士 / 組隊打王 / 狂戰斧頭掉落 / 變身平衡 / 武器等級限制 / 真離線掛機
    ========================= */
 (()=>{
- const VERSION='1.5';
- document.title='lineage_Idle_V1.5';
+ const VERSION='5.3';
+ document.title='lineage_Idle_V1.4.1';
  const titleEl=document.querySelector('.title');
- if(titleEl&&titleEl.textContent.includes('lineage_Idle'))titleEl.textContent='lineage_Idle_V1.5';
+ if(titleEl&&titleEl.textContent.includes('lineage_Idle'))titleEl.textContent='lineage_Idle_V1.4.1';
 
  // 1) 新增神聖劍士職業與技能書
  DB.classes.holyknight={
@@ -535,10 +535,10 @@ viewTransform(){let active=this.activeTransform();let rows=Object.values(DB.tran
    修正：武器與防具進度 / 騎士武士刀與大馬過晚 / 妖精後期弓斷層 / 等級限制過硬
    ========================= */
 (()=>{
- const VERSION='1.5';
- document.title='lineage_Idle_V1.5';
- document.querySelectorAll('.title').forEach(el=>{if(el.textContent.includes('lineage_Idle'))el.textContent='lineage_Idle_V1.5';});
- const startTitle=document.querySelector('#start h1'); if(startTitle)startTitle.textContent='lineage_Idle_V1.5';
+ const VERSION='5.3';
+ document.title='lineage_Idle_V1.4.1';
+ document.querySelectorAll('.title').forEach(el=>{if(el.textContent.includes('lineage_Idle'))el.textContent='lineage_Idle_V1.4.1';});
+ const startTitle=document.querySelector('#start h1'); if(startTitle)startTitle.textContent='lineage_Idle_V1.4.1';
 
  const addItem=(id,o)=>{DB.items[id]=Object.assign({id,rarity:'白',price:100,type:'material'},DB.items[id]||{},o,{id});};
  const addWeapon=(id,name,weapon,dmg,rarity,price,reqLv,safe=6,stat={})=>addItem(id,{name,type:'weapon',weapon,dmg,safe,rarity,price,reqLv,stat});
@@ -664,11 +664,11 @@ viewTransform(){let active=this.activeTransform();let rows=Object.values(DB.tran
    - 強化紀錄與基礎
    ========================================================= */
 (()=>{
- const VERSION='1.5';
- document.title='lineage_Idle_V1.5';
- document.querySelectorAll('.title').forEach(el=>{if(el.textContent.includes('lineage_Idle'))el.textContent='lineage_Idle_V1.5';});
- const startTitle=document.querySelector('#start h1'); if(startTitle)startTitle.textContent='lineage_Idle_V1.5';
- const topTitle=document.querySelector('.top .title'); if(topTitle)topTitle.textContent='lineage_Idle_V1.5';
+ const VERSION='5.3';
+ document.title='lineage_Idle_V1.4.1';
+ document.querySelectorAll('.title').forEach(el=>{if(el.textContent.includes('lineage_Idle'))el.textContent='lineage_Idle_V1.4.1';});
+ const startTitle=document.querySelector('#start h1'); if(startTitle)startTitle.textContent='lineage_Idle_V1.4.1';
+ const topTitle=document.querySelector('.top .title'); if(topTitle)topTitle.textContent='lineage_Idle_V1.4.1';
  const loadBtn=document.getElementById('loadGame'); if(loadBtn)loadBtn.textContent='讀取存檔';
 
  const EQUIP_TYPES=['weapon','helmet','tshirt','armor','cloak','gloves','boots','leggings','ring','earring','amulet','belt'];
@@ -812,7 +812,7 @@ viewTransform(){let active=this.activeTransform();let rows=Object.values(DB.tran
    重構：武器/防具官方化、商店移除裝備販售、加入經驗藥水
    ============================== */
 (()=>{
- const VERSION='1.5';
+ const VERSION='5.3';
  const rarityRank={'白':1,'綠':2,'藍':3,'紫':4,'橘':5,'紅':6};
  const esc=s=>String(s??'').replace(/[&<>\"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;'}[m]||m));
  const put=(id,o)=>{DB.items[id]=Object.assign(DB.items[id]||{id},o,{id});return DB.items[id];};
@@ -982,7 +982,7 @@ viewTransform(){let active=this.activeTransform();let rows=Object.values(DB.tran
    - 寵物支援第二欄、升級延續與升級退費
    ============================== */
 (()=>{
- const VERSION='1.5';
+ const VERSION='5.3';
  const EQUIP_TYPES=['weapon','helmet','tshirt','armor','cloak','gloves','boots','leggings','ring','earring','amulet','belt'];
  const ARMOR_TYPES=['helmet','tshirt','armor','cloak','gloves','boots','leggings'];
  const RANK={'白':1,'綠':2,'藍':3,'紫':4,'橘':5,'紅':6};
@@ -1074,7 +1074,7 @@ viewTransform(){let active=this.activeTransform();let rows=Object.values(DB.tran
 })();
 
 
-/* lineage_Idle_V1.5 patch: job weapons/equipment, boss encounter tuning, transform stat optimization */
+/* lineage_Idle_V1.4.1 patch: job weapons/equipment, boss encounter tuning, transform stat optimization */
 (function(){
   'use strict';
   if(!window.DB || !window.Game) return;
@@ -1130,14 +1130,14 @@ viewTransform(){let active=this.activeTransform();let rows=Object.values(DB.tran
   const oldBaseState = Game.baseState;
   Game.baseState = function(cls){
     const s = oldBaseState.call(this, cls);
-    s.version='1.5';
+    s.version='4.4';
     if(!('shield' in s.equip)) s.equip.shield=null;
     return s;
   };
   const oldMigrate = Game.migrateState;
   Game.migrateState = function(){
     oldMigrate.call(this);
-    this.state.version='1.5';
+    this.state.version='4.4';
     if(!this.state.equip) this.state.equip={};
     if(!('shield' in this.state.equip)) this.state.equip.shield=null;
     if(this.state.bossPity===undefined) this.state.bossPity=0;
@@ -1417,7 +1417,7 @@ viewTransform(){let active=this.activeTransform();let rows=Object.values(DB.tran
     }).join('');
     return `<h3 class="title">變身</h3><div class="small">變身能力完整中文化，並顯示力量、敏捷、智力等加成。</div>${active?`<div class="setting-card">目前變身：<b class="c-gold">${active.name}</b></div>`:''}${rows}`;
   };
-  document.title='lineage_Idle_V1.5';
+  document.title='lineage_Idle_V1.4.1';
 })();
 
 
@@ -1511,7 +1511,7 @@ viewTransform(){let active=this.activeTransform();let rows=Object.values(DB.tran
 (function(){
   'use strict';
   if(!window.DB || !window.Game) return;
-  const VERSION='1.5';
+  const VERSION='5.3';
   const esc=s=>String(s??'').replace(/[&<>\"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]));
   const put=(id,o)=>{DB.items[id]=Object.assign(DB.items[id]||{id},o,{id});return DB.items[id];};
   const merge=(a,b)=>{let r=Object.assign({},a||{});for(let [k,v] of Object.entries(b||{})) if(typeof v==='number') r[k]=(r[k]||0)+v; return r;};
@@ -1584,10 +1584,10 @@ viewTransform(){let active=this.activeTransform();let rows=Object.values(DB.tran
   const oldStatus=Game.renderStatus.bind(Game);
   Game.renderStatus=function(){oldStatus();let box=document.getElementById('statBox');if(box&&!box.querySelector('[data-v45-power]'))box.innerHTML+=`<div data-v45-power>戰力 ${this.v45Power().toLocaleString()}</div><div>DPS ${this.v45Dps().toLocaleString()}</div>`;};
   setInterval(()=>{if(Game.state){Game.renderStatus(); if(Game.tab==='v45combat')Game.renderTab();}},1000);
-  document.title='lineage_Idle_V1.5';
-  document.querySelectorAll('.title').forEach(el=>{if(el.textContent.includes('lineage_Idle'))el.textContent='lineage_Idle_V1.5';});
-  const startTitle=document.querySelector('#start h1'); if(startTitle)startTitle.textContent='lineage_Idle_V1.5';
-  const topTitle=document.querySelector('.top .title'); if(topTitle)topTitle.textContent='lineage_Idle_V1.5';
+  document.title='lineage_Idle_V1.4.1';
+  document.querySelectorAll('.title').forEach(el=>{if(el.textContent.includes('lineage_Idle'))el.textContent='lineage_Idle_V1.4.1';});
+  const startTitle=document.querySelector('#start h1'); if(startTitle)startTitle.textContent='lineage_Idle_V1.4.1';
+  const topTitle=document.querySelector('.top .title'); if(topTitle)topTitle.textContent='lineage_Idle_V1.4.1';
   Game.log('lineage_Idle 已套用 V5.3：紅裝、套裝、收藏加成、掉落重構、戰力/DPS、裝備比較、存檔轉換。','green');
 })();
 
@@ -1611,7 +1611,7 @@ viewTransform(){let active=this.activeTransform();let rows=Object.values(DB.tran
 // === Patch: Auction refresh and randomized listings ===
 (function(){
   if(!window.Game||!window.DB) return;
-  const VERSION='1.5';
+  const VERSION='5.3';
   const esc=s=>String(s??'').replace(/[&<>\"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]));
   const sellers=['亞丁商會','奇岩掮客','象牙塔學徒','拉斯塔巴德密探','龍谷獵人','傲慢遠征隊','妖精森林商人','說話之島旅人','紅騎士團','四龍討伐隊'];
   const auctionTypes=new Set(['weapon','helmet','tshirt','armor','cloak','gloves','boots','leggings','ring','earring','amulet','belt','scroll','book','exp_potion','potion']);
@@ -1669,10 +1669,10 @@ viewTransform(){let active=this.activeTransform();let rows=Object.values(DB.tran
   Game.renderTab=function(){oldRender();let el=document.getElementById('tabContent');if(!this.state||!el)return;if(this.tab==='auction')el.innerHTML=this.viewAuction();el.querySelectorAll('[data-refresh-auction]').forEach(b=>b.onclick=()=>this.refreshAuction());el.querySelectorAll('[data-buy-auction]').forEach(b=>b.onclick=()=>this.buyAuction(b.dataset.buyAuction));el.querySelectorAll('[data-sell-auction]').forEach(b=>b.onclick=()=>this.sellAuction(b.dataset.sellAuction));};
   Game.exportSave=function(){this.save(false);let blob=new Blob([JSON.stringify(this.state,null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='lineage_idle_v46_save.json';a.click();URL.revokeObjectURL(a.href)};
   Game.importSave=function(e){let f=e.target.files[0];if(!f)return;let r=new FileReader();r.onload=()=>{try{this.state=JSON.parse(r.result);this.migrateState();this.save(false);this.enter();this.log('已自動轉換匯入存檔。','green');}catch(err){alert('存檔格式錯誤')}};r.readAsText(f)};
-  document.title='lineage_Idle_V1.5';
-  document.querySelectorAll('.title').forEach(el=>{if(el.textContent.includes('lineage_Idle'))el.textContent='lineage_Idle_V1.5';});
-  const startTitle=document.querySelector('#start h1');if(startTitle)startTitle.textContent='lineage_Idle_V1.5';
-  const topTitle=document.querySelector('.top .title');if(topTitle)topTitle.textContent='lineage_Idle_V1.5';
+  document.title='lineage_Idle_V1.4.1';
+  document.querySelectorAll('.title').forEach(el=>{if(el.textContent.includes('lineage_Idle'))el.textContent='lineage_Idle_V1.4.1';});
+  const startTitle=document.querySelector('#start h1');if(startTitle)startTitle.textContent='lineage_Idle_V1.4.1';
+  const topTitle=document.querySelector('.top .title');if(topTitle)topTitle.textContent='lineage_Idle_V1.4.1';
 })();
 
 
@@ -1680,7 +1680,7 @@ viewTransform(){let active=this.activeTransform();let rows=Object.values(DB.tran
 // === Patch: 批次賣裝備優化 ===
 (function(){
   if(!window.Game||!window.DB) return;
-  const VERSION='1.5';
+  const VERSION='5.3';
   const esc=s=>String(s??'').replace(/[&<>\"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]));
   const equipTypes=['weapon','helmet','tshirt','armor','cloak','gloves','boots','leggings','ring','earring','amulet','belt'];
   const rarityOrder={白:1,綠:2,藍:3,紫:4,橘:5,紅:6};
@@ -1758,16 +1758,16 @@ viewTransform(){let active=this.activeTransform();let rows=Object.values(DB.tran
     return `<h3 class="title">背包</h3>${controls}${rows||'<div class="small">空</div>'}`;
   };
   Game.renderTab=function(){oldRender();let el=document.getElementById('tabContent');if(!this.state||!el)return;if(this.tab==='inventory')el.innerHTML=this.viewInventory();el.querySelectorAll('[data-equip]').forEach(b=>b.onclick=()=>this.equip(b.dataset.equip));el.querySelectorAll('[data-use]').forEach(b=>b.onclick=()=>this.useItem(b.dataset.use));el.querySelectorAll('[data-sell]').forEach(b=>b.onclick=()=>this.sellItem(b.dataset.sell));el.querySelectorAll('[data-batch-ui]').forEach(x=>x.onchange=()=>this.setBatchSellUI(x.dataset.batchUi,x.value));el.querySelectorAll('[data-batch-check]').forEach(x=>x.onchange=()=>this.setBatchSellUI(x.dataset.batchCheck,x.checked));el.querySelectorAll('[data-batch-sell-rule]').forEach(b=>b.onclick=()=>this.batchSellByRule());el.querySelectorAll('[data-batch-quick]').forEach(b=>b.onclick=()=>this.batchSellQuick(b.dataset.batchQuick));};
-  document.title='lineage_Idle_V1.5';
-  document.querySelectorAll('.title').forEach(el=>{if(el.textContent.includes('lineage_Idle'))el.textContent='lineage_Idle_V1.5';});
-  const startTitle=document.querySelector('#start h1');if(startTitle)startTitle.textContent='lineage_Idle_V1.5';
-  const topTitle=document.querySelector('.top .title');if(topTitle)topTitle.textContent='lineage_Idle_V1.5';
+  document.title='lineage_Idle_V1.4.1';
+  document.querySelectorAll('.title').forEach(el=>{if(el.textContent.includes('lineage_Idle'))el.textContent='lineage_Idle_V1.4.1';});
+  const startTitle=document.querySelector('#start h1');if(startTitle)startTitle.textContent='lineage_Idle_V1.4.1';
+  const topTitle=document.querySelector('.top .title');if(topTitle)topTitle.textContent='lineage_Idle_V1.4.1';
 })();
 
 
-/* === lineage_Idle_V1.5 Patch: Auction refresh, auto buy, batch sell, combat score, save migration === */
+/* === lineage_Idle_V1.4.1 Patch: Auction refresh, auto buy, batch sell, combat score, save migration === */
 (()=>{
-  const VERSION='1.5';
+  const VERSION='5.3';
   const esc=s=>String(s??'').replace(/[&<>\"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]||m));
   const rarityOrder={白:1,綠:2,藍:3,紫:4,橘:5,紅:6};
   const equipTypes=['weapon','helmet','tshirt','armor','cloak','gloves','boots','leggings','ring','earring','amulet','belt'];
@@ -1813,16 +1813,16 @@ viewTransform(){let active=this.activeTransform();let rows=Object.values(DB.tran
   const oldInv=Game.viewInventory.bind(Game);
   Game.viewInventory=function(){let base=oldInv();let keep=v47Cfg(this).batch.keepEnchant;let modes=[['white','賣白裝'],['green','賣綠裝'],['blue','賣藍裝'],['dupeBooks','賣重複技能書'],['materials','賣全部材料'],['lowEnchant','賣低於/等於指定強化值']];let panel=`<div class="setting-card" style="margin-bottom:10px"><b class="c-gold">批次販售</b><div class="row" style="flex-wrap:wrap;justify-content:flex-start;margin-top:8px"><label>指定強化值 <input data-v47-batch-keep="1" type="number" min="0" max="15" value="${keep}" style="width:70px"></label>${modes.map(([m,t])=>{let p=previewMode(this,m);return `<button class="btn red" data-v47-batch="${m}">${t}<br><span class="small">${p.qty}格 / ${p.gain.toLocaleString()}</span></button>`;}).join('')}</div><div class="small">預估收益顯示在按鈕下方；已裝備物品不會被批次販售。</div></div>`;return String(base).replace('<h3 class="title">背包</h3>',`<h3 class="title">背包</h3>${panel}`);};
   Game.renderTab=function(){oldRender();let el=document.getElementById('tabContent');if(!this.state||!el)return;if(this.tab==='auction')el.innerHTML=this.viewAuction();if(this.tab==='v47combat')el.innerHTML=this.viewV47Combat();if(this.tab==='inventory')el.innerHTML=this.viewInventory();el.querySelectorAll('[data-v47-refresh-auction]').forEach(b=>b.onclick=()=>{refreshAuction(this,true);this.render();this.save(false);});el.querySelectorAll('[data-v47-buy-auction]').forEach(b=>b.onclick=()=>this.buyAuction(b.dataset.v47BuyAuction));el.querySelectorAll('[data-v47-auction-search]').forEach(x=>x.oninput=()=>{v47Cfg(this).auction.search=x.value;this.render();});el.querySelectorAll('[data-v47-autobuy]').forEach(x=>x.onchange=()=>{let c=v47Cfg(this).auction.autoBuy;let k=x.dataset.v47Autobuy;c[k]=x.type==='checkbox'?x.checked:(x.type==='number'?+x.value:x.value);this.save(false);this.render();});el.querySelectorAll('[data-v47-batch]').forEach(b=>b.onclick=()=>{let inp=el.querySelector('[data-v47-batch-keep]');if(inp)v47Cfg(this).batch.keepEnchant=+inp.value;batchSell(this,b.dataset.v47Batch);});el.querySelectorAll('[data-v47-batch-keep]').forEach(x=>x.onchange=()=>{v47Cfg(this).batch.keepEnchant=+x.value;this.save(false);this.render();});el.querySelectorAll('[data-equip]').forEach(b=>b.onclick=()=>this.equip(b.dataset.equip));el.querySelectorAll('[data-enchant]').forEach(b=>b.onclick=()=>this.enchant(b.dataset.enchant));el.querySelectorAll('[data-use]').forEach(b=>b.onclick=()=>this.useItem(b.dataset.use));el.querySelectorAll('[data-sell]').forEach(b=>b.onclick=()=>this.sellItem(b.dataset.sell));};
-  document.title='lineage_Idle_V1.5';
-  document.querySelectorAll('.title').forEach(el=>{if(el.textContent.includes('lineage_Idle'))el.textContent='lineage_Idle_V1.5';});
-  const st=document.querySelector('#start h1');if(st)st.textContent='lineage_Idle_V1.5';
-  const top=document.querySelector('.top .title');if(top)top.textContent='lineage_Idle_V1.5';
+  document.title='lineage_Idle_V1.4.1';
+  document.querySelectorAll('.title').forEach(el=>{if(el.textContent.includes('lineage_Idle'))el.textContent='lineage_Idle_V1.4.1';});
+  const st=document.querySelector('#start h1');if(st)st.textContent='lineage_Idle_V1.4.1';
+  const top=document.querySelector('.top .title');if(top)top.textContent='lineage_Idle_V1.4.1';
 })();
 
 
-/* === lineage_Idle_V1.5 Patch: inventory equipment display and remove backpack enchant === */
+/* === lineage_Idle_V1.4.1 Patch: inventory equipment display and remove backpack enchant === */
 (()=>{
-  const VERSION='1.5';
+  const VERSION='5.3';
   const esc=s=>String(s??'').replace(/[&<>\"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]||m));
   const oldMigrateV48=Game.migrateState.bind(Game);
   const oldViewInventoryV48=Game.viewInventory.bind(Game);
@@ -1850,14 +1850,14 @@ viewTransform(){let active=this.activeTransform();let rows=Object.values(DB.tran
     return html;
   };
 
-  document.title='lineage_Idle_V1.5';
-  document.querySelectorAll('.title').forEach(el=>{if(el.textContent.includes('lineage_Idle'))el.textContent='lineage_Idle_V1.5';});
-  const st=document.querySelector('#start h1');if(st)st.textContent='lineage_Idle_V1.5';
-  const top=document.querySelector('.top .title');if(top)top.textContent='lineage_Idle_V1.5';
+  document.title='lineage_Idle_V1.4.1';
+  document.querySelectorAll('.title').forEach(el=>{if(el.textContent.includes('lineage_Idle'))el.textContent='lineage_Idle_V1.4.1';});
+  const st=document.querySelector('#start h1');if(st)st.textContent='lineage_Idle_V1.4.1';
+  const top=document.querySelector('.top .title');if(top)top.textContent='lineage_Idle_V1.4.1';
 })();
 
 
-/* === lineage_Idle_V1.5 Hotfix: remove transform level limit after 1st rebirth === */
+/* === lineage_Idle_V1.4.1 Hotfix: remove transform level limit after 1st rebirth === */
 (()=>{
   const esc=s=>String(s??'').replace(/[&<>\"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]||m));
   const oldTransformV48Rebirth=Game.transform.bind(Game);
@@ -1903,7 +1903,7 @@ viewTransform(){let active=this.activeTransform();let rows=Object.values(DB.tran
 
 
 
-/* === lineage_Idle_V1.5 Core Consolidation ===
+/* === lineage_Idle_V1.4.1 Core Consolidation ===
    目標：
    1. 版本統一 V1.0
    2. 背包、裝備、售出判定集中於單一核心
@@ -1912,7 +1912,7 @@ viewTransform(){let active=this.activeTransform();let rows=Object.values(DB.tran
 (()=>{
   if(!window.Game || !window.DB) return;
 
-  const VERSION='1.5';
+  const VERSION='1.0';
   const SAVE_KEY='lineage_idle_v10';
 
   const money=n=>Math.max(0,Math.floor(Number(n)||0)).toLocaleString();
@@ -2132,9 +2132,9 @@ viewTransform(){let active=this.activeTransform();let rows=Object.values(DB.tran
 
   // 畫面版本字樣統一
   document.addEventListener('DOMContentLoaded',()=>{
-    document.title='lineage_Idle_V1.5';
+    document.title='lineage_Idle_V1.4.1';
     document.querySelectorAll('.title').forEach(el=>{
-      if(el.textContent && el.textContent.includes('lineage_Idle_')) el.textContent=el.textContent.replace(/lineage_Idle_V[\d.]+/g,'lineage_Idle_V1.5');
+      if(el.textContent && el.textContent.includes('lineage_Idle_')) el.textContent=el.textContent.replace(/lineage_Idle_V[\d.]+/g,'lineage_Idle_V1.4.1');
     });
   });
 })();
@@ -2150,14 +2150,14 @@ viewTransform(){let active=this.activeTransform();let rows=Object.values(DB.tran
    - 奇遇系統改版：分類、選項感、歷史紀錄、任務連動
    ========================================================= */
 (()=>{
-  const VERSION='1.5';
+  const VERSION='1.1';
   const setVersionText=()=>{
-    document.title='lineage_Idle_V1.5';
+    document.title='lineage_Idle_V1.4.1';
     document.querySelectorAll('.title').forEach(el=>{
-      if(String(el.textContent||'').includes('lineage_Idle')) el.textContent='lineage_Idle_V1.5';
+      if(String(el.textContent||'').includes('lineage_Idle')) el.textContent='lineage_Idle_V1.4.1';
     });
-    const h1=document.querySelector('#start h1'); if(h1) h1.textContent='lineage_Idle_V1.5';
-    const top=document.querySelector('.top .title'); if(top) top.textContent='lineage_Idle_V1.5';
+    const h1=document.querySelector('#start h1'); if(h1) h1.textContent='lineage_Idle_V1.4.1';
+    const top=document.querySelector('.top .title'); if(top) top.textContent='lineage_Idle_V1.4.1';
   };
   setVersionText();
 
@@ -2473,8 +2473,8 @@ viewTransform(){let active=this.activeTransform();let rows=Object.values(DB.tran
    - 奇遇事件池 50+ 事件
    ============================== */
 (()=>{
-  const VERSION='1.5';
-  const TITLE='lineage_Idle_V1.5';
+  const VERSION='1.2';
+  const TITLE='lineage_Idle_V1.4.1';
   const EQUIP_TYPES=['weapon','helmet','tshirt','armor','cloak','gloves','boots','leggings','ring','earring','amulet','belt'];
   const rarityRank={'白':1,'綠':2,'藍':3,'紫':4,'橘':5,'紅':6};
   const esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
@@ -2761,9 +2761,9 @@ viewTransform(){let active=this.activeTransform();let rows=Object.values(DB.tran
 })();
 
 
-/* === lineage_Idle_V1.5 Hotfix: restore Rebirth / Awakening tab === */
+/* === lineage_Idle_V1.4.1 Hotfix: restore Rebirth / Awakening tab === */
 (()=>{
-  const TITLE='lineage_Idle_V1.5';
+  const TITLE='lineage_Idle_V1.4.1';
   const setTitle=()=>{
     document.title=TITLE;
     document.querySelectorAll('.title').forEach(el=>{ if(String(el.textContent||'').includes('lineage_Idle')) el.textContent=TITLE; });
@@ -2778,7 +2778,7 @@ viewTransform(){let active=this.activeTransform();let rows=Object.values(DB.tran
   Object.assign(Game,{
     migrateState(){
       oldMigrate(); if(!this.state) return; setTitle();
-      this.state.version='1.5';
+      this.state.version='1.2';
       this.state.rebirth=this.state.rebirth||{count:0,awake:null,points:0,history:[]};
       if(this.state.rebirth.points===undefined) this.state.rebirth.points=(this.state.rebirth.count||0)*3;
       if(!Array.isArray(this.state.rebirth.history)) this.state.rebirth.history=[];
@@ -2884,9 +2884,9 @@ viewTransform(){let active=this.activeTransform();let rows=Object.values(DB.tran
 window.addEventListener('DOMContentLoaded',()=>{
   Game.init();
 
-  /* === lineage_Idle_V1.5 Final EXP Potion Fix: run after Game.init and after every render === */
+  /* === lineage_Idle_V1.4.1 Final EXP Potion Fix: run after Game.init and after every render === */
   (()=>{
-    const TITLE='lineage_Idle_V1.5';
+    const TITLE='lineage_Idle_V1.4.1';
 
     function setTitle(){
       document.title=TITLE;
@@ -3022,7 +3022,7 @@ window.addEventListener('DOMContentLoaded',()=>{
 
 
 
-/* === lineage_Idle_V1.5 Rebuilt Sell Rules ===
+/* === lineage_Idle_V1.2.11 Rebuilt Sell Rules ===
    重新建立販售規則：
    1) 卷軸不進入任何自動 / 批次 / 智能清理規則。
    2) 卷軸可以在背包單件手動賣出。
@@ -3031,7 +3031,7 @@ window.addEventListener('DOMContentLoaded',()=>{
 */
 (()=>{
   if(!window.Game||!window.DB) return;
-  const VERSION='1.5';
+  const VERSION='lineage_Idle_V1.2.11';
   const EQUIP_TYPES=['weapon','helmet','tshirt','armor','cloak','gloves','boots','leggings','ring','earring','amulet','belt'];
   const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   const money=n=>Math.max(0,Math.floor(Number(n)||0)).toLocaleString();
@@ -3212,7 +3212,7 @@ window.addEventListener('DOMContentLoaded',()=>{
   Game.migrateState=function(){
     if(oldMigrate) oldMigrate();
     if(this.state){
-      this.state.version='1.5';
+      this.state.version='1.2.11';
       this.state.settings=this.state.settings||{};
       delete this.state.settings.sellRarity;
       delete this.state.settings.sellType;
@@ -3224,13 +3224,13 @@ window.addEventListener('DOMContentLoaded',()=>{
   setVersion();
 })();
 
-/* === lineage_Idle_V1.5 Restore Auto Sell Options ===
+/* === lineage_Idle_V1.2.12 Restore Auto Sell Options ===
    修正 V1.2.11 重建規則後，自動設定頁遺失「賣裝備 / 賣技能書」選項。
    規則：卷軸永遠不進入自動、批次、智能清理；卷軸仍可手動賣出。
 */
 (()=>{
   if(!window.Game||!window.DB) return;
-  const VERSION='1.5';
+  const VERSION='lineage_Idle_V1.2.12';
   const EQUIP_TYPES=['weapon','helmet','tshirt','armor','cloak','gloves','boots','leggings','ring','earring','amulet','belt'];
   const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   const money=n=>Math.max(0,Math.floor(Number(n)||0)).toLocaleString();
@@ -3323,9 +3323,9 @@ window.addEventListener('DOMContentLoaded',()=>{
   };
 
   const oldMigrate=Game.migrateState?.bind(Game);
-  Game.migrateState=function(){ if(oldMigrate) oldMigrate(); if(this.state){this.state.version='1.5'; ensureSettings(this); delete this.state.settings.sellRarity; delete this.state.settings.sellType; delete this.state.settings.sellFilter;} setVersion(); };
+  Game.migrateState=function(){ if(oldMigrate) oldMigrate(); if(this.state){this.state.version='1.2.12'; ensureSettings(this); delete this.state.settings.sellRarity; delete this.state.settings.sellType; delete this.state.settings.sellFilter;} setVersion(); };
   const oldBase=Game.baseState?.bind(Game);
-  if(oldBase){Game.baseState=function(cls){const s=oldBase(cls); s.version='1.5'; this.state=s; ensureSettings(this); return s;};}
+  if(oldBase){Game.baseState=function(cls){const s=oldBase(cls); s.version='1.2.12'; this.state=s; ensureSettings(this); return s;};}
 
   Game.viewSettings=function(){
     const s=ensureSettings(this);
@@ -3410,7 +3410,7 @@ window.addEventListener('DOMContentLoaded',()=>{
   setVersion();
 })();
 
-/* === lineage_Idle_V1.5 Rebuilt Sell System ===
+/* === lineage_Idle_V1.4.1 Rebuilt Sell System ===
    完整重建販售系統：
    - 卷軸永遠排除自動 / 批次 / 智能清理規則，但可手動單件賣出。
    - 自動販售支援：未裝備裝備、強化值門檻、已學技能書。
@@ -3418,7 +3418,7 @@ window.addEventListener('DOMContentLoaded',()=>{
 */
 (()=>{
   if(!window.Game || !window.DB) return;
-  const VERSION='1.5';
+  const VERSION='lineage_Idle_V1.4.1';
   const EQUIP_TYPES=new Set(['weapon','helmet','tshirt','armor','cloak','gloves','boots','leggings','ring','earring','amulet','belt']);
   const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   const money=n=>Math.max(0,Math.floor(Number(n)||0)).toLocaleString();
@@ -3609,10 +3609,10 @@ window.addEventListener('DOMContentLoaded',()=>{
   Game.viewInventory=function(){return renderInventory(this);};
 
   const oldMigrate=Game.migrateState?.bind(Game);
-  Game.migrateState=function(){ if(oldMigrate) oldMigrate(); if(this.state){this.state.version='1.5'; ensureSettings(this);} setVersion(); };
+  Game.migrateState=function(){ if(oldMigrate) oldMigrate(); if(this.state){this.state.version='1.3'; ensureSettings(this);} setVersion(); };
   const oldBase=Game.baseState?.bind(Game);
   if(oldBase){
-    Game.baseState=function(cls){const s=oldBase(cls); s.version='1.5'; this.state=s; ensureSettings(this); return s;};
+    Game.baseState=function(cls){const s=oldBase(cls); s.version='1.3'; this.state=s; ensureSettings(this); return s;};
   }
 
   // 擊殺流程重建：經驗值大幅降低，並只呼叫 V1.3 自動販售。
@@ -3691,13 +3691,13 @@ window.addEventListener('DOMContentLoaded',()=>{
 })();
 
 
-/* === lineage_Idle_V1.5 No Auction Patch ===
+/* === lineage_Idle_V1.4.1 No Auction Patch ===
    目的：升級版本顯示至 V1.4，完全移除拍賣場入口與拍賣行互動。
    保留：背包、商店、製作、副本、掉落、強化等既有功能。
 */
 (()=>{
   'use strict';
-  const VERSION='1.5';
+  const VERSION='lineage_Idle_V1.4.1';
   const AUCTION_WORDS=['拍賣場','拍賣行'];
 
   function setVersion(){
@@ -3835,12 +3835,12 @@ window.addEventListener('DOMContentLoaded',()=>{
 
 
 
-/* lineage_Idle_V1.5 patch: pet system optimization */
+/* lineage_Idle_V1.4.1 patch: pet system optimization */
 (function(){
   'use strict';
   if(!window.DB || !window.Game) return;
 
-  const VERSION='1.5';
+  const VERSION='lineage_Idle_V1.4.1';
   const PET_MAX_LEVEL=60;
   const PET_SLOT_COST=[0,1000000,5000000];
 
@@ -3953,7 +3953,7 @@ window.addEventListener('DOMContentLoaded',()=>{
   }
 
   const oldMigrate=Game.migrateState?.bind(Game);
-  Game.migrateState=function(){oldMigrate?.(); if(!this.state)return; this.state.version='1.5'; normalizePets(this); setVersion();};
+  Game.migrateState=function(){oldMigrate?.(); if(!this.state)return; this.state.version='1.4-pet'; normalizePets(this); setVersion();};
 
   const oldTotalStats=Game.totalStats?.bind(Game);
   Game.totalStats=function(){
@@ -4063,79 +4063,6 @@ window.addEventListener('DOMContentLoaded',()=>{
   };
 
   setVersion();
-})();
-
-
-
-/* =========================================================
-   V1.5 Final Patch
-   全版本號統一 + 天堂風格寵物核心重構
-   - 捕捉 / 馴服
-   - 召喚多寵欄位
-   - 飽食度 / 忠誠度
-   - 寵物經驗、升級、進化
-   - 寵物技能與戰鬥協助
-   - 寵物圖鑑與狀態面板
-   ========================================================= */
-(()=>{
- const VERSION='1.5';
- const APP_TITLE='lineage_Idle_V1.5';
- const PET_MAX_LEVEL=60;
- const PET_SLOT_COST=[0,500000,1500000];
- const PET_FOOD_PRICE=1200;
- const PET_COLLAR_PRICE=8000;
- const esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
- const petDB={
-  beagle:{id:'beagle',name:'小獵犬',line:'一般寵物',role:'命中輔助',lv:1,catchRate:42,food:'肉',evolve:'brave_beagle',stat:{hit:1,dmg:1},skill:{name:'撕咬',rate:.20,power:0.9},desc:'最容易馴服的初階寵物，適合說話之島與古魯丁前期練功。'},
-  shepherd:{id:'shepherd',name:'牧羊犬',line:'一般寵物',role:'穩定輸出',lv:8,catchRate:34,food:'肉',evolve:'battle_shepherd',stat:{hit:2,dmg:2},skill:{name:'猛撲',rate:.22,power:1.15},desc:'攻擊節奏穩定，忠誠高時會更常協助攻擊。'},
-  wolf:{id:'wolf',name:'狼',line:'攻擊寵物',role:'物理傷害',lv:15,catchRate:26,food:'肉',evolve:'dire_wolf',stat:{str:1,hit:2,dmg:4},skill:{name:'狼牙突襲',rate:.24,power:1.45},desc:'天堂風格經典攻擊型寵物，適合近戰與弓手。'},
-  bear:{id:'bear',name:'熊',line:'防禦寵物',role:'血量減傷',lv:22,catchRate:22,food:'肉',evolve:'battle_bear',stat:{hp:120,dr:3,dmg:3},skill:{name:'重擊',rate:.18,power:1.7},desc:'生存型寵物，能提供 HP 與減傷。'},
-  collie:{id:'collie',name:'柯利',line:'支援寵物',role:'補血支援',lv:30,catchRate:18,food:'寵物餅乾',evolve:'holy_collie',stat:{wis:1,mp:80,dr:1},skill:{name:'治癒舔舐',rate:.20,heal:90},desc:'支援型寵物，戰鬥中有機率恢復主人 HP。'},
-  hawk:{id:'hawk',name:'獵鷹',line:'速度寵物',role:'速度命中',lv:38,catchRate:16,food:'生肉',evolve:'storm_hawk',stat:{dex:2,hit:5,spd:5},skill:{name:'俯衝',rate:.25,power:1.35},desc:'高速型寵物，適合妖精與高命中需求職業。'},
-  tiger:{id:'tiger',name:'老虎',line:'高級寵物',role:'爆發輸出',lv:50,catchRate:10,food:'高級肉',evolve:'battle_tiger',stat:{str:2,dex:1,hit:5,dmg:9},skill:{name:'猛虎爪擊',rate:.28,power:2.05},desc:'高級攻擊寵物，對 BOSS 有額外輸出。'},
-  baby_dragon:{id:'baby_dragon',name:'幼龍',line:'龍系寵物',role:'終局泛用',lv:65,catchRate:6,food:'龍之肉',evolve:'guardian_dragon',stat:{str:2,dex:2,int:2,hit:6,dmg:12,dr:5,mr:15},skill:{name:'幼龍吐息',rate:.30,power:2.35},desc:'稀有龍系寵物，兼具輸出、防禦與魔防。'},
-  brave_beagle:{id:'brave_beagle',name:'高等小獵犬',line:'進化寵物',role:'命中輔助',lv:1,catchRate:0,food:'肉',stat:{hit:4,dmg:5,spd:3},skill:{name:'連續撕咬',rate:.26,power:1.55},desc:'小獵犬 Lv.30 後可進化。'},
-  battle_shepherd:{id:'battle_shepherd',name:'高等牧羊犬',line:'進化寵物',role:'穩定輸出',lv:1,catchRate:0,food:'肉',stat:{hit:5,dmg:7,dr:2},skill:{name:'戰鬥猛撲',rate:.27,power:1.75},desc:'牧羊犬 Lv.30 後可進化。'},
-  dire_wolf:{id:'dire_wolf',name:'高等狼',line:'進化寵物',role:'物理傷害',lv:1,catchRate:0,food:'肉',stat:{str:2,hit:5,dmg:10,spd:4},skill:{name:'狂狼牙',rate:.30,power:2.1},desc:'狼 Lv.30 後可進化。'},
-  battle_bear:{id:'battle_bear',name:'高等熊',line:'進化寵物',role:'血量減傷',lv:1,catchRate:0,food:'肉',stat:{hp:260,dr:7,dmg:8},skill:{name:'震地重擊',rate:.23,power:2.25},desc:'熊 Lv.30 後可進化。'},
-  holy_collie:{id:'holy_collie',name:'高等柯利',line:'進化寵物',role:'補血支援',lv:1,catchRate:0,food:'寵物餅乾',stat:{wis:3,mp:180,dr:3,mr:10},skill:{name:'忠誠治癒',rate:.26,heal:180},desc:'柯利 Lv.30 後可進化。'},
-  storm_hawk:{id:'storm_hawk',name:'高等獵鷹',line:'進化寵物',role:'速度命中',lv:1,catchRate:0,food:'生肉',stat:{dex:4,hit:10,spd:10,dmg:6},skill:{name:'暴風俯衝',rate:.32,power:2.0},desc:'獵鷹 Lv.30 後可進化。'},
-  battle_tiger:{id:'battle_tiger',name:'高等老虎',line:'進化寵物',role:'爆發輸出',lv:1,catchRate:0,food:'高級肉',stat:{str:4,dex:2,hit:10,dmg:18,spd:5},skill:{name:'猛虎連爪',rate:.34,power:2.75},desc:'老虎 Lv.30 後可進化。'},
-  guardian_dragon:{id:'guardian_dragon',name:'守護幼龍',line:'進化寵物',role:'終局泛用',lv:1,catchRate:0,food:'龍之肉',stat:{str:4,dex:4,int:4,hit:12,dmg:24,dr:10,mr:30,spd:6},skill:{name:'龍息爆發',rate:.36,power:3.2},desc:'幼龍 Lv.30 後可進化。'}
- };
- const petList=()=>Object.values(petDB);
- const petDef=id=>petDB[id]||null;
- const statText=o=>Object.entries(o||{}).map(([k,v])=>`${k.toUpperCase()} ${v>0?'+':''}${v}`).join('、')||'無';
- const petExpNeed=lv=>Math.floor(80*Math.pow(Math.max(1,lv),1.85));
- const petLvBonus=(def,own)=>{let lv=own?.lv||1, evo=own?.evolved?1.35:1;let b={};for(let [k,v] of Object.entries(def?.stat||{}))b[k]=Math.floor((v+lv/6)*evo);return b;};
- const petPower=(def,own)=>{let b=petLvBonus(def,own),n=(own?.lv||1)*18+(own?.loyalty??100)*2+(own?.hunger??100);for(let [k,v] of Object.entries(b))n+=({dmg:80,hit:35,dr:70,str:55,dex:50,int:55,wis:40,spd:30,hp:.8,mp:.5,mr:6}[k]||20)*v;return Math.floor(n);};
- const normalizePets=g=>{let s=g.state;if(!s)return;s.version=VERSION;s.pets=s.pets||{};s.petSlots=Math.max(1,Math.min(3,s.petSlots||1));s.activePets=Array.isArray(s.activePets)?s.activePets.filter(id=>s.pets[id]).slice(0,s.petSlots):(s.activePet?[s.activePet].filter(id=>s.pets[id]):[]);s.activePet=s.activePets[0]||null;s.petStats=s.petStats||{tamed:0,evolved:0,skillCasts:0,expGained:0,autoLevels:0,feed:0};s.settings=s.settings||{};if(s.settings.autoPetSummon===undefined)s.settings.autoPetSummon=true;if(s.settings.autoPetFeed===undefined)s.settings.autoPetFeed=false;if(s.settings.petSkill===undefined)s.settings.petSkill=true;for(let [id,o] of Object.entries(s.pets)){o.lv=Math.max(1,Math.min(PET_MAX_LEVEL,o.lv||1));o.exp=o.exp||0;o.loyalty=Math.max(0,Math.min(100,o.loyalty??100));o.hunger=Math.max(0,Math.min(100,o.hunger??100));o.caughtAt=o.caughtAt||Date.now();if(!petDB[id])delete s.pets[id];}};
- const addPetExp=(g,amount)=>{normalizePets(g);let active=g.state.activePets||[];for(let id of active){let own=g.state.pets[id],def=petDef(id);if(!own||!def)continue;let gain=Math.max(1,Math.floor(amount*(1+(own.loyalty||0)/200)));own.exp+=gain;g.state.petStats.expGained+=gain;own.hunger=Math.max(0,(own.hunger??100)-0.8);while(own.lv<PET_MAX_LEVEL&&own.exp>=petExpNeed(own.lv)){own.exp-=petExpNeed(own.lv);own.lv++;own.loyalty=Math.min(100,(own.loyalty??100)+2);g.state.petStats.autoLevels++;g.log(`${def.name} 升級為 Lv.${own.lv}`,'green');}}};
- const setVersion=()=>{document.title=APP_TITLE;document.querySelectorAll('.title').forEach(el=>{if(/lineage_Idle_V/i.test(el.textContent))el.textContent=APP_TITLE;});let start=document.querySelector('#start h1');if(start)start.textContent=APP_TITLE;let top=document.querySelector('.top .title');if(top)top.textContent=APP_TITLE;};
- const oldMigrate=Game.migrateState.bind(Game), oldInitMenus=Game.initMenus.bind(Game), oldTotalStats=Game.totalStats.bind(Game), oldFight=Game.fight.bind(Game), oldKill=Game.kill.bind(Game), oldRenderTab=Game.renderTab.bind(Game), oldViewSettings=Game.viewSettings?.bind(Game), oldSave=Game.save.bind(Game), oldEnter=Game.enter.bind(Game), oldStartNew=Game.startNew.bind(Game);
- Object.assign(Game,{
-  migrateState(){oldMigrate();normalizePets(this);this.state.version=VERSION;setVersion();},
-  startNew(){oldStartNew();normalizePets(this);this.state.version=VERSION;setVersion();this.save(false);},
-  enter(){oldEnter();normalizePets(this);setVersion();},
-  save(show){if(this.state){normalizePets(this);this.state.version=VERSION;}oldSave(show);setVersion();},
-  initMenus(){oldInitMenus();let tabs=document.getElementById('tabs');if(tabs){let pet=tabs.querySelector('[data-tab="pet"]');if(pet)pet.textContent='寵物';}},
-  totalStats(){let s=oldTotalStats();normalizePets(this);for(let id of this.state.activePets||[]){let own=this.state.pets[id],def=petDef(id);if(!own||!def)continue;let mult=((own.loyalty??100)/100)*((own.hunger??100)/100);let bonus=petLvBonus(def,own);for(let [k,v] of Object.entries(bonus))s[k]=(s[k]||0)+Math.floor(v*Math.max(.25,mult));}return s;},
-  tamePet(id){normalizePets(this);let def=petDef(id);if(!def||def.catchRate<=0)return;if(this.state.lv<def.lv){alert('等級不足，需要 Lv.'+def.lv);return;}let cost=PET_COLLAR_PRICE+def.lv*1200;if(this.state.adena<cost){alert('金幣不足，需要 '+cost.toLocaleString()+' 購買項圈與肉。');return;}this.state.adena-=cost;let rate=def.catchRate+(this.state.lv-def.lv)*0.4;if(Math.random()*100<rate){this.state.pets[id]={lv:1,exp:0,loyalty:70,hunger:80,caughtAt:Date.now(),evolved:false};this.state.petStats.tamed++;this.log(`馴服成功：${def.name}`,'green');if((this.state.activePets||[]).length<this.state.petSlots)this.summonPetToSlot(id,(this.state.activePets||[]).length);}else{this.log(`馴服失敗：${def.name} 逃走了。`,'red');}this.render();},
-  summonPetToSlot(id,slot=0){normalizePets(this);let def=petDef(id);if(!def)return;if(!this.state.pets[id]){this.tamePet(id);return;}slot=+slot;if(slot>=this.state.petSlots){alert('尚未開啟此寵物欄位');return;}this.state.activePets=this.state.activePets.filter(x=>x!==id);this.state.activePets[slot]=id;this.state.activePets=this.state.activePets.filter(Boolean).slice(0,this.state.petSlots);this.state.activePet=this.state.activePets[0]||null;this.log(`召喚 ${def.name} 到第 ${slot+1} 格。`,'green');this.render();},
-  summonPet(id){this.summonPetToSlot(id,0);},
-  clearPetSlot(slot){normalizePets(this);this.state.activePets.splice(+slot,1);this.state.activePet=this.state.activePets[0]||null;this.render();},
-  buyPetSlot(){normalizePets(this);let n=this.state.petSlots||1;if(n>=3){alert('寵物欄位已全開');return;}let cost=PET_SLOT_COST[n]||1500000;if(this.state.adena<cost){alert('金幣不足，需要 '+cost.toLocaleString());return;}this.state.adena-=cost;this.state.petSlots=n+1;this.log(`開啟第 ${n+1} 個寵物欄位。`,'green');this.render();},
-  feedPet(id){normalizePets(this);let own=this.state.pets[id],def=petDef(id);if(!own||!def)return;let cost=PET_FOOD_PRICE+(own.lv||1)*180;if(this.state.adena<cost){alert('金幣不足，需要 '+cost.toLocaleString());return;}this.state.adena-=cost;own.hunger=Math.min(100,(own.hunger??100)+35);own.loyalty=Math.min(100,(own.loyalty??100)+8);own.exp+=Math.floor(petExpNeed(own.lv)*0.08);this.state.petStats.feed++;this.log(`餵食 ${def.name}：飽食度與忠誠度提升。`,'green');this.render();},
-  trainPet(id){normalizePets(this);let own=this.state.pets[id],def=petDef(id);if(!own||!def)return;if(own.lv>=PET_MAX_LEVEL){alert('寵物已達最高等級');return;}let cost=Math.floor(8000+Math.pow(own.lv,2)*900);if(this.state.adena<cost){alert('金幣不足，需要 '+cost.toLocaleString());return;}this.state.adena-=cost;own.exp+=Math.floor(petExpNeed(own.lv)*0.45);own.loyalty=Math.min(100,(own.loyalty??100)+3);this.log(`訓練 ${def.name}，獲得寵物經驗。`,'green');addPetExp(this,0);this.render();},
-  evolvePet(id){normalizePets(this);let own=this.state.pets[id],def=petDef(id);if(!own||!def||!def.evolve)return;if(own.lv<30){alert('進化需要寵物 Lv.30');return;}let target=petDef(def.evolve);if(!target)return;let cost=300000+def.lv*5000;if(this.state.adena<cost){alert('金幣不足，需要 '+cost.toLocaleString());return;}this.state.adena-=cost;delete this.state.pets[id];this.state.pets[target.id]={lv:Math.max(1,Math.floor(own.lv*0.7)),exp:0,loyalty:Math.max(75,own.loyalty??75),hunger:Math.max(70,own.hunger??70),caughtAt:own.caughtAt,evolved:true};this.state.activePets=(this.state.activePets||[]).map(x=>x===id?target.id:x);this.state.activePet=this.state.activePets[0]||null;this.state.petStats.evolved++;this.log(`${def.name} 進化為 ${target.name}。`,'green');this.render();},
-  autoBestPets(){normalizePets(this);if(this.state.settings.autoPetSummon===false)return;let owned=Object.keys(this.state.pets).sort((a,b)=>petPower(petDef(b),this.state.pets[b])-petPower(petDef(a),this.state.pets[a]));this.state.activePets=owned.slice(0,this.state.petSlots);this.state.activePet=this.state.activePets[0]||null;},
-  fight(){normalizePets(this);this.autoBestPets();oldFight();let mon=this.mon();if(!mon||mon.hp<=0)return;let mdef=DB.mons[mon.id];let total=0,healed=0,casts=[];for(let id of this.state.activePets||[]){let own=this.state.pets[id],def=petDef(id);if(!own||!def||own.hunger<=0)continue;let loyalty=(own.loyalty??100)/100,hunger=(own.hunger??100)/100;let base=Math.max(1,Math.floor((petPower(def,own)/95)*Math.max(.25,loyalty*hunger)));let skill=def.skill||{};if(this.state.settings.petSkill!==false&&Math.random()<(skill.rate||0)*loyalty){if(skill.heal){let h=Math.floor(skill.heal+(own.lv||1)*6);this.state.hp=Math.min(this.maxHp(),this.state.hp+h);healed+=h;}else{base+=Math.floor((skill.power||1)*((own.lv||1)+this.state.lv));}casts.push(skill.name);this.state.petStats.skillCasts++;}mon.hp-=base;total+=base;own.loyalty=Math.min(100,(own.loyalty??100)+0.05);}if(total>0)this.blog(`寵物協助攻擊 ${mdef.name}，造成 <span class="c-purple">${total}</span> 傷害${casts.length?'，技能：'+casts.join('、'):''}${healed?'，恢復 HP '+healed:''}。`);if(mon.hp<=0)this.kill(mdef);},
-  kill(mdef){oldKill(mdef);addPetExp(this,Math.max(1,Math.floor((mdef?.exp||10)*0.18)));},
-  viewSettings(){let html=oldViewSettings?oldViewSettings():'';normalizePets(this);return html+`<div class="setting-card" style="margin-top:10px"><b class="c-gold">寵物自動設定</b><label class="row item"><span>自動召喚戰力最高寵物</span><input data-setting="autoPetSummon" type="checkbox" ${this.state.settings.autoPetSummon!==false?'checked':''}></label><label class="row item"><span>寵物技能自動發動</span><input data-setting="petSkill" type="checkbox" ${this.state.settings.petSkill!==false?'checked':''}></label><label class="row item"><span>低飽食自動餵食</span><input data-setting="autoPetFeed" type="checkbox" ${this.state.settings.autoPetFeed?'checked':''}></label><div class="small">寵物加成會受到忠誠度與飽食度影響；飽食為 0 時不協助戰鬥。</div></div>`;},
-  viewPet(){normalizePets(this);let s=this.state,slots=s.petSlots||1,active=s.activePets||[];let slotHtml=Array.from({length:slots},(_,i)=>{let id=active[i],def=petDef(id),own=id&&s.pets[id];return `<div class="setting-card"><div class="row"><span><b class="c-gold">第 ${i+1} 格</b><br>${def?`<span>${esc(def.name)} Lv.${own.lv}</span><br><span class="small">${esc(def.line)}｜戰力 ${petPower(def,own).toLocaleString()}｜忠誠 ${Math.floor(own.loyalty)}｜飽食 ${Math.floor(own.hunger)}</span>`:'<span class="small">空欄位</span>'}</span>${def?`<button class="btn red" data-clear-pet-slot="${i}">收回</button>`:''}</div></div>`;}).join('');let nextSlot=slots<3?`<button class="btn green" data-buy-pet-slot>花 ${(PET_SLOT_COST[slots]||1500000).toLocaleString()} 開第 ${slots+1} 格</button>`:'<span class="c-green">寵物欄位已全開</span>';let rows=petList().map(p=>{let own=s.pets[p.id],lv=own?.lv||1,need=petExpNeed(lv),exp=own?.exp||0,pct=own?Math.max(0,Math.min(100,exp/need*100)):0,locked=s.lv<p.lv,bonus=own?petLvBonus(p,own):p.stat,power=own?petPower(p,own):petPower(p,{lv:1,loyalty:70,hunger:80}),canEvo=own&&p.evolve&&own.lv>=30;let summonBtns=own?Array.from({length:slots},(_,i)=>`<button class="btn green" data-summon-pet-slot="${p.id}" data-slot="${i}">${active[i]===p.id?'召喚中':`召喚${i+1}`}</button>`).join(' '):`<button class="btn green" data-tame-pet="${p.id}" ${locked||p.catchRate<=0?'disabled':''}>馴服</button>`;return `<div class="item"><div class="row"><span><b class="${own?'c-gold':''}">${esc(p.name)}</b> <span class="pill">${esc(p.line)}</span> <span class="pill">${esc(p.role)}</span> ${own?`<span class="pill">Lv.${lv}/${PET_MAX_LEVEL}</span><span class="pill">忠誠 ${Math.floor(own.loyalty)}</span><span class="pill">飽食 ${Math.floor(own.hunger)}</span>`:`<span class="pill">需求 Lv.${p.lv}</span><span class="pill">馴服率 ${p.catchRate}%</span>`}<br><span class="small">${esc(p.desc)}<br>技能：${esc(p.skill?.name||'無')}｜食物：${esc(p.food)}｜戰力 ${power.toLocaleString()}｜加成：${statText(bonus)}${locked?'｜等級不足':''}</span></span><span>${summonBtns}</span></div>${own?`<div style="margin-top:6px"><div class="bar"><i class="exp" style="width:${pct}%"></i><span>寵物EXP ${Math.floor(exp)}/${need} (${pct.toFixed(1)}%)</span></div><div style="margin-top:6px" class="row"><span class="small">訓練費 ${(8000+Math.pow(lv,2)*900).toLocaleString()}｜餵食費 ${(PET_FOOD_PRICE+lv*180).toLocaleString()}${p.evolve?'｜Lv.30 可進化':''}</span><span><button class="btn" data-train-pet="${p.id}" ${lv>=PET_MAX_LEVEL?'disabled':''}>訓練</button> <button class="btn" data-feed-pet="${p.id}">餵食</button> ${p.evolve?`<button class="btn green" data-evolve-pet="${p.id}" ${canEvo?'':'disabled'}>進化</button>`:''}</span></div></div>`:''}</div>`;}).join('');let st=s.petStats||{};return `<h3 class="title">寵物系統 V1.5</h3><div class="setting-card"><div class="row"><span><b class="c-gold">天堂風格寵物</b><br><span class="small">先馴服，再召喚。寵物會受忠誠度、飽食度、等級與進化影響，並會在戰鬥中自動攻擊或施放技能。</span></span><span>${nextSlot}</span></div><div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(220px,1fr));margin-top:8px">${slotHtml}</div><div class="small" style="margin-top:8px">馴服 ${st.tamed||0}｜進化 ${st.evolved||0}｜累計寵物EXP ${(st.expGained||0).toLocaleString()}｜技能發動 ${st.skillCasts||0}｜餵食 ${st.feed||0}</div></div>${rows}`;},
-  renderTab(){oldRenderTab();let el=document.getElementById('tabContent');if(!this.state||!el)return;if(this.tab==='pet'){el.innerHTML=this.viewPet();el.querySelectorAll('[data-tame-pet]').forEach(b=>b.onclick=()=>this.tamePet(b.dataset.tamePet));el.querySelectorAll('[data-summon-pet-slot]').forEach(b=>b.onclick=()=>this.summonPetToSlot(b.dataset.summonPetSlot,+b.dataset.slot));el.querySelectorAll('[data-clear-pet-slot]').forEach(b=>b.onclick=()=>this.clearPetSlot(+b.dataset.clearPetSlot));el.querySelectorAll('[data-buy-pet-slot]').forEach(b=>b.onclick=()=>this.buyPetSlot());el.querySelectorAll('[data-feed-pet]').forEach(b=>b.onclick=()=>this.feedPet(b.dataset.feedPet));el.querySelectorAll('[data-train-pet]').forEach(b=>b.onclick=()=>this.trainPet(b.dataset.trainPet));el.querySelectorAll('[data-evolve-pet]').forEach(b=>b.onclick=()=>this.evolvePet(b.dataset.evolvePet));}setVersion();}
- });
- setVersion();
 })();
 
 </script>
