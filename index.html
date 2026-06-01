@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>lineage_Idle_V1.4</title>
+<title>lineage_Idle_V1.4.1</title>
 <style>
 :root{--bg:#05070a;--panel:#0d1117;--panel2:#111827;--line:#334155;--text:#dbeafe;--muted:#94a3b8;--gold:#facc15;--green:#22c55e;--red:#ef4444;--blue:#60a5fa;--purple:#c084fc;--orange:#fb923c}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:"Microsoft JhengHei",Consolas,monospace;font-size:15px;user-select:none}.hidden{display:none!important}.app{height:100vh;display:flex;flex-direction:column;padding:12px;gap:10px}.panel{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px}.top{display:flex;justify-content:space-between;align-items:center}.title{color:var(--gold);font-weight:700}.grid{display:grid;gap:10px}.main{flex:1;display:grid;grid-template-columns:300px 1fr 330px;gap:10px;min-height:0}.col{display:flex;flex-direction:column;gap:10px;min-height:0}.scroll{overflow:auto}.btn,select,input{background:#1f2937;color:var(--text);border:1px solid #475569;border-radius:8px;padding:8px 10px;font:inherit}.btn{cursor:pointer}.btn:hover{background:#334155}.btn:disabled{opacity:.45;cursor:not-allowed}.btn.green{color:#86efac}.btn.blue{color:#93c5fd}.btn.red{color:#fca5a5}.row{display:flex;align-items:center;justify-content:space-between;gap:8px}.tabs{display:flex;gap:6px;flex-wrap:wrap}.tab{padding:8px 12px}.tab.active{border-color:var(--gold);color:var(--gold)}.bar{height:18px;background:#020617;border:1px solid #475569;border-radius:99px;overflow:hidden;position:relative}.bar i{display:block;height:100%;width:0}.hp{background:#991b1b}.mp{background:#1d4ed8}.exp{background:#a16207}.bar span{position:absolute;inset:0;text-align:center;font-size:12px;line-height:16px;text-shadow:1px 1px #000}.stat{display:grid;grid-template-columns:1fr 1fr;gap:6px}.item{border-bottom:1px dashed #293548;padding:7px 0}.log{font-size:14px;line-height:1.55}.c-gold{color:var(--gold)}.c-green{color:var(--green)}.c-red{color:var(--red)}.c-blue{color:var(--blue)}.c-purple{color:var(--purple)}.c-orange{color:var(--orange)}.modal{position:fixed;inset:0;background:rgba(0,0,0,.86);display:flex;align-items:center;justify-content:center;z-index:50}.modal-card{width:min(760px,94vw);max-height:92vh;overflow:auto}.classes{grid-template-columns:repeat(auto-fit,minmax(150px,1fr))}.class-card{text-align:left;min-height:96px}.class-card.selected{border-color:var(--gold);background:#1e293b}.small{font-size:13px;color:var(--muted)}.pill{display:inline-block;border:1px solid #475569;border-radius:99px;padding:2px 7px;margin:2px;color:#cbd5e1}.rarity-白{color:#e5e7eb}.rarity-綠{color:#4ade80}.rarity-藍{color:#60a5fa}.rarity-紫{color:#c084fc}.rarity-橘{color:#fb923c}.rarity-紅{color:#f87171}.kbd{background:#020617;border:1px solid #334155;border-radius:5px;padding:1px 5px;color:#cbd5e1}.setting-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:10px}.setting-card{background:#0b1220;border:1px solid #26364f;border-radius:10px;padding:12px}@media(max-width:1100px){.main{grid-template-columns:1fr}.app{height:auto}.col{min-height:500px}}
 </style>
@@ -11,7 +11,7 @@
 <body>
 <div id="start" class="modal">
   <div class="panel modal-card">
-    <h1 class="title" style="font-size:42px;text-align:center;margin:20px 0 8px">lineage_Idle_V1.4</h1>
+    <h1 class="title" style="font-size:42px;text-align:center;margin:20px 0 8px">lineage_Idle_V1.4.1</h1>
     <p class="small" style="text-align:center;margin-bottom:24px">單機版</p>
     <div class="grid">
       <button id="newGame" class="btn green" style="font-size:22px;padding:14px">新冒險</button>
@@ -32,7 +32,7 @@
 
 <div class="app hidden" id="app">
   <div class="panel top">
-    <div><span class="title">lineage_Idle_V1.4</span> <span id="subTitle" class="small"></span></div>
+    <div><span class="title">lineage_Idle_V1.4.1</span> <span id="subTitle" class="small"></span></div>
     <div class="row"><button class="btn blue" id="saveBtn">儲存</button><button class="btn" id="exportBtn">匯出</button><button class="btn red" id="resetBtn">刪除</button></div>
   </div>
   <div class="main">
@@ -443,9 +443,9 @@ viewTransform(){let active=this.activeTransform();let rows=Object.values(DB.tran
    ========================= */
 (()=>{
  const VERSION='5.3';
- document.title='lineage_Idle_V1.4';
+ document.title='lineage_Idle_V1.4.1';
  const titleEl=document.querySelector('.title');
- if(titleEl&&titleEl.textContent.includes('lineage_Idle'))titleEl.textContent='lineage_Idle_V1.4';
+ if(titleEl&&titleEl.textContent.includes('lineage_Idle'))titleEl.textContent='lineage_Idle_V1.4.1';
 
  // 1) 新增神聖劍士職業與技能書
  DB.classes.holyknight={
@@ -536,9 +536,9 @@ viewTransform(){let active=this.activeTransform();let rows=Object.values(DB.tran
    ========================= */
 (()=>{
  const VERSION='5.3';
- document.title='lineage_Idle_V1.4';
- document.querySelectorAll('.title').forEach(el=>{if(el.textContent.includes('lineage_Idle'))el.textContent='lineage_Idle_V1.4';});
- const startTitle=document.querySelector('#start h1'); if(startTitle)startTitle.textContent='lineage_Idle_V1.4';
+ document.title='lineage_Idle_V1.4.1';
+ document.querySelectorAll('.title').forEach(el=>{if(el.textContent.includes('lineage_Idle'))el.textContent='lineage_Idle_V1.4.1';});
+ const startTitle=document.querySelector('#start h1'); if(startTitle)startTitle.textContent='lineage_Idle_V1.4.1';
 
  const addItem=(id,o)=>{DB.items[id]=Object.assign({id,rarity:'白',price:100,type:'material'},DB.items[id]||{},o,{id});};
  const addWeapon=(id,name,weapon,dmg,rarity,price,reqLv,safe=6,stat={})=>addItem(id,{name,type:'weapon',weapon,dmg,safe,rarity,price,reqLv,stat});
@@ -665,10 +665,10 @@ viewTransform(){let active=this.activeTransform();let rows=Object.values(DB.tran
    ========================================================= */
 (()=>{
  const VERSION='5.3';
- document.title='lineage_Idle_V1.4';
- document.querySelectorAll('.title').forEach(el=>{if(el.textContent.includes('lineage_Idle'))el.textContent='lineage_Idle_V1.4';});
- const startTitle=document.querySelector('#start h1'); if(startTitle)startTitle.textContent='lineage_Idle_V1.4';
- const topTitle=document.querySelector('.top .title'); if(topTitle)topTitle.textContent='lineage_Idle_V1.4';
+ document.title='lineage_Idle_V1.4.1';
+ document.querySelectorAll('.title').forEach(el=>{if(el.textContent.includes('lineage_Idle'))el.textContent='lineage_Idle_V1.4.1';});
+ const startTitle=document.querySelector('#start h1'); if(startTitle)startTitle.textContent='lineage_Idle_V1.4.1';
+ const topTitle=document.querySelector('.top .title'); if(topTitle)topTitle.textContent='lineage_Idle_V1.4.1';
  const loadBtn=document.getElementById('loadGame'); if(loadBtn)loadBtn.textContent='讀取存檔';
 
  const EQUIP_TYPES=['weapon','helmet','tshirt','armor','cloak','gloves','boots','leggings','ring','earring','amulet','belt'];
@@ -1074,7 +1074,7 @@ viewTransform(){let active=this.activeTransform();let rows=Object.values(DB.tran
 })();
 
 
-/* lineage_Idle_V1.4 patch: job weapons/equipment, boss encounter tuning, transform stat optimization */
+/* lineage_Idle_V1.4.1 patch: job weapons/equipment, boss encounter tuning, transform stat optimization */
 (function(){
   'use strict';
   if(!window.DB || !window.Game) return;
@@ -1417,7 +1417,7 @@ viewTransform(){let active=this.activeTransform();let rows=Object.values(DB.tran
     }).join('');
     return `<h3 class="title">變身</h3><div class="small">變身能力完整中文化，並顯示力量、敏捷、智力等加成。</div>${active?`<div class="setting-card">目前變身：<b class="c-gold">${active.name}</b></div>`:''}${rows}`;
   };
-  document.title='lineage_Idle_V1.4';
+  document.title='lineage_Idle_V1.4.1';
 })();
 
 
@@ -1584,10 +1584,10 @@ viewTransform(){let active=this.activeTransform();let rows=Object.values(DB.tran
   const oldStatus=Game.renderStatus.bind(Game);
   Game.renderStatus=function(){oldStatus();let box=document.getElementById('statBox');if(box&&!box.querySelector('[data-v45-power]'))box.innerHTML+=`<div data-v45-power>戰力 ${this.v45Power().toLocaleString()}</div><div>DPS ${this.v45Dps().toLocaleString()}</div>`;};
   setInterval(()=>{if(Game.state){Game.renderStatus(); if(Game.tab==='v45combat')Game.renderTab();}},1000);
-  document.title='lineage_Idle_V1.4';
-  document.querySelectorAll('.title').forEach(el=>{if(el.textContent.includes('lineage_Idle'))el.textContent='lineage_Idle_V1.4';});
-  const startTitle=document.querySelector('#start h1'); if(startTitle)startTitle.textContent='lineage_Idle_V1.4';
-  const topTitle=document.querySelector('.top .title'); if(topTitle)topTitle.textContent='lineage_Idle_V1.4';
+  document.title='lineage_Idle_V1.4.1';
+  document.querySelectorAll('.title').forEach(el=>{if(el.textContent.includes('lineage_Idle'))el.textContent='lineage_Idle_V1.4.1';});
+  const startTitle=document.querySelector('#start h1'); if(startTitle)startTitle.textContent='lineage_Idle_V1.4.1';
+  const topTitle=document.querySelector('.top .title'); if(topTitle)topTitle.textContent='lineage_Idle_V1.4.1';
   Game.log('lineage_Idle 已套用 V5.3：紅裝、套裝、收藏加成、掉落重構、戰力/DPS、裝備比較、存檔轉換。','green');
 })();
 
@@ -1669,10 +1669,10 @@ viewTransform(){let active=this.activeTransform();let rows=Object.values(DB.tran
   Game.renderTab=function(){oldRender();let el=document.getElementById('tabContent');if(!this.state||!el)return;if(this.tab==='auction')el.innerHTML=this.viewAuction();el.querySelectorAll('[data-refresh-auction]').forEach(b=>b.onclick=()=>this.refreshAuction());el.querySelectorAll('[data-buy-auction]').forEach(b=>b.onclick=()=>this.buyAuction(b.dataset.buyAuction));el.querySelectorAll('[data-sell-auction]').forEach(b=>b.onclick=()=>this.sellAuction(b.dataset.sellAuction));};
   Game.exportSave=function(){this.save(false);let blob=new Blob([JSON.stringify(this.state,null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='lineage_idle_v46_save.json';a.click();URL.revokeObjectURL(a.href)};
   Game.importSave=function(e){let f=e.target.files[0];if(!f)return;let r=new FileReader();r.onload=()=>{try{this.state=JSON.parse(r.result);this.migrateState();this.save(false);this.enter();this.log('已自動轉換匯入存檔。','green');}catch(err){alert('存檔格式錯誤')}};r.readAsText(f)};
-  document.title='lineage_Idle_V1.4';
-  document.querySelectorAll('.title').forEach(el=>{if(el.textContent.includes('lineage_Idle'))el.textContent='lineage_Idle_V1.4';});
-  const startTitle=document.querySelector('#start h1');if(startTitle)startTitle.textContent='lineage_Idle_V1.4';
-  const topTitle=document.querySelector('.top .title');if(topTitle)topTitle.textContent='lineage_Idle_V1.4';
+  document.title='lineage_Idle_V1.4.1';
+  document.querySelectorAll('.title').forEach(el=>{if(el.textContent.includes('lineage_Idle'))el.textContent='lineage_Idle_V1.4.1';});
+  const startTitle=document.querySelector('#start h1');if(startTitle)startTitle.textContent='lineage_Idle_V1.4.1';
+  const topTitle=document.querySelector('.top .title');if(topTitle)topTitle.textContent='lineage_Idle_V1.4.1';
 })();
 
 
@@ -1758,14 +1758,14 @@ viewTransform(){let active=this.activeTransform();let rows=Object.values(DB.tran
     return `<h3 class="title">背包</h3>${controls}${rows||'<div class="small">空</div>'}`;
   };
   Game.renderTab=function(){oldRender();let el=document.getElementById('tabContent');if(!this.state||!el)return;if(this.tab==='inventory')el.innerHTML=this.viewInventory();el.querySelectorAll('[data-equip]').forEach(b=>b.onclick=()=>this.equip(b.dataset.equip));el.querySelectorAll('[data-use]').forEach(b=>b.onclick=()=>this.useItem(b.dataset.use));el.querySelectorAll('[data-sell]').forEach(b=>b.onclick=()=>this.sellItem(b.dataset.sell));el.querySelectorAll('[data-batch-ui]').forEach(x=>x.onchange=()=>this.setBatchSellUI(x.dataset.batchUi,x.value));el.querySelectorAll('[data-batch-check]').forEach(x=>x.onchange=()=>this.setBatchSellUI(x.dataset.batchCheck,x.checked));el.querySelectorAll('[data-batch-sell-rule]').forEach(b=>b.onclick=()=>this.batchSellByRule());el.querySelectorAll('[data-batch-quick]').forEach(b=>b.onclick=()=>this.batchSellQuick(b.dataset.batchQuick));};
-  document.title='lineage_Idle_V1.4';
-  document.querySelectorAll('.title').forEach(el=>{if(el.textContent.includes('lineage_Idle'))el.textContent='lineage_Idle_V1.4';});
-  const startTitle=document.querySelector('#start h1');if(startTitle)startTitle.textContent='lineage_Idle_V1.4';
-  const topTitle=document.querySelector('.top .title');if(topTitle)topTitle.textContent='lineage_Idle_V1.4';
+  document.title='lineage_Idle_V1.4.1';
+  document.querySelectorAll('.title').forEach(el=>{if(el.textContent.includes('lineage_Idle'))el.textContent='lineage_Idle_V1.4.1';});
+  const startTitle=document.querySelector('#start h1');if(startTitle)startTitle.textContent='lineage_Idle_V1.4.1';
+  const topTitle=document.querySelector('.top .title');if(topTitle)topTitle.textContent='lineage_Idle_V1.4.1';
 })();
 
 
-/* === lineage_Idle_V1.4 Patch: Auction refresh, auto buy, batch sell, combat score, save migration === */
+/* === lineage_Idle_V1.4.1 Patch: Auction refresh, auto buy, batch sell, combat score, save migration === */
 (()=>{
   const VERSION='5.3';
   const esc=s=>String(s??'').replace(/[&<>\"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]||m));
@@ -1813,14 +1813,14 @@ viewTransform(){let active=this.activeTransform();let rows=Object.values(DB.tran
   const oldInv=Game.viewInventory.bind(Game);
   Game.viewInventory=function(){let base=oldInv();let keep=v47Cfg(this).batch.keepEnchant;let modes=[['white','賣白裝'],['green','賣綠裝'],['blue','賣藍裝'],['dupeBooks','賣重複技能書'],['materials','賣全部材料'],['lowEnchant','賣低於/等於指定強化值']];let panel=`<div class="setting-card" style="margin-bottom:10px"><b class="c-gold">批次販售</b><div class="row" style="flex-wrap:wrap;justify-content:flex-start;margin-top:8px"><label>指定強化值 <input data-v47-batch-keep="1" type="number" min="0" max="15" value="${keep}" style="width:70px"></label>${modes.map(([m,t])=>{let p=previewMode(this,m);return `<button class="btn red" data-v47-batch="${m}">${t}<br><span class="small">${p.qty}格 / ${p.gain.toLocaleString()}</span></button>`;}).join('')}</div><div class="small">預估收益顯示在按鈕下方；已裝備物品不會被批次販售。</div></div>`;return String(base).replace('<h3 class="title">背包</h3>',`<h3 class="title">背包</h3>${panel}`);};
   Game.renderTab=function(){oldRender();let el=document.getElementById('tabContent');if(!this.state||!el)return;if(this.tab==='auction')el.innerHTML=this.viewAuction();if(this.tab==='v47combat')el.innerHTML=this.viewV47Combat();if(this.tab==='inventory')el.innerHTML=this.viewInventory();el.querySelectorAll('[data-v47-refresh-auction]').forEach(b=>b.onclick=()=>{refreshAuction(this,true);this.render();this.save(false);});el.querySelectorAll('[data-v47-buy-auction]').forEach(b=>b.onclick=()=>this.buyAuction(b.dataset.v47BuyAuction));el.querySelectorAll('[data-v47-auction-search]').forEach(x=>x.oninput=()=>{v47Cfg(this).auction.search=x.value;this.render();});el.querySelectorAll('[data-v47-autobuy]').forEach(x=>x.onchange=()=>{let c=v47Cfg(this).auction.autoBuy;let k=x.dataset.v47Autobuy;c[k]=x.type==='checkbox'?x.checked:(x.type==='number'?+x.value:x.value);this.save(false);this.render();});el.querySelectorAll('[data-v47-batch]').forEach(b=>b.onclick=()=>{let inp=el.querySelector('[data-v47-batch-keep]');if(inp)v47Cfg(this).batch.keepEnchant=+inp.value;batchSell(this,b.dataset.v47Batch);});el.querySelectorAll('[data-v47-batch-keep]').forEach(x=>x.onchange=()=>{v47Cfg(this).batch.keepEnchant=+x.value;this.save(false);this.render();});el.querySelectorAll('[data-equip]').forEach(b=>b.onclick=()=>this.equip(b.dataset.equip));el.querySelectorAll('[data-enchant]').forEach(b=>b.onclick=()=>this.enchant(b.dataset.enchant));el.querySelectorAll('[data-use]').forEach(b=>b.onclick=()=>this.useItem(b.dataset.use));el.querySelectorAll('[data-sell]').forEach(b=>b.onclick=()=>this.sellItem(b.dataset.sell));};
-  document.title='lineage_Idle_V1.4';
-  document.querySelectorAll('.title').forEach(el=>{if(el.textContent.includes('lineage_Idle'))el.textContent='lineage_Idle_V1.4';});
-  const st=document.querySelector('#start h1');if(st)st.textContent='lineage_Idle_V1.4';
-  const top=document.querySelector('.top .title');if(top)top.textContent='lineage_Idle_V1.4';
+  document.title='lineage_Idle_V1.4.1';
+  document.querySelectorAll('.title').forEach(el=>{if(el.textContent.includes('lineage_Idle'))el.textContent='lineage_Idle_V1.4.1';});
+  const st=document.querySelector('#start h1');if(st)st.textContent='lineage_Idle_V1.4.1';
+  const top=document.querySelector('.top .title');if(top)top.textContent='lineage_Idle_V1.4.1';
 })();
 
 
-/* === lineage_Idle_V1.4 Patch: inventory equipment display and remove backpack enchant === */
+/* === lineage_Idle_V1.4.1 Patch: inventory equipment display and remove backpack enchant === */
 (()=>{
   const VERSION='5.3';
   const esc=s=>String(s??'').replace(/[&<>\"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]||m));
@@ -1850,14 +1850,14 @@ viewTransform(){let active=this.activeTransform();let rows=Object.values(DB.tran
     return html;
   };
 
-  document.title='lineage_Idle_V1.4';
-  document.querySelectorAll('.title').forEach(el=>{if(el.textContent.includes('lineage_Idle'))el.textContent='lineage_Idle_V1.4';});
-  const st=document.querySelector('#start h1');if(st)st.textContent='lineage_Idle_V1.4';
-  const top=document.querySelector('.top .title');if(top)top.textContent='lineage_Idle_V1.4';
+  document.title='lineage_Idle_V1.4.1';
+  document.querySelectorAll('.title').forEach(el=>{if(el.textContent.includes('lineage_Idle'))el.textContent='lineage_Idle_V1.4.1';});
+  const st=document.querySelector('#start h1');if(st)st.textContent='lineage_Idle_V1.4.1';
+  const top=document.querySelector('.top .title');if(top)top.textContent='lineage_Idle_V1.4.1';
 })();
 
 
-/* === lineage_Idle_V1.4 Hotfix: remove transform level limit after 1st rebirth === */
+/* === lineage_Idle_V1.4.1 Hotfix: remove transform level limit after 1st rebirth === */
 (()=>{
   const esc=s=>String(s??'').replace(/[&<>\"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]||m));
   const oldTransformV48Rebirth=Game.transform.bind(Game);
@@ -1903,7 +1903,7 @@ viewTransform(){let active=this.activeTransform();let rows=Object.values(DB.tran
 
 
 
-/* === lineage_Idle_V1.4 Core Consolidation ===
+/* === lineage_Idle_V1.4.1 Core Consolidation ===
    目標：
    1. 版本統一 V1.0
    2. 背包、裝備、售出判定集中於單一核心
@@ -2132,9 +2132,9 @@ viewTransform(){let active=this.activeTransform();let rows=Object.values(DB.tran
 
   // 畫面版本字樣統一
   document.addEventListener('DOMContentLoaded',()=>{
-    document.title='lineage_Idle_V1.4';
+    document.title='lineage_Idle_V1.4.1';
     document.querySelectorAll('.title').forEach(el=>{
-      if(el.textContent && el.textContent.includes('lineage_Idle_')) el.textContent=el.textContent.replace(/lineage_Idle_V[\d.]+/g,'lineage_Idle_V1.4');
+      if(el.textContent && el.textContent.includes('lineage_Idle_')) el.textContent=el.textContent.replace(/lineage_Idle_V[\d.]+/g,'lineage_Idle_V1.4.1');
     });
   });
 })();
@@ -2152,12 +2152,12 @@ viewTransform(){let active=this.activeTransform();let rows=Object.values(DB.tran
 (()=>{
   const VERSION='1.1';
   const setVersionText=()=>{
-    document.title='lineage_Idle_V1.4';
+    document.title='lineage_Idle_V1.4.1';
     document.querySelectorAll('.title').forEach(el=>{
-      if(String(el.textContent||'').includes('lineage_Idle')) el.textContent='lineage_Idle_V1.4';
+      if(String(el.textContent||'').includes('lineage_Idle')) el.textContent='lineage_Idle_V1.4.1';
     });
-    const h1=document.querySelector('#start h1'); if(h1) h1.textContent='lineage_Idle_V1.4';
-    const top=document.querySelector('.top .title'); if(top) top.textContent='lineage_Idle_V1.4';
+    const h1=document.querySelector('#start h1'); if(h1) h1.textContent='lineage_Idle_V1.4.1';
+    const top=document.querySelector('.top .title'); if(top) top.textContent='lineage_Idle_V1.4.1';
   };
   setVersionText();
 
@@ -2474,7 +2474,7 @@ viewTransform(){let active=this.activeTransform();let rows=Object.values(DB.tran
    ============================== */
 (()=>{
   const VERSION='1.2';
-  const TITLE='lineage_Idle_V1.4';
+  const TITLE='lineage_Idle_V1.4.1';
   const EQUIP_TYPES=['weapon','helmet','tshirt','armor','cloak','gloves','boots','leggings','ring','earring','amulet','belt'];
   const rarityRank={'白':1,'綠':2,'藍':3,'紫':4,'橘':5,'紅':6};
   const esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
@@ -2761,9 +2761,9 @@ viewTransform(){let active=this.activeTransform();let rows=Object.values(DB.tran
 })();
 
 
-/* === lineage_Idle_V1.4 Hotfix: restore Rebirth / Awakening tab === */
+/* === lineage_Idle_V1.4.1 Hotfix: restore Rebirth / Awakening tab === */
 (()=>{
-  const TITLE='lineage_Idle_V1.4';
+  const TITLE='lineage_Idle_V1.4.1';
   const setTitle=()=>{
     document.title=TITLE;
     document.querySelectorAll('.title').forEach(el=>{ if(String(el.textContent||'').includes('lineage_Idle')) el.textContent=TITLE; });
@@ -2884,9 +2884,9 @@ viewTransform(){let active=this.activeTransform();let rows=Object.values(DB.tran
 window.addEventListener('DOMContentLoaded',()=>{
   Game.init();
 
-  /* === lineage_Idle_V1.4 Final EXP Potion Fix: run after Game.init and after every render === */
+  /* === lineage_Idle_V1.4.1 Final EXP Potion Fix: run after Game.init and after every render === */
   (()=>{
-    const TITLE='lineage_Idle_V1.4';
+    const TITLE='lineage_Idle_V1.4.1';
 
     function setTitle(){
       document.title=TITLE;
@@ -3410,7 +3410,7 @@ window.addEventListener('DOMContentLoaded',()=>{
   setVersion();
 })();
 
-/* === lineage_Idle_V1.4 Rebuilt Sell System ===
+/* === lineage_Idle_V1.4.1 Rebuilt Sell System ===
    完整重建販售系統：
    - 卷軸永遠排除自動 / 批次 / 智能清理規則，但可手動單件賣出。
    - 自動販售支援：未裝備裝備、強化值門檻、已學技能書。
@@ -3418,7 +3418,7 @@ window.addEventListener('DOMContentLoaded',()=>{
 */
 (()=>{
   if(!window.Game || !window.DB) return;
-  const VERSION='lineage_Idle_V1.4';
+  const VERSION='lineage_Idle_V1.4.1';
   const EQUIP_TYPES=new Set(['weapon','helmet','tshirt','armor','cloak','gloves','boots','leggings','ring','earring','amulet','belt']);
   const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   const money=n=>Math.max(0,Math.floor(Number(n)||0)).toLocaleString();
@@ -3691,13 +3691,13 @@ window.addEventListener('DOMContentLoaded',()=>{
 })();
 
 
-/* === lineage_Idle_V1.4 No Auction Patch ===
+/* === lineage_Idle_V1.4.1 No Auction Patch ===
    目的：升級版本顯示至 V1.4，完全移除拍賣場入口與拍賣行互動。
    保留：背包、商店、製作、副本、掉落、強化等既有功能。
 */
 (()=>{
   'use strict';
-  const VERSION='lineage_Idle_V1.4';
+  const VERSION='lineage_Idle_V1.4.1';
   const AUCTION_WORDS=['拍賣場','拍賣行'];
 
   function setVersion(){
@@ -3835,12 +3835,12 @@ window.addEventListener('DOMContentLoaded',()=>{
 
 
 
-/* lineage_Idle_V1.4 patch: pet system optimization */
+/* lineage_Idle_V1.4.1 patch: pet system optimization */
 (function(){
   'use strict';
   if(!window.DB || !window.Game) return;
 
-  const VERSION='lineage_Idle_V1.4';
+  const VERSION='lineage_Idle_V1.4.1';
   const PET_MAX_LEVEL=60;
   const PET_SLOT_COST=[0,1000000,5000000];
 
