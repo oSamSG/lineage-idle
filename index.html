@@ -3833,6 +3833,238 @@ window.addEventListener('DOMContentLoaded',()=>{
   setVersion();
 })();
 
+
+
+/* lineage_Idle_V1.4 patch: pet system optimization */
+(function(){
+  'use strict';
+  if(!window.DB || !window.Game) return;
+
+  const VERSION='lineage_Idle_V1.4';
+  const PET_MAX_LEVEL=60;
+  const PET_SLOT_COST=[0,1000000,5000000];
+
+  function setVersion(){
+    document.title=VERSION;
+    document.querySelectorAll('#start h1,.top .title').forEach(el=>{el.textContent=VERSION;});
+    document.querySelectorAll('.title').forEach(el=>{
+      const t=String(el.textContent||'');
+      if(t.includes('lineage_Idle')) el.textContent=VERSION;
+    });
+  }
+  function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+  function petDefs(){
+    const base=(typeof V31!=='undefined'&&V31.petDefs)?V31.petDefs():[
+      {id:'wolf_pet',name:'狼',lv:1,cost:3000,stat:{str:1,dex:1,dmg:2},desc:'初期物理輸出。'},
+      {id:'bear_pet',name:'熊',lv:15,cost:20000,stat:{str:3,con:2,hp:100,dr:2},desc:'防禦型寵物。'},
+      {id:'fairy_pet',name:'妖精寵物',lv:30,cost:60000,stat:{dex:3,wis:1,hit:3,dmg:4},desc:'遠距離輔助。'},
+      {id:'succubus_pet',name:'魅魔召喚獸',lv:50,cost:150000,stat:{int:2,wis:2,mp:120,dmg:6},desc:'魔法職業推薦。'},
+      {id:'baby_dragon',name:'幼龍',lv:70,cost:500000,stat:{str:2,dex:2,int:2,dmg:12,dr:5,mr:15},desc:'高階泛用召喚獸。'}
+    ];
+    const role={wolf_pet:['攻擊','每 8 秒撕咬造成額外傷害'],bear_pet:['守護','每 10 秒替主人減傷並回復少量 HP'],fairy_pet:['輔助','每 12 秒治癒主人'],succubus_pet:['魔攻','每 9 秒施放暗影魔法'],baby_dragon:['龍息','每 10 秒造成高額龍息傷害']};
+    return base.map(p=>Object.assign({},p,{role:(role[p.id]||['支援','定期協助戰鬥'])[0],skillDesc:(role[p.id]||['支援','定期協助戰鬥'])[1]}));
+  }
+  function petDef(id){return petDefs().find(p=>p.id===id);}
+  function statMerge(a,b){let r=Object.assign({},a||{});Object.entries(b||{}).forEach(([k,v])=>{if(typeof v==='number')r[k]=(r[k]||0)+v;});return r;}
+  function statText(stat){return Object.entries(stat||{}).map(([k,v])=>`${k.toUpperCase()} ${v>0?'+':''}${v}`).join('、')||'無';}
+  function petExpNeed(lv){return Math.floor(120+Math.pow(Math.max(1,lv),1.75)*95);}
+  function petUpgradeCost(def,lv){return Math.floor((def?.cost||3000)*0.45+Math.pow(Math.max(1,lv),2)*900);}
+  function petBonus(def,lv){
+    lv=Math.max(1,lv||1);
+    let bonus={};
+    for(let [k,v] of Object.entries(def?.stat||{})){
+      let grow=(k==='hp'||k==='mp')?Math.floor(lv*8):Math.floor(lv/4);
+      if(k==='dmg') grow=Math.floor(lv/3);
+      if(k==='dr'||k==='mr'||k==='hit') grow=Math.floor(lv/5);
+      bonus[k]=v+grow;
+    }
+    return bonus;
+  }
+  function petPower(def,own){
+    let lv=own?.lv||1,b=petBonus(def,lv);
+    return Math.floor(lv*35+(b.dmg||0)*45+(b.str||0)*25+(b.dex||0)*22+(b.int||0)*25+(b.dr||0)*60+(b.hp||0)*0.4+(b.mp||0)*0.25+(b.hit||0)*18+(b.mr||0)*4);
+  }
+  function activePetIds(game){
+    let max=Math.max(1,Math.min(3,game.state?.petSlots||1));
+    return (game.state?.activePets||[]).filter(Boolean).slice(0,max);
+  }
+  function normalizePets(game){
+    if(!game.state)return;
+    game.state.pets=game.state.pets||{};
+    Object.values(game.state.pets).forEach(p=>{p.lv=Math.max(1,Math.min(PET_MAX_LEVEL,p.lv||1));p.exp=Math.max(0,p.exp||0);p.loyalty=Math.max(0,Math.min(100,p.loyalty??100));p.lastSkill=p.lastSkill||0;});
+    game.state.petSlots=Math.max(1,Math.min(3,game.state.petSlots||1));
+    game.state.activePets=Array.isArray(game.state.activePets)?game.state.activePets:[];
+    if(game.state.activePet&&!game.state.activePets.includes(game.state.activePet)) game.state.activePets.unshift(game.state.activePet);
+    game.state.activePets=game.state.activePets.filter(id=>!!game.state.pets[id]).slice(0,game.state.petSlots);
+    game.state.activePet=game.state.activePets[0]||null;
+    game.state.petStats=game.state.petStats||{expGained:0,autoLevels:0,skillCasts:0};
+  }
+  function addPetExp(game,baseExp){
+    normalizePets(game);
+    let ids=activePetIds(game); if(!ids.length)return;
+    let gain=Math.max(1,Math.floor((baseExp||1)*0.55));
+    ids.forEach(id=>{
+      let own=game.state.pets[id],def=petDef(id); if(!own||!def)return;
+      own.exp=(own.exp||0)+gain;
+      own.loyalty=Math.min(100,(own.loyalty??100)+0.15);
+      game.state.petStats.expGained=(game.state.petStats.expGained||0)+gain;
+      let up=0;
+      while(own.lv<PET_MAX_LEVEL && own.exp>=petExpNeed(own.lv)){
+        own.exp-=petExpNeed(own.lv); own.lv++; up++;
+      }
+      if(up){game.state.petStats.autoLevels=(game.state.petStats.autoLevels||0)+up;game.log(`${def.name} 透過戰鬥成長為 Lv.${own.lv}`,'green');}
+    });
+  }
+  function castPetSkills(game){
+    normalizePets(game);
+    let mon=game.mon&&game.mon(); if(!mon||mon.hp<=0)return;
+    let now=Date.now();
+    activePetIds(game).forEach(id=>{
+      let own=game.state.pets[id],def=petDef(id); if(!own||!def)return;
+      let cd=id==='fairy_pet'?12000:(id==='bear_pet'?10000:(id==='succubus_pet'?9000:8000));
+      if(now-(own.lastSkill||0)<cd)return;
+      own.lastSkill=now; game.state.petStats.skillCasts=(game.state.petStats.skillCasts||0)+1;
+      let lv=own.lv||1;
+      if(id==='fairy_pet'){
+        let heal=Math.floor(60+lv*9+(game.totalStats().wis||0)*2);
+        game.state.hp=Math.min(game.maxHp(),game.state.hp+heal);
+        game.blog(`${def.name} 施放治癒，恢復 <span class="c-green">${heal}</span> HP。`);
+      }else if(id==='bear_pet'){
+        let heal=Math.floor(35+lv*6);
+        game.state.hp=Math.min(game.maxHp(),game.state.hp+heal);
+        game.state.buffs=game.state.buffs||{};
+        game.state.buffs.pet_guard={name:'寵物守護',dr:Math.max(2,Math.floor(lv/8)),until:Date.now()+8000};
+        game.blog(`${def.name} 發動守護，短時間提升減傷並恢復 HP。`);
+      }else{
+        let dmg=Math.floor((def.stat?.dmg||3)*8+lv*5+(id==='baby_dragon'?120:0)+(id==='succubus_pet'?80:0));
+        mon.hp-=dmg;
+        game.blog(`${def.name} 發動${id==='baby_dragon'?'龍息':id==='succubus_pet'?'暗影魔法':'撕咬'}，造成 <span class="c-purple">${dmg}</span> 傷害。`);
+        if(mon.hp<=0){let mdef=DB.mons[mon.id]; if(mdef) game.kill(mdef);}
+      }
+    });
+  }
+  function autoBestPets(game){
+    let s=game.state; if(!s||s.settings?.autoPetSummon===false)return;
+    normalizePets(game);
+    let owned=Object.keys(s.pets||{}); if(!owned.length)return;
+    let max=s.petSlots||1;
+    s.activePets=owned.sort((a,b)=>petPower(petDef(b),s.pets[b])-petPower(petDef(a),s.pets[a])).slice(0,max);
+    s.activePet=s.activePets[0]||null;
+  }
+
+  const oldMigrate=Game.migrateState?.bind(Game);
+  Game.migrateState=function(){oldMigrate?.(); if(!this.state)return; this.state.version='1.4-pet'; normalizePets(this); setVersion();};
+
+  const oldTotalStats=Game.totalStats?.bind(Game);
+  Game.totalStats=function(){
+    let s=oldTotalStats?oldTotalStats():{}; normalizePets(this);
+    activePetIds(this).forEach(id=>{let def=petDef(id),own=this.state.pets[id]; if(def&&own){let extra={};let lv=own.lv||1;extra.hit=Math.floor(lv/10);extra.dmg=Math.floor(lv/8);if(id==='bear_pet')extra.dr=Math.floor(lv/10);if(id==='fairy_pet')extra.wis=Math.floor(lv/12);if(id==='succubus_pet')extra.int=Math.floor(lv/12);if(id==='baby_dragon')extra.mr=Math.floor(lv/3);s=statMerge(s,extra);}});
+    return s;
+  };
+
+  const oldKill=Game.kill?.bind(Game);
+  Game.kill=function(mdef){let exp=mdef?.exp||1; oldKill?.(mdef); addPetExp(this,exp);};
+
+  const oldFight=Game.fight?.bind(Game);
+  Game.fight=function(){oldFight?.(); castPetSkills(this);};
+
+  const oldTick=Game.tick?.bind(Game);
+  Game.tick=function(){autoBestPets(this); oldTick?.();};
+
+  Game.buyPetSlot=function(){
+    normalizePets(this);
+    let next=(this.state.petSlots||1)+1;
+    if(next>3){alert('目前最多可帶 3 隻寵物。');return;}
+    let cost=PET_SLOT_COST[next-1]||5000000;
+    if(this.state.adena<cost){alert('金幣不足，需要 '+cost.toLocaleString());return;}
+    this.state.adena-=cost; this.state.petSlots=next;
+    this.log(`已開啟第 ${next} 格寵物欄。`,'green'); this.render();
+  };
+  Game.buySecondPetSlot=function(){this.buyPetSlot();};
+
+  Game.clearPetSlot=function(slot){
+    normalizePets(this); slot=+slot;
+    if(slot<0||slot>=this.state.petSlots)return;
+    let old=this.state.activePets[slot];
+    this.state.activePets.splice(slot,1);
+    this.state.activePet=this.state.activePets[0]||null;
+    if(old&&petDef(old))this.log(`已收回第 ${slot+1} 格寵物：${petDef(old).name}`,'green');
+    this.render();
+  };
+
+  Game.summonPetToSlot=function(id,slot){
+    normalizePets(this); let def=petDef(id); if(!def)return;
+    if(this.state.lv<def.lv){alert('等級不足，需要 Lv.'+def.lv);return;}
+    if(!this.state.pets[id]){
+      if(this.state.adena<def.cost){alert('金幣不足，需要 '+def.cost.toLocaleString());return;}
+      this.state.adena-=def.cost; this.state.pets[id]={lv:1,exp:0,loyalty:100,lastSkill:0};
+      this.log('取得寵物：'+def.name,'green');
+    }
+    slot=+slot;
+    if(slot>=this.state.petSlots){alert('尚未開啟此寵物欄位');return;}
+    this.state.activePets=this.state.activePets.filter(x=>x!==id);
+    this.state.activePets[slot]=id;
+    this.state.activePets=this.state.activePets.filter(Boolean).slice(0,this.state.petSlots);
+    this.state.activePet=this.state.activePets[0]||null;
+    this.log(`第 ${slot+1} 格召喚寵物：${def.name}`,'green'); this.render();
+  };
+  Game.summonPet=function(id){this.summonPetToSlot(id,0);};
+
+  Game.upgradePet=function(id){
+    normalizePets(this); let own=this.state.pets?.[id],def=petDef(id); if(!own||!def)return;
+    if((own.lv||1)>=PET_MAX_LEVEL){alert('寵物已達最高等級。');return;}
+    let cost=petUpgradeCost(def,own.lv||1);
+    if(this.state.adena<cost){alert('金幣不足，需要 '+cost.toLocaleString());return;}
+    this.state.adena-=cost; own.lv=(own.lv||1)+1; own.loyalty=Math.min(100,(own.loyalty??100)+3);
+    this.state.v31Stats=this.state.v31Stats||{}; this.state.v31Stats.petUpgrades=(this.state.v31Stats.petUpgrades||0)+1;
+    this.log(`${def.name} 訓練升級為 Lv.${own.lv}`,'green'); this.render();
+  };
+
+  Game.feedPet=function(id){
+    normalizePets(this); let own=this.state.pets?.[id],def=petDef(id); if(!own||!def)return;
+    let cost=Math.floor(5000+(own.lv||1)*1200);
+    if(this.state.adena<cost){alert('金幣不足，需要 '+cost.toLocaleString());return;}
+    this.state.adena-=cost; own.loyalty=Math.min(100,(own.loyalty??100)+20); own.exp+=Math.floor(petExpNeed(own.lv)*0.15);
+    this.log(`${def.name} 餵養完成，忠誠度提升並獲得成長經驗。`,'green'); this.render();
+  };
+
+  const oldRenderTab=Game.renderTab?.bind(Game);
+  Game.renderTab=function(){
+    oldRenderTab?.(); let el=document.getElementById('tabContent'); if(!this.state||!el)return;
+    if(this.tab==='pet'){
+      el.innerHTML=this.viewPet();
+      el.querySelectorAll('[data-summon-pet-slot]').forEach(b=>b.onclick=()=>this.summonPetToSlot(b.dataset.summonPetSlot,+b.dataset.slot));
+      el.querySelectorAll('[data-buy-pet-slot]').forEach(b=>b.onclick=()=>this.buyPetSlot());
+      el.querySelectorAll('[data-clear-pet-slot]').forEach(b=>b.onclick=()=>this.clearPetSlot(+b.dataset.clearPetSlot));
+      el.querySelectorAll('[data-upgrade-pet]').forEach(b=>b.onclick=()=>this.upgradePet(b.dataset.upgradePet));
+      el.querySelectorAll('[data-feed-pet]').forEach(b=>b.onclick=()=>this.feedPet(b.dataset.feedPet));
+      el.querySelectorAll('[data-refund-pet]').forEach(b=>b.onclick=()=>this.refundPetUpgrade&&this.refundPetUpgrade(b.dataset.refundPet));
+    }
+    setVersion();
+  };
+
+  Game.viewPet=function(){
+    normalizePets(this);
+    let s=this.state,slots=s.petSlots||1,active=s.activePets||[];
+    let slotHtml=Array.from({length:slots},(_,i)=>{
+      let id=active[i],def=petDef(id),own=id&&s.pets[id];
+      return `<div class="setting-card"><div class="row"><span><b class="c-gold">第 ${i+1} 格</b><br>${def?`<span>${esc(def.name)} Lv.${own.lv||1}</span><br><span class="small">戰力 ${petPower(def,own).toLocaleString()}｜${esc(def.role)}</span>`:'<span class="small">空欄位</span>'}</span>${def?`<button class="btn red" data-clear-pet-slot="${i}">收回</button>`:''}</div></div>`;
+    }).join('');
+    let nextSlot=slots<3?`<button class="btn green" data-buy-pet-slot>花 ${(PET_SLOT_COST[slots]||5000000).toLocaleString()} 開第 ${slots+1} 格</button>`:'<span class="c-green">寵物欄位已全開</span>';
+    let auto=s.settings?.autoPetSummon!==false?'啟用':'停用';
+    let rows=petDefs().map(p=>{
+      let own=s.pets[p.id]; let lv=own?.lv||1; let need=petExpNeed(lv); let exp=own?.exp||0; let pct=own?Math.max(0,Math.min(100,exp/need*100)):0;
+      let locked=s.lv<p.lv, cost=own?petUpgradeCost(p,lv):p.cost, bonus=own?petBonus(p,lv):p.stat, power=own?petPower(p,own):petPower(p,{lv:1});
+      let summonBtns=Array.from({length:slots},(_,i)=>`<button class="btn green" data-summon-pet-slot="${p.id}" data-slot="${i}" ${locked?'disabled':''}>${active[i]===p.id?'召喚中':`召喚${i+1}`}</button>`).join(' ');
+      return `<div class="item"><div class="row"><span><b class="${own?'c-gold':''}">${esc(p.name)}</b> <span class="pill">${esc(p.role)}</span> ${own?`<span class="pill">Lv.${lv}/${PET_MAX_LEVEL}</span><span class="pill">忠誠 ${Math.floor(own.loyalty??100)}</span>`:`<span class="pill">取得 ${p.cost.toLocaleString()}</span>`}<br><span class="small">需求 Lv.${p.lv}｜戰力 ${power.toLocaleString()}｜${esc(p.skillDesc)}<br>目前加成：${statText(bonus)}${locked?'｜等級不足':''}</span></span><span>${own?summonBtns:`<button class="btn green" data-summon-pet-slot="${p.id}" data-slot="0" ${locked?'disabled':''}>取得/召喚</button>`}</span></div>${own?`<div style="margin-top:6px"><div class="bar"><i class="exp" style="width:${pct}%"></i><span>寵物EXP ${Math.floor(exp)}/${need} (${pct.toFixed(1)}%)</span></div><div style="margin-top:6px" class="row"><span class="small">訓練費 ${cost.toLocaleString()}｜餵養費 ${(5000+lv*1200).toLocaleString()}</span><span><button class="btn" data-upgrade-pet="${p.id}" ${lv>=PET_MAX_LEVEL?'disabled':''}>訓練升級</button> <button class="btn" data-feed-pet="${p.id}">餵養</button> ${this.refundPetUpgrade?`<button class="btn red" data-refund-pet="${p.id}">升級退費</button>`:''}</span></div></div>`:''}</div>`;
+    }).join('');
+    let st=s.petStats||{};
+    return `<h3 class="title">寵物 / 召喚獸</h3><div class="setting-card"><div class="row"><span><b class="c-gold">寵物欄位</b><br><span class="small">自動召喚目前：${auto}。放置時會自動選擇戰力最高的寵物上場。</span></span><span>${nextSlot}</span></div><div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(210px,1fr));margin-top:8px">${slotHtml}</div><div class="small" style="margin-top:8px">累計寵物 EXP：${(st.expGained||0).toLocaleString()}｜自動升級：${st.autoLevels||0}｜技能發動：${st.skillCasts||0}</div></div>${rows}`;
+  };
+
+  setVersion();
+})();
+
 </script>
 </body>
 </html>
