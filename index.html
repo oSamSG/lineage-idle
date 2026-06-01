@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>lineage_Idle_V1.3</title>
+<title>lineage_Idle_V1.4</title>
 <style>
 :root{--bg:#05070a;--panel:#0d1117;--panel2:#111827;--line:#334155;--text:#dbeafe;--muted:#94a3b8;--gold:#facc15;--green:#22c55e;--red:#ef4444;--blue:#60a5fa;--purple:#c084fc;--orange:#fb923c}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:"Microsoft JhengHei",Consolas,monospace;font-size:15px;user-select:none}.hidden{display:none!important}.app{height:100vh;display:flex;flex-direction:column;padding:12px;gap:10px}.panel{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px}.top{display:flex;justify-content:space-between;align-items:center}.title{color:var(--gold);font-weight:700}.grid{display:grid;gap:10px}.main{flex:1;display:grid;grid-template-columns:300px 1fr 330px;gap:10px;min-height:0}.col{display:flex;flex-direction:column;gap:10px;min-height:0}.scroll{overflow:auto}.btn,select,input{background:#1f2937;color:var(--text);border:1px solid #475569;border-radius:8px;padding:8px 10px;font:inherit}.btn{cursor:pointer}.btn:hover{background:#334155}.btn:disabled{opacity:.45;cursor:not-allowed}.btn.green{color:#86efac}.btn.blue{color:#93c5fd}.btn.red{color:#fca5a5}.row{display:flex;align-items:center;justify-content:space-between;gap:8px}.tabs{display:flex;gap:6px;flex-wrap:wrap}.tab{padding:8px 12px}.tab.active{border-color:var(--gold);color:var(--gold)}.bar{height:18px;background:#020617;border:1px solid #475569;border-radius:99px;overflow:hidden;position:relative}.bar i{display:block;height:100%;width:0}.hp{background:#991b1b}.mp{background:#1d4ed8}.exp{background:#a16207}.bar span{position:absolute;inset:0;text-align:center;font-size:12px;line-height:16px;text-shadow:1px 1px #000}.stat{display:grid;grid-template-columns:1fr 1fr;gap:6px}.item{border-bottom:1px dashed #293548;padding:7px 0}.log{font-size:14px;line-height:1.55}.c-gold{color:var(--gold)}.c-green{color:var(--green)}.c-red{color:var(--red)}.c-blue{color:var(--blue)}.c-purple{color:var(--purple)}.c-orange{color:var(--orange)}.modal{position:fixed;inset:0;background:rgba(0,0,0,.86);display:flex;align-items:center;justify-content:center;z-index:50}.modal-card{width:min(760px,94vw);max-height:92vh;overflow:auto}.classes{grid-template-columns:repeat(auto-fit,minmax(150px,1fr))}.class-card{text-align:left;min-height:96px}.class-card.selected{border-color:var(--gold);background:#1e293b}.small{font-size:13px;color:var(--muted)}.pill{display:inline-block;border:1px solid #475569;border-radius:99px;padding:2px 7px;margin:2px;color:#cbd5e1}.rarity-白{color:#e5e7eb}.rarity-綠{color:#4ade80}.rarity-藍{color:#60a5fa}.rarity-紫{color:#c084fc}.rarity-橘{color:#fb923c}.rarity-紅{color:#f87171}.kbd{background:#020617;border:1px solid #334155;border-radius:5px;padding:1px 5px;color:#cbd5e1}.setting-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:10px}.setting-card{background:#0b1220;border:1px solid #26364f;border-radius:10px;padding:12px}@media(max-width:1100px){.main{grid-template-columns:1fr}.app{height:auto}.col{min-height:500px}}
 </style>
@@ -2884,9 +2884,9 @@ viewTransform(){let active=this.activeTransform();let rows=Object.values(DB.tran
 window.addEventListener('DOMContentLoaded',()=>{
   Game.init();
 
-  /* === lineage_Idle_V1.3.4 Final EXP Potion Fix: run after Game.init and after every render === */
+  /* === lineage_Idle_V1.4 Final EXP Potion Fix: run after Game.init and after every render === */
   (()=>{
-    const TITLE='lineage_Idle_V1.3.4';
+    const TITLE='lineage_Idle_V1.4';
 
     function setTitle(){
       document.title=TITLE;
@@ -3691,117 +3691,145 @@ window.addEventListener('DOMContentLoaded',()=>{
 })();
 
 
-/* === Sam Fix 2026-06-01: EXP restore + auction safety ===
-   1) 經驗獲得恢復原本核心設定：擊殺 EXP = 怪物 EXP × 0.15。
-   2) 拍賣場不再出現 / 購買紅裝與已強化(+過)裝備。
-   3) 拍賣場快速出售清單與出售動作排除紅裝與已強化(+過)裝備。
+/* === lineage_Idle_V1.4 No Auction Patch ===
+   目的：升級版本顯示至 V1.4，完全移除拍賣場入口與拍賣行互動。
+   保留：背包、商店、製作、副本、掉落、強化等既有功能。
 */
 (()=>{
-  if(!window.Game||!window.DB) return;
-  const VERSION='lineage_Idle_V1.3_fixed';
-  const EQUIP_TYPES=['weapon','helmet','tshirt','armor','cloak','gloves','boots','leggings','ring','earring','amulet','belt'];
-  const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-  const money=n=>Math.max(0,Math.floor(Number(n)||0)).toLocaleString();
-  const isEquip=d=>!!d&&EQUIP_TYPES.includes(d.type);
-  const equipSet=g=>new Set(Object.values(g.state?.equip||{}).filter(Boolean));
-  const itemDef=it=>DB.items[it?.id]||{};
-  const enchantOf=it=>Math.max(0,Number(it?.enchant)||0);
-  const isRedOrPlus=(it)=>{const d=itemDef(it);return isEquip(d)&&(d.rarity==='紅'||enchantOf(it)>0);};
-  const isAuctionAllowed=(x)=>{const d=DB.items[x?.id]||{};return !(isEquip(d)&&(d.rarity==='紅'||Number(x?.enchant||0)>0));};
+  'use strict';
+  const VERSION='lineage_Idle_V1.4';
+  const AUCTION_WORDS=['拍賣場','拍賣行'];
+
   function setVersion(){
     document.title=VERSION;
-    const start=document.querySelector('#start h1'); if(start) start.textContent=VERSION;
-    const top=document.querySelector('.top .title'); if(top) top.textContent=VERSION;
-    document.querySelectorAll('.title').forEach(el=>{if(String(el.textContent||'').includes('lineage_Idle'))el.textContent=VERSION;});
-  }
-  function baseSellPrice(g,key){const it=g.state?.inventory?.[key],d=itemDef(it);if(!it)return 0;return Math.max(1,Math.floor((Number(d.price)||100)*(0.35+enchantOf(it)*0.2)))*Math.max(1,Number(it.qty)||1);}
-  function auctionSellAllowed(g,key){const it=g.state?.inventory?.[key];if(!it)return false;if(equipSet(g).has(key))return false;return !isRedOrPlus(it);}
-  function filterAuctionListings(g){
-    const lists=[];
-    if(Array.isArray(g.state?.auction?.listings)) lists.push(g.state.auction.listings);
-    if(Array.isArray(g.state?.v47?.auction?.listings)) lists.push(g.state.v47.auction.listings);
-    for(const arr of lists){
-      for(let i=arr.length-1;i>=0;i--){if(!isAuctionAllowed(arr[i])) arr.splice(i,1);}
-    }
+    document.querySelectorAll('#start h1,.top .title').forEach(el=>{el.textContent=VERSION;});
+    document.querySelectorAll('.title').forEach(el=>{
+      const t=String(el.textContent||'');
+      if(t.includes('lineage_Idle')) el.textContent=VERSION;
+    });
   }
 
-  // 經驗獲得：恢復原本核心設定，不再疊加額外擊殺倍率。
-  Game.kill=function(mdef){
-    const m=this.map();
-    const ad=this.rand(mdef.adena[0],mdef.adena[1]);
-    const expGain=Math.max(1,Math.floor((Number(mdef.exp)||1)*0.15));
-    this.state.adena+=ad;
-    this.state.exp+=expGain;
-    this.blog?.(`擊敗 ${mdef.name}，EXP +${expGain}，金幣 +${ad}`);
-    m.drops.forEach(d=>{if(Math.random()*100<d.rate){this.addItem(d.id,1,0);this.log?.('獲得道具：'+(DB.items[d.id]?.name||d.id),'green');}});
-    this.levelUp?.();
-    this.storyEncounter?.(mdef);
-    this.state.monster=null;
-    if(this.state.settings?.autoSell){
-      if(typeof this.sellByCurrentRule==='function') this.sellByCurrentRule({silent:true});
-      else if(typeof this.sellWhite==='function') this.sellWhite();
+  function stripAuctionText(html){
+    return String(html||'')
+      .replace(/、?拍賣場/g,'')
+      .replace(/、?拍賣行/g,'')
+      .replace(/拍賣場或/g,'')
+      .replace(/或拍賣場/g,'')
+      .replace(/與拍賣場/g,'')
+      .replace(/，拍賣場/g,'')
+      .replace(/、製作、取得/g,'、製作取得')
+      .replace(/副本、製作、取得/g,'副本、製作取得')
+      .replace(/副本、製作與取得/g,'副本、製作取得');
+  }
+
+  function removeAuctionButtons(){
+    document.querySelectorAll('[data-tab="auction"],[data-buy-auction],[data-sell-auction],[data-refresh-auction],[data-v47-buy-auction],[data-v47-refresh-auction],[data-v47-auction-search],[data-v47-autobuy]').forEach(el=>el.remove());
+    document.querySelectorAll('#tabs .tab').forEach(btn=>{
+      if(String(btn.textContent||'').includes('拍賣')) btn.remove();
+    });
+  }
+
+  function neutralizeAuctionState(game){
+    if(!game||!game.state) return;
+    game.state.version='1.4';
+    if(game.state.auction){
+      game.state.auction.listings=[];
+      game.state.auction.disabled=true;
+      game.state.auction.version='disabled-v1.4';
     }
-  };
-
-  // 拍賣場快速出售：保護紅裝與已強化裝備。
-  Game.sellAuction=function(key){
-    if(!auctionSellAllowed(this,key)){alert('紅裝與已強化裝備不允許在拍賣場快速出售。');return;}
-    const it=this.invItem(key),d=itemDef(it);if(!it)return;
-    const price=baseSellPrice(this,key);
-    this.state.adena=(Number(this.state.adena)||0)+price;
-    this.removeItem(key,it.qty||1);
-    this.state.auction=this.state.auction||{};
-    this.state.auction.sold=(this.state.auction.sold||0)+1;
-    this.log?.(`拍賣場快速出售 ${d.name||it.id}${(it.qty||1)>1?' ×'+it.qty:''}，收入 ${money(price)}`,'green');
-    this.render?.();this.save?.(false);
-  };
-
-  // 拍賣場購買：防止殘留舊商品被買入。
-  const oldBuyAuction=Game.buyAuction?.bind(Game);
-  Game.buyAuction=function(i){
-    filterAuctionListings(this);
-    const a=this.state?.v47?.auction||this.state?.auction||{};
-    const x=a.listings?.[+i];
-    if(!x)return;
-    if(!isAuctionAllowed(x)){alert('拍賣場已移除紅裝與已強化裝備。');a.listings.splice(+i,1);this.render?.();return;}
-    if(oldBuyAuction)return oldBuyAuction(i);
-  };
-
-  // 覆寫拍賣場畫面：市場商品與我的可出售物品都排除紅裝 / +裝。
-  Game.viewAuction=function(){
-    this.state.auction=this.state.auction||{};
-    this.state.v47=this.state.v47||{};
-    this.state.v47.auction=this.state.v47.auction||{};
-    let a=this.state.v47.auction;
-    if(!Array.isArray(a.listings)||!a.listings.length){
-      if(Array.isArray(this.state.auction.listings)) a.listings=this.state.auction.listings.slice();
-      else a.listings=[];
+    if(game.state.v47&&game.state.v47.auction){
+      game.state.v47.auction.listings=[];
+      game.state.v47.auction.disabled=true;
+      game.state.v47.auction.nextRefresh=Number.MAX_SAFE_INTEGER;
+      game.state.v47.auction.autoBuy={enabled:false,maxPrice:0,rarity:'紅',keyword:'',minEnchant:0,includeRed:false,includeDragon:false,includeBoss:false};
     }
-    filterAuctionListings(this);
-    const q=String(a.search||'').trim();
-    const market=(a.listings||[]).map((x,i)=>[x,i]).filter(([x])=>{
-      const d=DB.items[x.id]||{};
-      return isAuctionAllowed(x)&&(!q||String(d.name||'').includes(q)||String(x.tag||'').includes(q));
-    }).map(([x,i])=>{const d=DB.items[x.id]||{};return `<div class="item row"><span><b class="rarity-${esc(d.rarity||'白')}">${esc(d.name||x.id)} ×${x.qty||1}</b> <span class="pill">${esc(x.tag||d.rarity||'一般')}</span><br><span class="small">賣家：${esc(x.seller||'亞丁商會')}｜強化 +0｜價格 ${money(x.price)}</span></span><button class="btn green" data-v47-buy-auction="${i}">購買</button></div>`;}).join('')||'<div class="small">目前沒有可購買商品（紅裝與已強化裝備已排除）。</div>';
-    const sell=Object.entries(this.state.inventory||{}).filter(([k,it])=>auctionSellAllowed(this,k)).slice(0,30).map(([k,it])=>{const d=itemDef(it);return `<div class="item row"><span><b class="rarity-${esc(d.rarity||'白')}">${esc(this.itemName?this.itemName(k):d.name||it.id)}</b><br><span class="small">${esc(this.typeName?this.typeName(d.type):d.type||'物品')}｜${esc(d.rarity||'白')}｜強化 +0｜預估 ${money(baseSellPrice(this,k))}</span></span><button class="btn" data-safe-auction-sell="${esc(k)}">快速出售</button></div>`;}).join('')||'<div class="small">沒有可出售物品（紅裝、已強化裝備、已裝備物品已排除）。</div>';
-    return `<h3 class="title">拍賣場</h3><div class="small">已優化規則：市場與快速出售皆不處理紅裝、已強化 +1 以上裝備。</div><div class="setting-grid"><div class="setting-card"><b class="c-gold">市場商品</b>${market}</div><div class="setting-card"><b class="c-gold">我的可出售物品</b>${sell}</div></div>`;
+    if(game.tab==='auction') game.tab='inventory';
+  }
+
+  const oldInitMenus=Game.initMenus?.bind(Game);
+  Game.initMenus=function(){
+    oldInitMenus?.();
+    removeAuctionButtons();
+    setVersion();
+  };
+
+  const oldMigrate=Game.migrateState?.bind(Game);
+  Game.migrateState=function(){
+    oldMigrate?.();
+    neutralizeAuctionState(this);
+    setVersion();
+  };
+
+  const oldEnter=Game.enter?.bind(Game);
+  Game.enter=function(){
+    neutralizeAuctionState(this);
+    oldEnter?.();
+    removeAuctionButtons();
+    setVersion();
+  };
+
+  const oldRender=Game.render?.bind(Game);
+  Game.render=function(){
+    neutralizeAuctionState(this);
+    oldRender?.();
+    removeAuctionButtons();
+    setVersion();
+  };
+
+  const oldRenderStatus=Game.renderStatus?.bind(Game);
+  Game.renderStatus=function(){
+    neutralizeAuctionState(this);
+    oldRenderStatus?.();
+    setVersion();
   };
 
   const oldRenderTab=Game.renderTab?.bind(Game);
   Game.renderTab=function(){
+    if(this.tab==='auction') this.tab='inventory';
+    neutralizeAuctionState(this);
+    oldRenderTab?.();
+    removeAuctionButtons();
     setVersion();
-    if(this.state)filterAuctionListings(this);
-    const el=document.getElementById('tabContent');
-    if(this.tab==='auction'&&el&&this.state) el.innerHTML=this.viewAuction();
-    else if(oldRenderTab) oldRenderTab();
-    const root=document.getElementById('tabContent'); if(!root)return;
-    root.querySelectorAll('[data-v47-buy-auction],[data-buy-auction]').forEach(btn=>btn.onclick=e=>{e.preventDefault();e.stopPropagation();this.buyAuction(btn.dataset.v47BuyAuction??btn.dataset.buyAuction);});
-    root.querySelectorAll('[data-safe-auction-sell],[data-sell-auction]').forEach(btn=>btn.onclick=e=>{e.preventDefault();e.stopPropagation();this.sellAuction(btn.dataset.safeAuctionSell??btn.dataset.sellAuction);});
   };
 
   const oldTick=Game.tick?.bind(Game);
-  Game.tick=function(){if(oldTick)oldTick();if(this.state)filterAuctionListings(this);};
+  Game.tick=function(){
+    // 防止舊版拍賣場 30 分鐘刷新與自動購買流程再次啟動。
+    neutralizeAuctionState(this);
+    oldTick?.();
+    neutralizeAuctionState(this);
+    removeAuctionButtons();
+  };
 
+  Game.viewAuction=function(){
+    this.tab='inventory';
+    return '<h3 class="title">拍賣場已移除</h3><div class="small">V1.4 已移除拍賣場，裝備改由狩獵掉落、BOSS、副本、製作與商店規則取得。</div>';
+  };
+  Game.buyAuction=function(){alert('V1.4 已移除拍賣場。');};
+  Game.sellAuction=function(){alert('V1.4 已移除拍賣場。');};
+  Game.refreshAuction=function(){alert('V1.4 已移除拍賣場。');};
+
+  const oldViewShop=Game.viewShop?.bind(Game);
+  if(oldViewShop){
+    Game.viewShop=function(){return stripAuctionText(oldViewShop());};
+  }
+
+  const oldViewDungeon=Game.viewDungeon?.bind(Game);
+  if(oldViewDungeon){
+    Game.viewDungeon=function(){return stripAuctionText(oldViewDungeon());};
+  }
+
+  const oldLog=Game.log?.bind(Game);
+  if(oldLog){
+    Game.log=function(msg,color){
+      const t=String(msg??'');
+      if(AUCTION_WORDS.some(w=>t.includes(w))) return;
+      return oldLog(msg,color);
+    };
+  }
+
+  neutralizeAuctionState(Game);
+  removeAuctionButtons();
   setVersion();
 })();
 
