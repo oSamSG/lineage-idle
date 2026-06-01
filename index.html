@@ -3690,6 +3690,98 @@ window.addEventListener('DOMContentLoaded',()=>{
   setVersion();
 })();
 
+
+
+// === Hotfix Sam: restore original EXP gain and remove auction god-gear ===
+(function(){
+  if(!window.Game || !window.DB) return;
+
+  function removeAuctionTab(){
+    const tabs=document.getElementById('tabs');
+    if(!tabs) return;
+    tabs.querySelectorAll('[data-tab="auction"]').forEach(b=>b.remove());
+    if(Game.tab==='auction'){
+      Game.tab='inventory';
+      if(Game.renderTab) Game.renderTab();
+    }
+  }
+
+  function cleanAuctionText(html){
+    return String(html||'')
+      .replace(/、?拍賣場/g,'')
+      .replace(/拍賣場、?/g,'')
+      .replace(/或拍賣場取得/g,'取得')
+      .replace(/、高階紅裝/g,'')
+      .replace(/高階紅裝、?/g,'');
+  }
+
+  const oldMigrate=Game.migrateState ? Game.migrateState.bind(Game) : null;
+  Game.migrateState=function(){
+    if(oldMigrate) oldMigrate();
+    if(this.state){
+      this.state.version='1.3';
+      delete this.state.auction;
+    }
+  };
+
+  const oldInitMenus=Game.initMenus ? Game.initMenus.bind(Game) : null;
+  Game.initMenus=function(){
+    if(oldInitMenus) oldInitMenus();
+    removeAuctionTab();
+  };
+
+  const oldRenderTab=Game.renderTab ? Game.renderTab.bind(Game) : null;
+  Game.renderTab=function(){
+    removeAuctionTab();
+    if(this.tab==='auction') this.tab='inventory';
+    if(oldRenderTab) oldRenderTab();
+    removeAuctionTab();
+  };
+
+  if(Game.viewShop){
+    const oldViewShop=Game.viewShop.bind(Game);
+    Game.viewShop=function(){ return cleanAuctionText(oldViewShop()); };
+  }
+  if(Game.viewMaps){
+    const oldViewMaps=Game.viewMaps.bind(Game);
+    Game.viewMaps=function(){ return cleanAuctionText(oldViewMaps()); };
+  }
+
+  Game.refreshAuction=function(){ alert('拍賣場功能已移除。'); };
+  Game.buyAuction=function(){ alert('拍賣場功能已移除。'); };
+  Game.sellAuction=function(){ alert('拍賣場功能已移除。'); };
+  Game.viewAuction=function(){ return '<h3 class="title">拍賣場已移除</h3><div class="small">此版本已移除拍賣場與神裝購買功能。</div>'; };
+
+  // Restore original monster EXP gain: use monster base EXP directly instead of the reduced 15% multiplier.
+  Game.kill=function(mdef){
+    if(!mdef) return;
+    const m=this.map ? this.map() : null;
+    const ad=this.rand ? this.rand(mdef.adena[0],mdef.adena[1]) : Math.floor(mdef.adena[0]);
+    const expGain=Math.max(1,Math.floor(Number(mdef.exp)||1));
+    this.state.adena+=ad;
+    this.state.exp+=expGain;
+    if(this.blog) this.blog(`擊敗 ${mdef.name}，EXP +${expGain}，金幣 +${ad}`);
+    if(m && Array.isArray(m.drops)){
+      m.drops.forEach(d=>{
+        if(Math.random()*100<d.rate){
+          this.addItem(d.id,1,0);
+          if(this.log) this.log('獲得道具：'+(DB.items[d.id]?.name||d.id),'green');
+        }
+      });
+    }
+    if(this.levelUp) this.levelUp();
+    if(this.storyEncounter) this.storyEncounter(mdef);
+    this.state.monster=null;
+    if(this.state.settings && (this.state.settings.autoSell || this.state.settings.autoSellEnabled)){
+      if(typeof runAutoSell==='function') runAutoSell(this,{silent:true});
+      else if(this.autoSellInventory) this.autoSellInventory();
+    }
+  };
+
+  setTimeout(removeAuctionTab,0);
+  setTimeout(removeAuctionTab,250);
+})();
+
 </script>
 </body>
 </html>
